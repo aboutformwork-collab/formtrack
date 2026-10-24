@@ -1,0 +1,1844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FormTrack</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#15232d">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="FormTrack">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=Noto+Sans+Bengali:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--steel:#22384a;--steel2:#2f4b60;--side:#15232d;--bg:#dde2e0;--paper:#fff;--ink:#17252f;--muted:#5d6f7b;--line:#b9c2bf;--line2:#d9dedc;--in:#fffbe8;--calc:#eef3f5;--accent:#0e6b8c;--accent2:#e0a526;--ph-bg:#22384a;--ph-fg:#fff;--th-bg:#2f4b60;--th-fg:#fff;--side:#15232d;--sidefg:#b8c7d0;--sideink:#fff;--sidehi:#ffffff16;--sideline:#ffffff18;--proj:#17252f;--title:#0e6b8c;--btnp-fg:#fff;--track:#d9dedc;--hi:#fff3c4;--good:#2b7a4b;--warn:#b7791f;--bad:#b23a30;--okbg:#d8efe0;--okfg:#1f5c38;--wnbg:#f8e8c4;--wnfg:#7a5211;--bdbg:#f6d5d1;--bdfg:#8a2a22;color-scheme:light}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:13px/1.4 "Barlow","Segoe UI",system-ui,sans-serif;font-variant-numeric:tabular-nums;overflow:hidden}
+#app{display:flex;height:100%}
+#side{width:220px;flex:0 0 220px;background:var(--side);color:var(--sidefg);overflow-y:auto;display:flex;flex-direction:column}
+.brand{padding:14px 16px 12px;border-bottom:1px solid #ffffff18}
+.brand b{display:block;font:700 21px/1.05 "Barlow Condensed","Arial Narrow",sans-serif;color:#fff}
+.brand span{font-size:11px}
+.ng{font:600 11px sans-serif;letter-spacing:.08em;color:#6f8797;padding:12px 16px 3px;text-transform:uppercase}
+.nl{display:block;width:100%;text-align:left;background:none;border:0;border-left:3px solid transparent;color:var(--sidefg);padding:7px 16px;font:500 13px inherit;font-family:inherit;cursor:pointer}
+.nl:hover{background:#ffffff10;color:#fff}
+.nl.on{background:#ffffff16;color:#fff;border-left-color:var(--accent2);font-weight:700}
+.side-foot{margin-top:auto;padding:12px 16px;font-size:11px;border-top:1px solid #ffffff18}
+#main{flex:1;min-width:0;overflow:auto;padding-block:16px 70px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.mh{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px;margin:0 0 12px}
+.mh h1{margin:0;font:700 28px/1 "Barlow Condensed","Arial Narrow",sans-serif}
+.mh .sub{color:var(--muted);font-size:12px;margin-top:3px}
+.acts{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:5px 11px;font:600 12px inherit;font-family:inherit;cursor:pointer;border-radius:2px}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.p{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.d{border-color:var(--bad);color:var(--bad)}
+.btn.sm{padding:2px 8px;font-size:11px}
+.panel{background:var(--paper);border:1px solid var(--line);margin-bottom:14px}
+.ph{background:var(--steel);color:#fff;padding:6px 12px;font:600 15px "Barlow Condensed","Arial Narrow",sans-serif;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.ph small{font:500 11px sans-serif;opacity:.8}
+.pb{padding:10px 12px}
+.note{font-size:12px;color:var(--muted);margin:0 0 8px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));background:var(--paper);border:1px solid var(--line);margin-bottom:14px}
+.k{padding:10px 14px;border-right:1px solid var(--line2);border-bottom:1px solid var(--line2)}
+.k .l{font-size:11px;color:var(--muted);font-weight:600}
+.k .v{font:700 24px/1.15 "Barlow Condensed","Arial Narrow",sans-serif;white-space:nowrap}
+.k .s{font-size:11px;color:var(--muted)}
+.k.bad .v{color:var(--bad)}.k.good .v{color:var(--good)}.k.warn .v{color:var(--warn)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:14px}
+.grid2>.panel{margin-bottom:0}
+.tw{overflow:auto;max-height:70vh}
+table.sheet{border-collapse:collapse;width:100%;font-size:12px}
+.sheet th{position:sticky;top:0;z-index:2;background:var(--steel2);color:#fff;font-weight:600;padding:5px 7px;border:1px solid var(--steel);text-align:left;white-space:nowrap}
+.sheet td{border:1px solid var(--line2);padding:0;height:26px}
+.sheet td.v,.sheet td.calc{padding:3px 7px}
+.sheet td.calc{background:var(--calc);white-space:nowrap}
+.sheet td.r,.sheet th.r{text-align:right}
+.sheet td.sn{background:var(--calc);color:var(--muted);text-align:center;width:34px;font-size:11px}
+.sheet td.x{width:26px;text-align:center}
+.sheet tfoot td{background:var(--calc);font-weight:700;padding:4px 7px;border-top:2px solid var(--line)}
+input.c,select.c{width:100%;height:100%;min-height:25px;border:0;background:var(--in);color:var(--ink);font:inherit;padding:3px 6px;outline:none;border-radius:0}
+input.c.r{text-align:right}
+input.c:focus,select.c:focus{outline:2px solid var(--accent);outline-offset:-2px;background:var(--paper)}
+.del{border:0;background:none;color:var(--muted);cursor:pointer;font-size:15px}
+.del:hover{color:var(--bad)}
+.pill{display:inline-block;padding:1px 7px;font-size:11px;font-weight:700;border-radius:2px;white-space:nowrap}
+.pill.ok{background:var(--okbg);color:var(--okfg)}.pill.wn{background:var(--wnbg);color:var(--wnfg)}.pill.bd{background:var(--bdbg);color:var(--bdfg)}.pill.na{background:var(--calc);color:var(--muted)}
+.neg{color:var(--bad);font-weight:600}.pos{color:var(--good);font-weight:600}
+.bar{height:8px;background:var(--line2);min-width:60px;position:relative}
+.bar i{position:absolute;left:0;top:0;bottom:0;background:var(--accent)}
+.bar i.b{background:var(--bad)}.bar i.g{background:var(--good)}
+.frm{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.frm label{display:block;font-size:11px;font-weight:600;color:var(--muted)}
+.frm input,.frm select{display:block;width:100%;margin-top:2px;border:1px solid var(--line);background:var(--in);color:var(--ink);padding:5px 7px;font:inherit}
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px}
+.chips select,.chips input{border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:4px 6px;font:inherit}
+.chips label{font-size:11px;font-weight:600;color:var(--muted)}
+.banner{background:var(--hi);border:1px solid var(--accent2);padding:8px 12px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.alerts{margin:0;padding:0;list-style:none}
+.alerts li{padding:6px 0;border-bottom:1px solid var(--line2);display:flex;gap:8px;align-items:flex-start}
+#toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--steel);color:#fff;padding:8px 14px;font-size:12px;z-index:50;display:none}
+@media (max-width:820px){#app{flex-direction:column}#side{width:100%;flex:0 0 auto;flex-direction:row;overflow-x:auto;overflow-y:hidden}.brand{border:0;flex:0 0 auto}.ng,.side-foot{display:none}.nl{width:auto;white-space:nowrap;border-left:0;border-bottom:3px solid transparent}.nl.on{border-bottom-color:var(--accent2)}#main{padding-block:12px 70px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}.grid2{grid-template-columns:1fr}}
+@media print{html,body{height:auto;overflow:visible;background:#fff}#app{display:block}#side,.noprint,.acts,.chips,.del,.x,.banner,#toast,.btn{display:none!important}#main{overflow:visible;padding:0}.tw{max-height:none;overflow:visible}.sheet th{position:static}.ph,.pill,.sheet td.calc,.k{-webkit-print-color-adjust:exact;print-color-adjust:exact}@page{size:A4 landscape;margin:9mm}}
+.muted{color:var(--muted)}
+.ck{display:inline-flex;align-items:center;gap:4px;font-size:12px!important;color:var(--ink)!important;font-weight:500!important;border:1px solid var(--line);background:var(--paper);padding:3px 8px;cursor:pointer}
+.sub-h{margin:4px 0 6px;font:600 13px inherit;color:var(--muted)}
+.sub-h:not(:first-child){margin-top:14px}
+.hstep{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line2)}
+.hstep:last-child{border-bottom:0}
+.hn{flex:0 0 26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:12px}
+.ht{font-weight:700;font-size:14px;margin-bottom:2px}
+.hen{font-size:13px}
+.hbn{font-size:12.5px;color:var(--muted);margin-top:3px;font-family:"Noto Sans Bengali","Nirmala UI","Vrinda",sans-serif}
+.hlink{font-size:12px;font-weight:600;margin-left:6px;color:var(--accent)}
+.hlist{margin:0;padding-left:18px}.hlist li{margin-bottom:8px}
+.banner.demo{justify-content:flex-start}
+
+.cfm{position:fixed;inset:0;background:#0008;z-index:100;display:flex;align-items:center;justify-content:center;padding:16px}
+.cfm-box{background:var(--paper);color:var(--ink);border:1px solid var(--line);max-width:440px;width:100%;padding:16px 18px;box-shadow:0 10px 40px #0005}
+.cfm-box p{margin:0 0 14px;font-size:14px;line-height:1.5}
+.cfm-box .acts{justify-content:flex-end}
+.btn:focus-visible,.nl:focus-visible{outline:2px solid var(--accent2);outline-offset:1px}
+/*V4*/
+.sync{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:12px;white-space:nowrap}
+.sync.ok{background:var(--okbg);color:var(--okfg)}.sync.wn{background:var(--wnbg);color:var(--wnfg)}.sync.bd{background:var(--bdbg);color:var(--bdfg)}
+.paste{margin-top:10px;border:1px dashed var(--line);padding:8px 10px;background:var(--calc)}
+.paste summary{cursor:pointer;font-weight:700;color:var(--accent);font-size:12px}
+.paste textarea{width:100%;margin:6px 0;padding:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font:12px ui-monospace,Consolas,monospace}
+.pmsg{margin-top:8px;font-size:12px;line-height:1.5}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}
+.mgrid>.mcard{min-width:0}
+.mcard{background:var(--paper);border:1px solid var(--line);border-top:4px solid var(--accent);padding:12px 14px}
+.mcard h4{margin:0 0 10px;font:700 18px "Barlow Condensed","Arial Narrow",sans-serif}
+.mlist{list-style:none;margin:0;padding:0}.mlist li{display:flex;gap:10px;padding:7px 0;border-top:1px solid var(--line2)}.mlist li:first-child{border-top:0}
+.mlist b{display:block;font-size:13px}.mlist small{color:var(--muted);font-size:12px}
+.mdot{flex:0 0 10px;height:10px;border-radius:50%;margin-top:4px}.mdot.r{background:var(--bad)}.mdot.a{background:var(--accent2)}
+.mbig{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}.mbig>div{background:var(--calc);padding:8px 10px}
+.mbig span{display:block;font-size:11px;color:var(--muted);font-weight:600}.mbig b{display:block;font:700 28px/1.1 "Barlow Condensed","Arial Narrow",sans-serif}.mbig small{color:var(--muted);font-size:11px}
+.mrow{display:grid;grid-template-columns:minmax(90px,1fr) 2fr 50px;gap:8px;align-items:center;padding:4px 0;font-size:12px}.mrow b{text-align:right}
+.mok{color:var(--good);font-weight:700;margin:4px 0}
+.present{position:fixed;inset:0;z-index:200;background:var(--bg);overflow:auto;padding:18px max(18px,env(safe-area-inset-left,0px)) 30px}
+.phead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.phead b{display:block;font:700 30px/1 "Barlow Condensed","Arial Narrow",sans-serif}.phead span{color:var(--muted)}
+.mgrid.big{grid-template-columns:repeat(auto-fit,minmax(380px,1fr))}.mgrid.big .sheet{font-size:13px}
+.pfoot{margin-top:16px;font-size:11px;color:var(--muted);text-align:right}
+body.presenting #app{visibility:hidden}
+@media (max-width:820px){.mgrid,.mgrid.big{grid-template-columns:1fr}.mh .acts{width:100%}}
+/*THEME_MULTI*/
+html[data-th="classic"]{--bg:#dde2e0;--paper:#fff;--ink:#17252f;--muted:#5d6f7b;--line:#b9c2bf;--line2:#d9dedc;--in:#fffbe8;--calc:#eef3f5;--accent:#0e6b8c;--accent2:#e0a526;--ph-bg:#22384a;--ph-fg:#fff;--th-bg:#2f4b60;--th-fg:#fff;--side:#15232d;--sidefg:#b8c7d0;--sideink:#fff;--sidehi:#ffffff16;--sideline:#ffffff18;--proj:#17252f;--title:#0e6b8c;--btnp-fg:#fff;--track:#d9dedc;--hi:#fff3c4;--good:#2b7a4b;--warn:#b7791f;--bad:#b23a30;--okbg:#d8efe0;--okfg:#1f5c38;--wnbg:#f8e8c4;--wnfg:#7a5211;--bdbg:#f6d5d1;--bdfg:#8a2a22;color-scheme:light}
+html[data-th="white"]{--bg:#f4f6fa;--paper:#fff;--ink:#1d2733;--muted:#64748b;--line:#d9e0e8;--line2:#edf1f5;--in:#fbfcfe;--calc:#f4f7fa;--accent:#2563eb;--accent2:#f59e0b;--ph-bg:#eaf0fa;--ph-fg:#1d2733;--th-bg:#e3eaf5;--th-fg:#1d2733;--side:#ffffff;--sidefg:#4b5b70;--sideink:#0f172a;--sidehi:#eef3fb;--sideline:#e3e8ef;--proj:#0f172a;--title:#2563eb;--btnp-fg:#fff;--track:#e3e8ef;--hi:#fff7e0;--good:#2b7a4b;--warn:#b7791f;--bad:#b23a30;--okbg:#d8efe0;--okfg:#1f5c38;--wnbg:#f8e8c4;--wnfg:#7a5211;--bdbg:#f6d5d1;--bdfg:#8a2a22;color-scheme:light}
+html[data-th="navy"]{--bg:#eef1f6;--paper:#fff;--ink:#14213d;--muted:#5b6b84;--line:#d4dbe6;--line2:#e8ecf2;--in:#fffdf6;--calc:#f3f6fa;--accent:#1f4e9c;--accent2:#f4a21c;--ph-bg:#14213d;--ph-fg:#fff;--th-bg:#e3e9f2;--th-fg:#14213d;--side:#14213d;--sidefg:#c4cde0;--sideink:#fff;--sidehi:#ffffff14;--sideline:#ffffff1a;--proj:#14213d;--title:#1f4e9c;--btnp-fg:#fff;--track:#dfe5ee;--hi:#fff4d9;--good:#2b7a4b;--warn:#b7791f;--bad:#b23a30;--okbg:#d8efe0;--okfg:#1f5c38;--wnbg:#f8e8c4;--wnfg:#7a5211;--bdbg:#f6d5d1;--bdfg:#8a2a22;color-scheme:light}
+html[data-th="sand"]{--bg:#f5efe7;--paper:#fffdf9;--ink:#2b2620;--muted:#7a6f63;--line:#e2d7c9;--line2:#eee6db;--in:#fffaf2;--calc:#f8f3ec;--accent:#0f766e;--accent2:#c2410c;--ph-bg:#ece2d4;--ph-fg:#2b2620;--th-bg:#e6dac9;--th-fg:#2b2620;--side:#2b2620;--sidefg:#d8cec2;--sideink:#fff;--sidehi:#ffffff14;--sideline:#ffffff1a;--proj:#2b2620;--title:#0f766e;--btnp-fg:#fff;--track:#e6dccf;--hi:#fdf0dc;--good:#2b7a4b;--warn:#b7791f;--bad:#b23a30;--okbg:#d8efe0;--okfg:#1f5c38;--wnbg:#f8e8c4;--wnfg:#7a5211;--bdbg:#f6d5d1;--bdfg:#8a2a22;color-scheme:light}
+html[data-th="mint"]{--bg:#f3faf6;--paper:#fff;--ink:#22343a;--muted:#6a7d7f;--line:#d3e8de;--line2:#e6f3ec;--in:#fff6ee;--calc:#f2f9f5;--accent:#2b9878;--accent2:#f2955f;--ph-bg:#d7f1e5;--ph-fg:#22343a;--th-bg:#c6e9d9;--th-fg:#1f3b34;--side:#e3f5ec;--sidefg:#3d5a53;--sideink:#1f3b34;--sidehi:#ffffffb3;--sideline:#d3e8de;--proj:#22343a;--title:#2b9878;--btnp-fg:#fff;--track:#dcefe5;--hi:#fff3e8;--good:#2b7a4b;--warn:#b7791f;--bad:#b23a30;--okbg:#d8efe0;--okfg:#1f5c38;--wnbg:#f8e8c4;--wnfg:#7a5211;--bdbg:#f6d5d1;--bdfg:#8a2a22;color-scheme:light}
+html[data-th="softdark"]{--bg:#211d1a;--paper:#28231f;--ink:#e3dbd2;--muted:#a3978b;--line:#40382f;--line2:#322b25;--in:#302924;--calc:#2a2521;--accent:#d9a15e;--accent2:#d9a15e;--ph-bg:#2d2824;--ph-fg:#e3dbd2;--th-bg:#352f2a;--th-fg:#d8cdc1;--side:#1b1815;--sidefg:#c2b7ab;--sideink:#ece3d9;--sidehi:#ffffff0f;--sideline:#40382f;--proj:#ece3d9;--title:#d9a15e;--btnp-fg:#1b1815;--track:#3a322b;--hi:#342a1e;--good:#7fbf95;--warn:#e0b071;--bad:#e2857a;--okbg:#26382c;--okfg:#9fd4b0;--wnbg:#3d3020;--wnfg:#e8c08a;--bdbg:#432924;--bdfg:#f0a69c;color-scheme:dark}
+html[data-th="black"]{--bg:#0e0e0f;--paper:#17181a;--ink:#ecebe8;--muted:#9a9ea4;--line:#2d2f33;--line2:#222427;--in:#1f2125;--calc:#1a1b1e;--accent:#e2a540;--accent2:#e2a540;--ph-bg:#1e1f22;--ph-fg:#ecebe8;--th-bg:#26282c;--th-fg:#e3e3e0;--side:#08080a;--sidefg:#b8bcc2;--sideink:#fff;--sidehi:#ffffff12;--sideline:#2d2f33;--proj:#f2f2ef;--title:#e2a540;--btnp-fg:#111;--track:#2d2f33;--hi:#2a2210;--good:#7fbf95;--warn:#e0b071;--bad:#e2857a;--okbg:#26382c;--okfg:#9fd4b0;--wnbg:#3d3020;--wnfg:#e8c08a;--bdbg:#432924;--bdfg:#f0a69c;color-scheme:dark}
+body{background:var(--bg);color:var(--ink)}
+#side{background:var(--side);color:var(--sidefg);border-right:1px solid var(--sideline)}
+.brand{display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--sideline)}
+.brand .logo{flex:0 0 38px;height:38px;border-radius:9px;background:var(--accent);color:var(--btnp-fg);font:700 22px/38px "Barlow Condensed",sans-serif;text-align:center}
+.brand b{color:var(--sideink);font-size:26px}.brand span{color:var(--sidefg)}
+.ng{color:var(--sidefg);opacity:.65}
+.nl{color:var(--sidefg)}.nl:hover{background:var(--sidehi);color:var(--sideink)}
+.nl.on{background:var(--sidehi);color:var(--sideink);border-left-color:var(--accent2)}
+.side-foot{border-top:1px solid var(--sideline);color:var(--sidefg)}
+.company{font:600 13px Barlow,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:2px}
+.company.empty{color:var(--muted);letter-spacing:.06em;text-transform:none;font-weight:500}
+.pco{display:block;font:600 12px Barlow,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.projname{font:700 38px/1.05 "Barlow Condensed","Arial Narrow",sans-serif;color:var(--proj);letter-spacing:.005em;text-wrap:balance}
+.projname::after{content:"";display:block;width:64px;height:4px;border-radius:2px;margin-top:6px;background:var(--accent2)}
+.mh h1{font-size:22px;color:var(--title);margin-top:8px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.mh h1 .loc{font:500 13px Barlow,sans-serif;color:var(--muted)}
+.panel{border-radius:8px;overflow:hidden;border-color:var(--line);background:var(--paper)}
+.ph{background:var(--ph-bg);color:var(--ph-fg)}.ph small{color:var(--ph-fg);opacity:.75}
+.sheet th{background:var(--th-bg);color:var(--th-fg);border-color:var(--line)}
+.kpis{border-radius:8px;overflow:hidden;border-color:var(--line);background:var(--paper)}
+.btn{border-radius:6px;background:var(--paper);color:var(--ink);border-color:var(--line)}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.p{background:var(--accent);border-color:var(--accent);color:var(--btnp-fg)}.btn.p:hover{color:var(--btnp-fg);filter:brightness(1.08)}
+.btn.d{color:var(--bad);border-color:var(--bad);background:var(--paper)}
+.banner{border-radius:8px;background:var(--hi);color:var(--ink)}
+.mcard{border-radius:8px;border-top:3px solid var(--accent);background:var(--paper)}
+#toast{background:var(--accent);color:var(--btnp-fg);border-radius:8px;font-weight:600}
+.cfm-box{border-radius:10px}
+.bar{background:var(--track)}
+a{color:var(--accent)}
+button.edit{background:none;border:0;padding:0;text-align:left;cursor:text;border-radius:4px;display:block}
+button.edit:hover{outline:1px dashed var(--muted);outline-offset:3px}
+button.edit:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+input.nameedit{display:block;background:var(--in);color:var(--ink);border:1px solid var(--accent);border-radius:6px;padding:4px 8px;font:600 14px Barlow,sans-serif;min-width:260px;max-width:100%;margin-bottom:4px}
+input.nameedit.big{font:700 32px/1.1 "Barlow Condensed","Arial Narrow",sans-serif;width:min(640px,100%)}
+.hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:14px}
+.hero-l{display:flex;flex-direction:column;gap:8px;min-width:0}
+.hl{font:600 12px Barlow,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.hero-l>b{font:700 26px "Barlow Condensed",sans-serif}
+.hero-l small{color:var(--muted)}
+.hero-nums{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.hero-nums b{display:block;font:700 30px/1.05 "Barlow Condensed","Arial Narrow",sans-serif;color:var(--ink)}
+.hero-nums b.g{color:var(--good)}.hero-nums b.a{color:var(--accent2)}
+.hero-nums small{font-size:11px;color:var(--muted)}
+.hero-bar{height:12px;border-radius:6px;background:var(--track);overflow:hidden}.hero-bar i{display:block;height:100%;background:var(--accent)}
+.hero-r{display:flex;flex-direction:column;justify-content:center;gap:8px;min-width:0}
+.hrow{display:grid;grid-template-columns:minmax(90px,1.1fr) minmax(60px,2fr) auto 42px;gap:10px;align-items:center;font-size:13px}
+.hrow span small{display:block;font-size:11px;color:var(--muted)}.hrow b{font-weight:600;white-space:nowrap;font-size:12px}.hrow em{font-style:normal;font-weight:700;text-align:right}
+.hrow .bar{height:9px;border-radius:5px}
+/*SIDE2*/
+#side{width:236px;flex:0 0 236px;padding:0 10px 10px;gap:2px;transition:width .2s,flex-basis .2s;scrollbar-width:thin}
+#side .brand{padding:16px 6px 14px;margin:0 -10px 10px;padding-left:16px;padding-right:10px;position:relative}
+#side .brand .logo{background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 6px 16px color-mix(in srgb,var(--accent) 40%,transparent);border-radius:11px;flex:0 0 40px;height:40px;line-height:40px}
+#side .bt{min-width:0;flex:1}
+.mini-t{background:none;border:1px solid var(--sideline);color:var(--sidefg);border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:14px;line-height:1;flex:0 0 26px}
+.mini-t:hover{color:var(--sideink);border-color:var(--accent)}
+.pcard{display:flex;gap:10px;align-items:center;width:100%;text-align:left;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 22%,transparent),color-mix(in srgb,var(--accent2) 10%,transparent));border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);border-radius:12px;padding:10px;margin-bottom:8px;cursor:pointer;color:var(--sideink);font-family:inherit}
+.pcard:hover{border-color:var(--accent)}
+.rw{position:relative;flex:0 0 44px;height:44px}
+.ring{width:44px;height:44px;display:block}.ring circle{fill:none;stroke-width:4.5}.ring .rt{stroke:color-mix(in srgb,var(--sidefg) 25%,transparent)}.ring .rv{stroke:var(--accent2);stroke-linecap:round}
+.rp{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:700 11px Barlow,sans-serif;color:var(--sideink)}
+.pt{min-width:0;display:flex;flex-direction:column}.pt small{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent2);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pt b{font:700 15px/1.15 "Barlow Condensed",sans-serif;color:var(--sideink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pt em{font-style:normal;font-size:11px;color:var(--sidefg)}
+.navw{display:flex;flex-direction:column;gap:2px;flex:1}
+#side .ng{display:flex;align-items:center;gap:8px;padding:12px 8px 4px;font-size:10px;letter-spacing:.14em}
+#side .ng::after{content:"";flex:1;height:1px;background:var(--sideline)}
+#side .nl{display:flex;align-items:center;gap:10px;border:0;border-radius:9px;padding:8px 10px;font-size:13px;position:relative;transition:background .15s,color .15s,transform .15s}
+#side .nl .ic{width:18px;height:18px;flex:0 0 18px;opacity:.85}
+#side .nl .lb{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#side .nl:hover{transform:translateX(2px)}
+#side .nl.on{background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 30%,transparent),color-mix(in srgb,var(--accent) 6%,transparent));color:var(--sideink);font-weight:700;box-shadow:inset 3px 0 0 var(--accent2)}
+#side .nl.on .ic{color:var(--accent2);opacity:1}
+#side .nl:focus-visible{outline:2px solid var(--accent2);outline-offset:-2px}
+.bdg{min-width:20px;height:18px;padding:0 6px;border-radius:9px;font:700 10.5px/18px Barlow,sans-serif;text-align:center}
+.bdg.bd{background:var(--bad);color:#fff}.bdg.wn{background:var(--accent2);color:var(--btnp-fg)}.bdg.na{background:color-mix(in srgb,var(--sidefg) 30%,transparent);color:var(--sideink)}
+.ucard{display:flex;align-items:center;gap:10px;margin-top:10px;padding:10px;border-radius:12px;background:color-mix(in srgb,var(--sidefg) 10%,transparent);border:1px solid var(--sideline)}
+.av{flex:0 0 34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent));color:var(--btnp-fg);font:700 13px/34px Barlow,sans-serif;text-align:center}
+.ut{min-width:0;flex:1;display:flex;flex-direction:column}.ut b{font-size:12.5px;color:var(--sideink);letter-spacing:.03em}.ut span{font-size:11px;color:var(--sidefg)}
+.sdot{width:9px;height:9px;border-radius:50%;flex:0 0 9px}.sdot.ok{background:var(--good);box-shadow:0 0 0 3px color-mix(in srgb,var(--good) 25%,transparent)}.sdot.wn{background:var(--accent2)}.sdot.bd{background:var(--bad)}
+#side.mini{width:76px;flex-basis:76px}
+#side.mini .bt,#side.mini .pt,#side.mini .lb,#side.mini .ng span,#side.mini .ut,#side.mini .sdot{display:none}
+#side.mini .brand{flex-direction:column;gap:8px;padding-left:10px;align-items:center}#side.mini .brand .logo{width:40px;height:40px;flex:0 0 40px}
+#side.mini .pcard{justify-content:center;padding:8px 0}
+#side.mini .nl{justify-content:center;padding:10px 0}
+#side.mini .bdg{position:absolute;top:2px;right:4px;min-width:16px;height:15px;line-height:15px;font-size:9.5px;padding:0 4px}
+#side.mini .ucard{justify-content:center;padding:8px 0}
+#side.mini .ng{padding:8px 4px 2px}
+@media (prefers-reduced-motion:reduce){#side,#side .nl{transition:none}#side .nl:hover{transform:none}}
+@media (max-width:820px){#side,#side.mini{width:100%;flex:0 0 auto;flex-direction:row;padding:6px 8px;gap:4px;align-items:center}#side .brand{margin:0;padding:4px 8px;border:0}.mini-t,.pcard,.ucard,#side .ng{display:none!important}.navw{flex-direction:row;gap:4px}#side .nl{flex:0 0 auto;padding:8px 12px}#side .nl .lb{display:inline!important}#side .nl.on{box-shadow:inset 0 -3px 0 var(--accent2)}#side .bdg{position:static}}
+.sheet tr.subt td{background:color-mix(in srgb,var(--accent) 10%,var(--calc))}
+.thgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:4px 0 12px}
+.thcard{border:2px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);padding:0;cursor:pointer;overflow:hidden;text-align:left;font:600 13px Barlow,sans-serif}
+.thcard.on{border-color:var(--accent)}
+.thcard:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.thprev{display:grid;grid-template-columns:30% 70%;height:62px}
+.thprev .s{display:block}.thprev .m{display:flex;flex-direction:column;gap:6px;padding:8px}
+.thprev .m i{display:block;height:7px;border-radius:4px}
+.thcard span.n{display:block;padding:7px 9px}
+.cfm-box.wide{max-width:640px;max-height:88vh;overflow:auto}
+.unm{background:none;border:0;padding:0;font:inherit;font-weight:700;font-size:12.5px;letter-spacing:.03em;color:var(--sideink);cursor:pointer;text-align:left}.unm:hover{text-decoration:underline}
+.pcard{position:relative}.psw{position:absolute;top:6px;right:9px;font-size:12px;opacity:.65}#side.mini .psw{display:none}
+.prjsw{display:inline-flex;align-items:center;gap:4px;margin:4px 0 6px 0;vertical-align:middle;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--paper);color:var(--accent);font:600 12.5px/1.2 inherit;font-family:inherit;cursor:pointer}.prjsw:hover{border-color:var(--accent)}
+.prjlist{display:flex;flex-direction:column;gap:6px;margin:6px 0 12px}
+.prjrow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--paper);cursor:pointer;font-family:inherit;color:var(--ink)}
+.prjrow:hover{border-color:var(--accent)}.prjrow.on{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+.prjrow .pi{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:var(--accent);color:#fff;font-weight:700;flex:0 0 auto}
+.prjrow .pn{flex:1;display:flex;flex-direction:column;min-width:0}.prjrow .pn b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.prjrow small{color:var(--muted)}
+.prjnew{display:flex;gap:8px;margin-bottom:12px}.prjnew input{flex:1;min-width:0;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font:inherit;background:var(--in);color:var(--ink)}
+
+@media (max-width:820px){.projname{font-size:28px}.brand b{font-size:20px}.hero{grid-template-columns:1fr}.hero-nums{grid-template-columns:repeat(2,minmax(0,1fr))}input.nameedit.big{font-size:24px}}
+@media print{html[data-th]{--ink:#000;--paper:#fff;--bg:#fff;--line:#888;--line2:#bbb;--in:#fff;--calc:#f0f0f0;--ph-bg:#22384a;--ph-fg:#fff;--th-bg:#2f4b60;--th-fg:#fff;--muted:#444;color-scheme:light}}
+</style>
+</head>
+<body>
+<div id="app"><nav id="side"></nav><main id="main"></main></div>
+<div id="toast"></div>
+<datalist id="elist"></datalist>
+<input type="file" id="restoreFile" accept=".json" style="display:none" onchange="if(this.files[0])restoreBackup(this.files[0]);this.value=''">
+<input type="file" id="fsPick" accept=".json,application/json" style="display:none" onchange="fsOpenFile(this.files[0]);this.value=''">
+
+<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.10.24-1909";</script>
+<script>
+/* FormTrack */
+const STORE_KEY = 'fct_v2_nilesh';
+const LEDGER_TYPES = ['Received','Dispatched','Damage claim'];
+const OWNERSHIP = ['Rental','Owned'];
+const NO_OUT = '(no output this period)';
+const PWA = !!window.__FORMTRACK_PWA;
+const FILEMODE = PWA || (()=>{ try{ return window.self===window.top; }catch(e){ return false; } })();
+const slug = s => String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+const nowMs = () => Date.now();
+const NOT_SPEC = '(element not entered)';
+
+/* ---------- utils ---------- */
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const num = v => { const n = parseFloat(v); return isNaN(n) ? 0 : n; };
+const pad = n => String(n).padStart(2,'0');
+const ymd = d => d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const todayStr = () => ymd(new Date());
+const thisMonth = () => todayStr().slice(0,7);
+const monthOf = d => (d||'').slice(0,7);
+const daysInMonth = m => { const [y,mo]=m.split('-').map(Number); return new Date(y,mo,0).getDate(); };
+const addMonth = (m,k) => { const [y,mo]=m.split('-').map(Number); const d=new Date(y,mo-1+k,1); return d.getFullYear()+'-'+pad(d.getMonth()+1); };
+const monthLabel = m => { if(!m) return '—'; const [y,mo]=m.split('-').map(Number); return new Date(y,mo-1,1).toLocaleString('en-IN',{month:'short',year:'numeric'}); };
+const dayDiff = (a,b) => Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/86400000);
+const addDays = (d,k) => { const x=new Date(d+'T00:00:00'); x.setDate(x.getDate()+k); return ymd(x); };
+const fmtN = (v,d=0) => num(v).toLocaleString('en-IN',{minimumFractionDigits:d,maximumFractionDigits:d});
+const cur = () => state.meta.currency || '₹';
+const money = v => cur()+' '+fmtN(v,0);
+const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const PILL = (cls,t) => `<span class="pill ${cls}">${t}</span>`;
+const norm = s => String(s||'').trim().toLowerCase();
+const FTD = window.__FT_DEFAULTS||{};
+const EMBED = (()=>{ try{ return window.self!==window.top; }catch(e){ return true; } })();
+function askConfirm(msg,onYes,yesLabel){
+  const old=document.getElementById('cfm'); if(old) old.remove();
+  const d=document.createElement('div'); d.id='cfm'; d.className='cfm';
+  d.innerHTML=`<div class="cfm-box" role="dialog" aria-modal="true"><p></p><div class="acts"><button class="btn" id="cfmNo">Cancel</button><button class="btn p" id="cfmYes"></button></div></div>`;
+  d.querySelector('p').textContent=msg; d.querySelector('#cfmYes').textContent=yesLabel||'Yes, continue';
+  d.querySelector('#cfmNo').onclick=()=>d.remove(); d.onclick=e=>{ if(e.target===d) d.remove(); };
+  d.querySelector('#cfmYes').onclick=()=>{ d.remove(); onYes(); };
+  document.body.appendChild(d); d.querySelector('#cfmYes').focus();
+}
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; clearTimeout(toast._t); toast._t=setTimeout(()=>t.style.display='none',3500); }
+
+/* ---------- state ---------- */
+let state;
+function seed(){
+  return {
+    meta:{project:FTD.project||'My Project', client:'', location:FTD.location||'', user:FTD.user||'', currency:'₹', tolerance:2000, chargeDispatchDay:true, lastBackup:'', idleDays:7, carpenterWage:0, helperWage:0, stdHours:8},
+    systems:[{id:'sys-conventional-ply', name:'Conventional (Ply)', ownership:'Owned', vendor:'', buyCostPerSqm:0, stdSqmPerManday:0, rentBasis:'Sqm per month', dispatchDay:'Charged'}],
+    areas:[], rates:[],
+    consItems:[
+      {id:'ci-shuttering-oil',item:'Shuttering oil',unit:'Ltr',unitCost:0,minStock:0},
+      {id:'ci-tie-cone',item:'Tie cone',unit:'Nos',unitCost:0,minStock:0},
+      {id:'ci-pvc-sleeve',item:'PVC sleeve',unit:'Rmt',unitCost:0,minStock:0},
+      {id:'ci-nails',item:'Nails',unit:'Kg',unitCost:0,minStock:0}],
+    ledger:[], invoices:[], owned:[], usage:[], execution:[], targets:[], scope:[], labour:[], consTx:[], items:[], itemTx:[],
+    storeItems:[
+      {id:'si-plywood-18-mm',item:'Plywood 18 mm',kind:'Reusable',unit:'Sheets',rate:0,minStock:0},
+      {id:'si-plywood-12-mm',item:'Plywood 12 mm',kind:'Reusable',unit:'Sheets',rate:0,minStock:0},
+      {id:'si-runner-75x75',item:'Runner 75x75',kind:'Reusable',unit:'Rmt',rate:0,minStock:0},
+      {id:'si-batten-50x75',item:'Batten 50x75',kind:'Reusable',unit:'Rmt',rate:0,minStock:0},
+      {id:'si-steel-props',item:'Steel props',kind:'Reusable',unit:'Nos',rate:0,minStock:0}],
+    storeTx:[], contractors:[], prpo:[], deleted:{},
+    meeting:{cards:{attention:true,progress:true,cost:true,rental:true,bills:true,idle:true,delays:true,stock:false,labour:false},approved:{},locks:[],requireApproval:true},
+    rev:0,
+    route:'help', ui:{month:thisMonth(), period:'month', groupBy:'system', sysSel:[]}
+  };
+}
+/* Import a vendor dataset.
+   Systems and areas are matched by name; rental data for those systems is replaced, everything else is kept. */
+function importDataset(DS){
+  const sysId={}, areaId={}, itemId={};
+  DS.systems.forEach(s=>{ let x=state.systems.find(y=>norm(y.name)===norm(s.name)); if(!x){ x={id:'sys-'+slug(s.name),name:s.name,buyCostPerSqm:0,stdSqmPerManday:0}; state.systems.push(x); } Object.assign(x,{ownership:s.ownership,vendor:s.vendor||x.vendor||'',rentBasis:s.rentBasis,dispatchDay:s.dispatchDay}); sysId[s.name]=x.id; });
+  DS.areas.forEach(n=>{ let a=state.areas.find(y=>norm(y.name)===norm(n)); if(!a){ a={id:'area-'+slug(n),name:n}; state.areas.push(a); } areaId[n]=a.id; });
+  const ids=new Set(Object.values(sysId));
+  state.ledger=state.ledger.filter(t=>!ids.has(t.systemId));
+  state.items=state.items.filter(i=>!ids.has(i.systemId));
+  state.itemTx=state.itemTx.filter(t=>!ids.has(t.systemId));
+  state.invoices=state.invoices.filter(i=>!DS.invoices.some(d=>sysId[d.system]===i.systemId&&d.month===i.month));
+  DS.rates.forEach(r=>{ const sI=sysId[r.system], aI=areaId[r.area]; let x=state.rates.find(y=>y.systemId===sI&&y.areaId===aI); if(!x){ x={id:'rate-'+sI+'-'+aI,systemId:sI,areaId:aI}; state.rates.push(x); } x.rate=r.rate; x.requiredSqm=r.requiredSqm; });
+  DS.ledger.forEach((l,i)=>state.ledger.push({id:'lg-'+hashStr(JSON.stringify(l))+'-'+i,date:l.date,systemId:sysId[l.system],areaId:areaId[l.area],type:l.type,item:'',sqm:l.sqm,nos:l.nos,amount:0,challan:l.challan,remarks:l.remarks}));
+  DS.items.forEach(i=>{ const id='it-'+hashStr(i.system+'|'+i.code+'|'+i.item); itemId[i.system+'|'+i.code+'|'+i.item]=id; state.items.push({id,systemId:sysId[i.system],code:i.code,item:i.item,sqmPerNo:i.sqmPerNo,kgPerNo:i.kgPerNo,boq:i.boq,ratePcDay:i.ratePcDay}); });
+  DS.itemTx.forEach((t,i)=>state.itemTx.push({id:'itx-'+hashStr(JSON.stringify(t))+'-'+i,date:t.date,systemId:sysId[t.system],areaId:t.area?areaId[t.area]:'',doc:t.doc,itemId:itemId[t.system+'|'+t.code+'|'+t.item],type:t.type,nos:t.nos,remarks:''}));
+  DS.invoices.forEach(i=>state.invoices.push({id:'inv-'+hashStr(i.system+'|'+i.month+'|'+i.invoiceNo),month:i.month,systemId:sysId[i.system],invoiceNo:i.invoiceNo,amount:i.amount,remarks:i.remarks}));
+}
+function loadVendorData(){
+  if(typeof VENDOR_DATA==='undefined'){ toast('Not available here.'); return; }
+  askConfirm('Load the vendor data? Rental entries, items and item movements for these 4 vendors will be replaced. Execution, scope, labour, consumables and other data are kept.',()=>{
+    importDataset(VENDOR_DATA); save(); toast('Vendor data loaded: 4 systems, '+VENDOR_DATA.ledger.length+' sqm entries, '+VENDOR_DATA.itemTx.length+' item movements.'); },'Load vendor data');
+}
+function persist(){ try{ localStorage.setItem(pkey(PRJ.cur), JSON.stringify(state)); }catch(e){ toast('Could not save in this browser — download a backup now.'); } }
+function hydrate(p){
+  const s=seed(); const out=Object.assign(s,p);
+  out.meta=Object.assign(seed().meta,p.meta||{});
+  out.ui=Object.assign({month:thisMonth(),period:'month',groupBy:'system',sysSel:[]},p.ui||{});
+  ['consItems','scope','labour','consTx','usage','targets','items','itemTx','storeItems','storeTx','contractors','prpo'].forEach(k=>{ if(!Array.isArray(out[k])) out[k]=s[k]; });
+  if(!out.deleted||typeof out.deleted!=='object'||Array.isArray(out.deleted)) out.deleted={};
+  out.meeting=Object.assign(s.meeting,out.meeting||{}); ['cards','approved'].forEach(k=>{ if(!out.meeting[k]||typeof out.meeting[k]!=='object') out.meeting[k]=s.meeting[k]; }); if(!Array.isArray(out.meeting.locks)) out.meeting.locks=[];
+  out.systems.forEach(x=>{ if(!x.rentBasis) x.rentBasis='Sqm per month'; if(!x.dispatchDay) x.dispatchDay=out.meta.chargeDispatchDay===false?'Not charged':'Charged'; });
+  return out;
+}
+/* an older app version wrote its built-in example name into saved data; clear it unless the user set it on purpose */
+function nameHash(t){ let x=5381; for(const ch of String(t||'')) x=((x*33)^ch.charCodeAt(0))>>>0; return x; }
+function oldDefaults(){
+  if(FTD.project) return; const u=state.meta._u||{};
+  if(!u.project && nameHash(state.meta.project)===2396310581) state.meta.project='My Project';
+  if(!u.location && nameHash(state.meta.location)===3423070289) state.meta.location='';
+}
+function load(){
+  prjRead();
+  try{ const raw=localStorage.getItem(pkey(PRJ.cur)); if(raw){ state=hydrate(JSON.parse(raw)); state.meta.pid=PRJ.cur; oldDefaults(); return; } }catch(e){}
+  if(PRJ.cur!==MAIN_PID){ const p=PRJ.list.find(x=>x.id===PRJ.cur); state=newProjectState(PRJ.cur,p&&p.name,p&&p.company); return; }
+  state=seed(); if(PWA){ if(window.__VENDOR_BUILD) importDataset(window.__VENDOR_BUILD); state.route='storage'; state.pwaFresh=true; return; } if(typeof VENDOR_DATA!=='undefined'){ importDataset(VENDOR_DATA); state.firstRun=true; }
+}
+
+/* ---------- lookups ---------- */
+const sysName = id => id==='__shared' ? 'Shared (no system)' : ((state.systems.find(s=>s.id===id)||{}).name || '—');
+const sysObj = id => state.systems.find(s=>s.id===id);
+const areaName = id => (state.areas.find(a=>a.id===id)||{}).name || '—';
+const rentalSystems = () => state.systems.filter(s=>s.ownership==='Rental');
+const ownedSystems = () => state.systems.filter(s=>s.ownership==='Owned');
+const rateRow = (sId,aId) => state.rates.find(r=>r.systemId===sId && r.areaId===aId);
+const consObj = id => state.consItems.find(c=>c.id===id);
+const elKey = e => norm(e) || '';
+const isPcs = sId => (sysObj(sId)||{}).rentBasis==='Per piece per day';
+const dispCharged = sId => { const x=sysObj(sId); return x&&x.dispatchDay? x.dispatchDay!=='Not charged' : state.meta.chargeDispatchDay!==false; };
+const itemObj = id => state.items.find(i=>i.id===id);
+
+/* ---------- caches (cleared on every save) ---------- */
+const C = { bal:new Map(), rent:new Map(), buckets:new Map(), ibal:new Map() };
+function clearCaches(){ C.bal.clear(); C.rent.clear(); C.buckets.clear(); C.ibal.clear(); }
+
+/* ---------- rental engine ---------- */
+function balanceOn(sId,aId,d){
+  const k=sId+'|'+aId+'|'+d; if(C.bal.has(k)) return C.bal.get(k);
+  let b=0;
+  for(const t of state.ledger){
+    if(t.systemId!==sId || t.areaId!==aId || !t.date) continue;
+    if(t.type==='Received' && t.date<=d) b+=num(t.sqm);
+    else if(t.type==='Dispatched' && (dispCharged(sId) ? t.date<d : t.date<=d)) b-=num(t.sqm);
+  }
+  C.bal.set(k,b); return b;
+}
+function balanceNosOn(sId,aId,d){
+  let b=0;
+  for(const t of state.ledger){
+    if(t.systemId!==sId || t.areaId!==aId || !t.date) continue;
+    if(t.type==='Received' && t.date<=d) b+=num(t.nos);
+    else if(t.type==='Dispatched' && t.date<=d) b-=num(t.nos);
+  }
+  return b;
+}
+// item-wise balance (nos) on a day; aId null = all areas. Dispatch day rule follows the system.
+function itemBalOn(itemId,aId,d){
+  const k=itemId+'|'+aId+'|'+d; if(C.ibal.has(k)) return C.ibal.get(k);
+  const it=itemObj(itemId), dc=it?dispCharged(it.systemId):true; let b=0;
+  for(const t of state.itemTx){
+    if(t.itemId!==itemId || !t.date || (aId!==null && (t.areaId||'')!==aId)) continue;
+    if(t.type==='Received' && t.date<=d) b+=num(t.nos);
+    else if(t.type==='Dispatched' && (dc ? t.date<d : t.date<=d)) b-=num(t.nos);
+  }
+  C.ibal.set(k,b); return b;
+}
+const itemTotals = id => { let r=0,d=0,lr='',ld=''; state.itemTx.forEach(t=>{ if(t.itemId!==id) return; if(t.type==='Received'){ r+=num(t.nos); if(t.date>lr) lr=t.date; } else { d+=num(t.nos); if(t.date>ld) ld=t.date; } }); return {r,d,bal:r-d,lastR:lr,lastD:ld}; };
+const ledgerAreas = sId => isPcs(sId)? [...new Set(state.itemTx.filter(t=>t.systemId===sId).map(t=>t.areaId||''))] : [...new Set(state.ledger.filter(t=>t.systemId===sId).map(t=>t.areaId).concat(state.rates.filter(r=>r.systemId===sId).map(r=>r.areaId)))].filter(Boolean);
+function monthRent(sId,aId,m){
+  const key=sId+'|'+aId+'|'+m; if(C.rent.has(key)) return C.rent.get(key);
+  if(isPcs(sId)){
+    const dim=daysInMonth(m), today=todayStr(), its=state.items.filter(i=>i.systemId===sId);
+    let rent=0,pcsDays=0,daysCounted=0; const byItem={};
+    for(let day=1; day<=dim; day++){ const d=m+'-'+pad(day); if(d>today) break; daysCounted++;
+      its.forEach(it=>{ const b=Math.max(0,itemBalOn(it.id,aId,d)); if(!b) return; pcsDays+=b; rent+=b*num(it.ratePcDay); const x=byItem[it.id]||(byItem[it.id]={pd:0,rent:0}); x.pd+=b; x.rent+=b*num(it.ratePcDay); }); }
+    const res={rate:0,req:0,dim,daysCounted,sqmDays:0,pcsDays,peak:0,rent,excess:0,partial:daysCounted<dim,byItem,pcs:true};
+    C.rent.set(key,res); return res;
+  }
+  const rr=rateRow(sId,aId), rate=rr?num(rr.rate):0, req=rr?num(rr.requiredSqm):0;
+  const dim=daysInMonth(m), today=todayStr();
+  let sqmDays=0, excessDays=0, daysCounted=0, peak=0;
+  for(let day=1; day<=dim; day++){
+    const d=m+'-'+pad(day); if(d>today) break;
+    const b=Math.max(0,balanceOn(sId,aId,d));
+    sqmDays+=b; daysCounted++; peak=Math.max(peak,b);
+    if(req>0) excessDays+=Math.max(0,b-req);
+  }
+  const res={rate,req,dim,daysCounted,sqmDays,peak,rent:sqmDays*rate/dim,excess:excessDays*rate/dim,partial:daysCounted<dim};
+  C.rent.set(key,res); return res;
+}
+function systemMonthRent(sId,m){
+  return ledgerAreas(sId).reduce((a,aId)=>{ const r=monthRent(sId,aId,m); a.rent+=r.rent; a.excess+=r.excess; a.sqmDays+=r.sqmDays; a.partial=a.partial||r.partial; return a; },{rent:0,excess:0,sqmDays:0,partial:false});
+}
+function avgRate(sId){ const rs=state.rates.filter(r=>r.systemId===sId && num(r.rate)>0); return rs.length? rs.reduce((a,r)=>a+num(r.rate),0)/rs.length : 0; }
+function damageClaims(sId,m){ return state.ledger.filter(t=>t.systemId===sId && t.type==='Damage claim' && (!m||monthOf(t.date)===m)).reduce((a,t)=>a+num(t.amount),0); }
+function invoiceFor(sId,m){ const v=state.invoices.filter(i=>i.systemId===sId && i.month===m); return v.length? v.reduce((a,i)=>a+num(i.amount),0) : null; }
+function invoiceDiff(i){
+  const r=systemMonthRent(i.systemId,i.month), diff=num(i.amount)-r.rent, ar=avgRate(i.systemId);
+  return {calc:r.rent,diff,sqm:ar?diff/ar:0,partial:r.partial};
+}
+function projectStart(){
+  const ds=[...state.ledger.map(t=>t.date),...state.execution.map(e=>e.date),...state.labour.map(l=>l.date),...state.consTx.map(t=>t.date)].filter(Boolean).sort();
+  return ds[0]||todayStr();
+}
+function allMonthsUpTo(m){
+  const out=[]; let x=monthOf(projectStart());
+  while(x<=m && out.length<240){ out.push(x); x=addMonth(x,1); }
+  return out;
+}
+const periodEnd = m => { const e=m+'-'+pad(daysInMonth(m)); const t=todayStr(); return e>t?t:e; };
+function* dayRange(a,b){ let d=new Date(a+'T00:00:00'); const e=new Date(b+'T00:00:00'); while(d<=e){ yield ymd(d); d.setDate(d.getDate()+1); } }
+
+/* ---------- execution ---------- */
+function execRows(f){
+  return state.execution.filter(e=>
+    (!f.m || monthOf(e.date)===f.m) && (!f.upto || monthOf(e.date)<=f.upto) &&
+    (!f.s || e.systemId===f.s) && (!f.a || e.areaId===f.a) && (f.e===undefined || elKey(e.element)===elKey(f.e)));
+}
+const sumSqm = rows => rows.reduce((a,e)=>a+num(e.sqm),0);
+const pouredInMonth = (m,aId) => sumSqm(execRows({m,a:aId}));
+
+/* ---------- labour ---------- */
+const stdH = () => num(state.meta.stdHours)||8;
+const mandays = rows => rows.reduce((a,r)=>a+(num(r.carpenters)+num(r.helpers))*num(r.hours===''||r.hours==null?stdH():r.hours)/stdH(),0);
+const labourCost = rows => rows.reduce((a,r)=>a+(num(r.carpenters)*num(state.meta.carpenterWage)+num(r.helpers)*num(state.meta.helperWage))*num(r.hours===''||r.hours==null?stdH():r.hours)/stdH(),0);
+
+/* ---------- consumables ---------- */
+const consQty = (id,type,m) => state.consTx.filter(t=>t.itemId===id && t.type===type && (!m||monthOf(t.date)===m)).reduce((a,t)=>a+num(t.qty),0);
+const consStock = id => consQty(id,'Received')-consQty(id,'Issued');
+const consCostTx = t => num(t.qty)*num((consObj(t.itemId)||{}).unitCost);
+
+/* ---------- owned ---------- */
+const ownedSqm = sId => state.owned.filter(o=>o.systemId===sId && o.unit==='Sqm').reduce((a,o)=>a+num(o.qty),0);
+function ownedPerUse(o){ return (num(o.totalCost)+num(o.repairCost)-num(o.scrapValue))/Math.max(1,num(o.expectedReps)); }
+function ownedRepsUpTo(sId,m){ const q=ownedSqm(sId); return q? sumSqm(execRows({s:sId,upto:m}))/q : 0; }
+function ownedCalc(o){
+  const used=ownedRepsUpTo(o.systemId,thisMonth()), exp=Math.max(1,num(o.expectedReps)), perUse=ownedPerUse(o);
+  const consumed=perUse*Math.min(used,exp);
+  return {used,exp,perUse,consumed,book:num(o.totalCost)+num(o.repairCost)-consumed,lifeLeft:Math.max(0,1-used/exp)};
+}
+// cost of owned material per sqm poured for a system = Σ(cost per use) ÷ sqm covered by one use
+function ownedCostPerSqm(sId){ const q=ownedSqm(sId); if(!q) return 0; return state.owned.filter(o=>o.systemId===sId).reduce((a,o)=>a+ownedPerUse(o),0)/q; }
+
+/* ---------- cost buckets: system | area | element, per month ---------- */
+function monthBuckets(m){
+  if(C.buckets.has(m)) return C.buckets.get(m);
+  const B=new Map();
+  const get=(s,a,e,label)=>{ const k=s+'|'+a+'|'+e; if(!B.has(k)) B.set(k,{s,a,ek:e,el:label||e||NOT_SPEC,rent:0,lab:0,cons:0,own:0,sqm:0}); return B.get(k); };
+  execRows({m}).forEach(r=>{ get(r.systemId,r.areaId||'',elKey(r.element),String(r.element||'').trim()).sqm+=num(r.sqm); });
+  const outBuckets=()=>[...B.values()].filter(b=>b.sqm>0);
+  function alloc(field,amt,s,a,e){
+    if(!amt) return;
+    if(e!==undefined && e!==null && String(e).trim()!==''){ get(s,a||'',elKey(e),String(e).trim())[field]+=amt; return; }
+    const pool=outBuckets().filter(b=>(s===null||b.s===s)&&(!a||b.a===a));
+    const tot=pool.reduce((x,b)=>x+b.sqm,0);
+    if(tot>0) pool.forEach(b=>b[field]+=amt*b.sqm/tot);
+    else get(s===null?'__shared':s, a||'', '__noout', NO_OUT)[field]+=amt;
+  }
+  // rent (vendor bill if entered, else calculated) + damage claims
+  rentalSystems().forEach(s=>{
+    const areas=ledgerAreas(s.id), calc=areas.reduce((x,a)=>x+monthRent(s.id,a,m).rent,0);
+    const inv=invoiceFor(s.id,m), f=(inv!==null && calc>0)? inv/calc : 1;
+    areas.forEach(a=>alloc('rent',monthRent(s.id,a,m).rent*f,s.id,a));
+    if(inv!==null && calc===0) alloc('rent',inv,s.id,null);
+    alloc('rent',damageClaims(s.id,m),s.id,null);
+  });
+  // labour
+  state.labour.filter(r=>monthOf(r.date)===m).forEach(r=>alloc('lab',labourCost([r]),r.systemId||null,r.areaId,r.element));
+  // consumables issued
+  state.consTx.filter(t=>t.type==='Issued' && monthOf(t.date)===m).forEach(t=>alloc('cons',consCostTx(t),t.systemId||null,t.areaId));
+  // owned material: cost per use spread on sqm poured
+  ownedSystems().forEach(s=>{ const cps=ownedCostPerSqm(s.id); if(cps) outBuckets().filter(b=>b.s===s.id).forEach(b=>b.own+=b.sqm*cps); });
+  const res=[...B.values()]; C.buckets.set(m,res); return res;
+}
+function periodMonths(){ const m=state.ui.month||thisMonth(); return state.ui.period==='todate'? allMonthsUpTo(m) : [m]; }
+function sysFilter(s){ const sel=state.ui.sysSel||[]; return !sel.length || sel.includes(s); }
+function groupKey(b){ const g=state.ui.groupBy; return g==='area'? b.s+'|'+b.a : g==='element'? b.s+'|'+b.ek : b.s; }
+function costGrouped(){
+  const G=new Map();
+  periodMonths().forEach(m=>monthBuckets(m).forEach(b=>{
+    if(!sysFilter(b.s)) return;
+    const k=groupKey(b);
+    if(!G.has(k)) G.set(k,{s:b.s,a:b.a,el:b.el,ek:b.ek,rent:0,lab:0,cons:0,own:0,sqm:0});
+    const g=G.get(k); ['rent','lab','cons','own','sqm'].forEach(f=>g[f]+=b[f]);
+  }));
+  return [...G.values()].map(g=>Object.assign(g,{total:g.rent+g.lab+g.cons+g.own})).sort((x,y)=>sysName(x.s).localeCompare(sysName(y.s))||areaName(x.a).localeCompare(areaName(y.a))||x.el.localeCompare(y.el));
+}
+function groupLabel(g){
+  const gb=state.ui.groupBy;
+  if(gb==='area') return `${esc(sysName(g.s))} <span class="muted">›</span> ${g.ek==='__noout'&&!g.a?'<i>'+NO_OUT+'</i>':esc(areaName(g.a))}`;
+  if(gb==='element') return `${esc(sysName(g.s))} <span class="muted">›</span> ${g.ek===''||g.ek==='__noout'?'<i>'+esc(g.el)+'</i>':esc(g.el)}`;
+  return esc(sysName(g.s));
+}
+
+/* ---------- labour productivity grouped ---------- */
+function labourGrouped(){
+  const months=new Set(periodMonths()), G=new Map(), gb=state.ui.groupBy;
+  const key=(s,a,e)=> gb==='area'? s+'|'+a : gb==='element'? s+'|'+elKey(e) : s;
+  const get=(s,a,e)=>{ const k=key(s,a,e); if(!G.has(k)) G.set(k,{s,a,el:String(e||'').trim()||NOT_SPEC,sqm:0,md:0,cost:0}); return G.get(k); };
+  state.execution.filter(e=>months.has(monthOf(e.date))&&sysFilter(e.systemId)).forEach(e=>get(e.systemId,e.areaId,e.element).sqm+=num(e.sqm));
+  state.labour.filter(r=>months.has(monthOf(r.date))&&sysFilter(r.systemId)).forEach(r=>{ const g=get(r.systemId,r.areaId,r.element); g.md+=mandays([r]); g.cost+=labourCost([r]); });
+  return [...G.values()].filter(g=>g.md||g.sqm).sort((x,y)=>sysName(x.s).localeCompare(sysName(y.s))||areaName(x.a).localeCompare(areaName(y.a))||x.el.localeCompare(y.el));
+}
+
+/* ---------- repetition ---------- */
+function deployedAvg(sId,aId,from,to){
+  if(!from||!to||from>to) return 0;
+  const areas=aId? [aId] : ledgerAreas(sId);
+  let sum=0,n=0;
+  for(const d of dayRange(from,to)){ let b=0; areas.forEach(a=>b+=Math.max(0,balanceOn(sId,a,d))); if(b>0){ sum+=b; n++; } }
+  return n? sum/n : 0;
+}
+function repetitionRows(){
+  const m=state.ui.month||thisMonth(), today=todayStr(), from=m+'-01', to=periodEnd(m), start=projectStart();
+  const rows=[], byArea=state.ui.groupBy!=='system';
+  state.systems.filter(s=>sysFilter(s.id)).forEach(s=>{
+    if(s.ownership==='Rental' && isPcs(s.id)) return;
+    if(s.ownership==='Rental'){
+      (byArea? ledgerAreas(s.id) : [null]).forEach(a=>{
+        const dM=deployedAvg(s.id,a,from,to>today?today:to), eM=sumSqm(execRows({m,s:s.id,a}));
+        const dT=deployedAvg(s.id,a,start,to), eT=sumSqm(execRows({upto:m,s:s.id,a}));
+        if(dM||eM||dT||eT) rows.push({s,a,dM,eM,rM:dM?eM/dM:0,dT,eT,rT:dT?eT/dT:0});
+      });
+    } else {
+      const q=ownedSqm(s.id), eM=sumSqm(execRows({m,s:s.id})), eT=sumSqm(execRows({upto:m,s:s.id}));
+      if(q||eM||eT) rows.push({s,a:null,dM:q,eM,rM:q?eM/q:0,dT:q,eT,rT:q?eT/q:0,owned:true});
+    }
+  });
+  return rows;
+}
+
+/* ---------- scope & schedule ---------- */
+function scopeStatus(sc){
+  const rows=execRows({s:sc.systemId,a:sc.areaId,e:String(sc.element||'').trim()?sc.element:undefined}).slice().sort((x,y)=>(x.date||'').localeCompare(y.date||''));
+  const scope=num(sc.scopeSqm), executed=sumSqm(rows), today=todayStr();
+  const pct=scope? Math.min(1,executed/scope) : 0;
+  const actualStart=rows[0]?.date||'';
+  let actualFinish='', run=0; if(scope>0) for(const r of rows){ run+=num(r.sqm); if(run>=scope-1e-6){ actualFinish=r.date; break; } }
+  const ps=sc.plannedStart, pf=sc.plannedFinish;
+  let plannedPct=null; if(ps&&pf&&pf>=ps){ plannedPct= today<ps?0 : today>=pf?1 : (dayDiff(ps,today)+1)/(dayDiff(ps,pf)+1); }
+  let status='na', label='No dates', late=0;
+  if(scope>0 && actualFinish){ late=pf? Math.max(0,dayDiff(pf,actualFinish)) : 0; status=late?'wn':'ok'; label=late?`Done ${late} d late`:'Done'; }
+  else if(ps && !actualStart && today>ps){ late=dayDiff(ps,today); status='bd'; label=`Start delayed ${late} d`; }
+  else if(pf && today>pf){ late=dayDiff(pf,today); status='bd'; label=`Overdue ${late} d`; }
+  else if(plannedPct!==null && plannedPct-pct>0.1){ status='wn'; label=`Behind plan (${fmtN((plannedPct-pct)*100)}%)`; }
+  else if(actualStart){ status='ok'; label='On track'; }
+  else if(ps){ status='na'; label='Not due yet'; }
+  return {scope,executed,balance:Math.max(0,scope-executed),pct,actualStart,actualFinish,plannedPct,status,label,late};
+}
+function scopeGrouped(){
+  const gb=state.ui.groupBy, G=new Map();
+  state.scope.filter(sc=>sysFilter(sc.systemId)).forEach(sc=>{
+    const st=scopeStatus(sc);
+    const k= gb==='element'? sc.id : sc.systemId+'|'+sc.areaId;
+    if(!G.has(k)) G.set(k,{s:sc.systemId,a:sc.areaId,el:String(sc.element||'').trim(),scope:0,executed:0});
+    const g=G.get(k); g.scope+=st.scope; g.executed+=Math.min(st.executed,st.scope||st.executed);
+  });
+  return [...G.values()].sort((x,y)=>sysName(x.s).localeCompare(sysName(y.s))||areaName(x.a).localeCompare(areaName(y.a))||x.el.localeCompare(y.el));
+}
+function targetStatus(t){
+  const rows=execRows({m:t.month,a:t.areaId||undefined,s:t.systemId||undefined}), ach=sumSqm(rows), tgt=num(t.targetSqm);
+  if(!tgt) return {ach,tgt,expected:0,short:0,status:'na',label:'No target'};
+  const tm=thisMonth();
+  if(t.month>tm) return {ach,tgt,expected:0,short:0,status:'na',label:'Future'};
+  const expected= t.month<tm ? tgt : tgt*new Date().getDate()/daysInMonth(t.month);
+  const short=Math.max(0,expected-ach);
+  let status='ok', label= t.month<tm ? (ach>=tgt?'Achieved':'Missed') : (ach>=expected*0.9?'On track':'Behind');
+  if(t.month<tm && ach<tgt) status='bd'; else if(t.month===tm && ach<expected*0.9) status='wn';
+  return {ach,tgt,expected,short,status,label};
+}
+
+/* ---------- idle material ---------- */
+function lastExecDate(sId,aId){ const ds=state.execution.filter(e=>e.systemId===sId&&(!aId||e.areaId===aId)).map(e=>e.date).filter(Boolean).sort(); return ds[ds.length-1]||''; }
+function firstReceipt(sId,aId){ const ds=state.ledger.filter(t=>t.systemId===sId&&t.areaId===aId&&t.type==='Received').map(t=>t.date).filter(Boolean).sort(); return ds[0]||''; }
+function idleList(){
+  const out=[], today=todayStr(), X=num(state.meta.idleDays)||7;
+  rentalSystems().forEach(s=>ledgerAreas(s.id).forEach(a=>{
+    const b=balanceOn(s.id,a,today); if(b<=0.001) return;
+    const rr=rateRow(s.id,a), rate=rr?num(rr.rate):0, req=rr?num(rr.requiredSqm):0;
+    const reasons=[]; let idle=0;
+    const scopes=state.scope.filter(sc=>sc.systemId===s.id&&sc.areaId===a);
+    if(scopes.length && scopes.every(sc=>scopeStatus(sc).pct>=1)){ reasons.push('Area finished – not returned'); idle=b; }
+    const last=lastExecDate(s.id,a)||firstReceipt(s.id,a); const days=last?dayDiff(last,today):0;
+    if(days>=X){ reasons.push(`No work for ${days} days`); idle=b; }
+    if(req>0 && b>req){ reasons.push(`${fmtN(b-req,2)} sqm above requirement`); idle=Math.max(idle,b-req); }
+    if(idle>0) out.push({s,a,onSite:b,idle,reasons,rate,cost:idle*rate});
+  }));
+  ownedSystems().forEach(s=>{
+    const q=ownedSqm(s.id); if(!q) return;
+    const last=lastExecDate(s.id); const days=last?dayDiff(last,today):null;
+    if(days===null||days>=X) out.push({s,a:null,onSite:q,idle:q,reasons:[days===null?'Never used':`No work for ${days} days`],rate:0,cost:0,owned:true});
+  });
+  return out;
+}
+
+/* ---------- row editing ---------- */
+const defDate = () => { const m=state.ui.month||thisMonth(); return m===thisMonth()? todayStr() : m+'-01'; };
+const DEFAULTS = {
+  systems:()=>({name:'New system',ownership:'Rental',vendor:'',buyCostPerSqm:0,stdSqmPerManday:0,rentBasis:'Sqm per month',dispatchDay:'Charged'}),
+  areas:()=>({name:'New area'}),
+  rates:()=>({systemId:rentalSystems()[0]?.id||'',areaId:state.areas[0]?.id||'',rate:0,requiredSqm:0}),
+  scope:()=>({systemId:state.systems[0]?.id||'',areaId:state.areas[0]?.id||'',element:'',scopeSqm:0,plannedStart:'',plannedFinish:''}),
+  ledger:()=>({date:todayStr(),systemId:rentalSystems()[0]?.id||'',areaId:state.areas[0]?.id||'',type:'Received',item:'',sqm:0,nos:0,amount:0,challan:'',remarks:''}),
+  invoices:()=>({month:state.ui.month||thisMonth(),systemId:rentalSystems()[0]?.id||'',invoiceNo:'',amount:0,remarks:''}),
+  owned:()=>({systemId:ownedSystems()[0]?.id||'',item:'',unit:'Sqm',qty:0,totalCost:0,expectedReps:20,repairCost:0,scrapValue:0}),
+  execution:()=>({date:defDate(),areaId:state.areas[0]?.id||'',systemId:state.systems[0]?.id||'',element:'',sqm:0,remarks:''}),
+  targets:()=>({month:state.ui.month||thisMonth(),areaId:state.areas[0]?.id||'',systemId:'',targetSqm:0}),
+  labour:()=>({date:defDate(),areaId:state.areas[0]?.id||'',systemId:state.systems[0]?.id||'',element:'',carpenters:0,helpers:0,hours:stdH(),remarks:''}),
+  consItems:()=>({item:'New item',unit:'Nos',unitCost:0,minStock:0}),
+  consTx:()=>({date:defDate(),itemId:state.consItems[0]?.id||'',type:'Issued',qty:0,systemId:'',areaId:'',remarks:''}),
+  items:()=>({systemId:curItemSys(),code:'',item:'New item',sqmPerNo:0,kgPerNo:0,boq:0,ratePcDay:0}),
+  storeItems:()=>({item:'New item',kind:'Reusable',unit:'Nos',rate:0,minStock:0}),
+  storeTx:()=>({date:defDate(),type:'Issued to contractor',itemId:state.storeItems[0]?.id||'',qty:0,contractorId:state.contractors[0]?.id||'',areaId:'',doc:'',remarks:''}),
+  contractors:()=>({name:'New contractor',phone:''}),
+  prpo:()=>({category:'Material',item:'',qty:0,unit:'',value:0,vendor:'',prNo:'',prDate:todayStr(),poNo:'',poDate:'',requiredBy:'',receivedDate:'',remarks:''}),
+  itemTx:()=>({date:todayStr(),systemId:curItemSys(),areaId:'',doc:'',itemId:state.items.find(i=>i.systemId===curItemSys())?.id||'',type:'Received',nos:0,remarks:''}),
+};
+function addRow(arr){ state[arr].push(Object.assign({id:uid(),_u:nowMs()},DEFAULTS[arr]())); save(); }
+function delRow(arr,id){
+  const used=(test)=>{ if(test){ toast('This is used in other entries — delete or change those first.'); return true; } return false; };
+  if(arr==='systems' && used(['ledger','owned','execution','labour','scope','rates','items','itemTx'].some(k=>state[k].some(r=>r.systemId===id)))) return;
+  if(arr==='areas' && used(['ledger','execution','labour','scope','rates'].some(k=>state[k].some(r=>r.areaId===id)))) return;
+  if(arr==='consItems' && used(state.consTx.some(t=>t.itemId===id))) return;
+  if(arr==='items' && used(state.itemTx.some(t=>t.itemId===id))) return;
+  if(arr==='storeItems' && used(state.storeTx.some(t=>t.itemId===id))) return;
+  if(arr==='contractors' && used(state.storeTx.some(t=>t.contractorId===id))) return;
+  askConfirm('Delete this row?',()=>{ state[arr]=state[arr].filter(r=>r.id!==id); tomb(id); save(); },'Delete');
+}
+function setField(arr,id,key,val,isNum){ const r=state[arr].find(x=>x.id===id); if(!r) return; r[key]=isNum?num(val):val; r._u=nowMs(); save(); }
+function tomb(id){ state.deleted=state.deleted||{}; state.deleted[id]=nowMs(); }
+function touchMeta(k){ state.meta._u=state.meta._u||{}; state.meta._u[k]=nowMs(); }
+function touchMeeting(){ state.meeting._u=nowMs(); }
+function setMeta(key,val,isNum){ state.meta[key]=isNum?num(val):val; touchMeta(key); save(); if(key==='project'||key==='company') prjSync(); }
+function setUI(key,val){ state.ui[key]=val; persist(); render(); }
+function toggleSys(id){ const s=new Set(state.ui.sysSel||[]); s.has(id)?s.delete(id):s.add(id); state.ui.sysSel=[...s]; persist(); render(); }
+function save(){ if(FILEMODE){ state.ui.fileDirty=(state.ui.fileDirty||0)+1; fsSchedule(); } clearCaches(); state.rev=(state.rev||0)+1; state.pending=true; if(SYNC.db) SYNC.waiting++; persistLocal(); render(); schedulePush(); }
+
+/* ---------- table renderer ---------- */
+function cellInput(arr,row,c){
+  const v=row[c.key]??''; const oc=`onchange="setField('${arr}','${row.id}','${c.key}',this.value,${c.type==='number'})"`;
+  const sel=(opts)=>`<select class="c" ${oc}>${opts}</select>`;
+  switch(c.type){
+    case 'select': return sel(c.options.map(o=>`<option ${o===v?'selected':''}>${esc(o)}</option>`).join(''));
+    case 'system': return sel(`<option value="">${c.blank||'—'}</option>`+(c.filter?state.systems.filter(c.filter):state.systems).map(s=>`<option value="${s.id}" ${s.id===v?'selected':''}>${esc(s.name)}</option>`).join(''));
+    case 'area': return sel(`<option value="">${c.blank||'—'}</option>`+state.areas.map(a=>`<option value="${a.id}" ${a.id===v?'selected':''}>${esc(a.name)}</option>`).join(''));
+    case 'itemsel': return sel(`<option value="">—</option>`+state.items.filter(i=>i.systemId===row.systemId).map(x=>`<option value="${x.id}" ${x.id===v?'selected':''}>${esc((x.code?x.code+' – ':'')+x.item)}</option>`).join(''));
+    case 'storeitem': return sel(`<option value="">—</option>`+state.storeItems.map(x=>`<option value="${x.id}" ${x.id===v?'selected':''}>${esc(x.item)} (${esc(x.unit)})</option>`).join(''));
+    case 'contractor': return sel(`<option value="">—</option>`+state.contractors.map(x=>`<option value="${x.id}" ${x.id===v?'selected':''}>${esc(x.name)}</option>`).join(''));
+    case 'cons': return sel(`<option value="">—</option>`+state.consItems.map(x=>`<option value="${x.id}" ${x.id===v?'selected':''}>${esc(x.item)} (${esc(x.unit)})</option>`).join(''));
+    case 'element': return `<input type="text" class="c" list="elist" value="${esc(v)}" placeholder="pick or type" ${oc}>`;
+    case 'date': return `<input type="date" class="c" value="${esc(v)}" ${oc}>`;
+    case 'month': return `<input type="month" class="c" value="${esc(v)}" ${oc}>`;
+    case 'number': return `<input type="number" step="any" class="c r" value="${v===''?'':num(v)}" ${oc}>`;
+    default: return `<input type="text" class="c" value="${esc(v)}" ${oc}>`;
+  }
+}
+function table(arr,cols,opt={}){
+  const rows=opt.rows||state[arr]; PCOLS[arr]=cols;
+  let h=`<div class="tw"><table class="sheet"><thead><tr><th>#</th>${cols.map(c=>`<th class="${c.r?'r':''}">${c.label}</th>`).join('')}<th></th></tr></thead><tbody>`;
+  if(!rows.length) h+=`<tr><td class="sn"></td><td class="calc" colspan="${cols.length+1}" style="text-align:center;color:var(--muted)">No entries yet — click "+ Add row".</td></tr>`;
+  rows.forEach((r,i)=>{
+    h+=`<tr><td class="sn">${i+1}</td>`+cols.map(c=> c.calc? `<td class="calc ${c.r?'r':''}">${c.calc(r)}</td>` : `<td${c.w?` style="min-width:${c.w}px"`:''}>${cellInput(arr,r,c)}</td>`).join('')+`<td class="x"><button class="del" title="Delete" onclick="delRow('${arr}','${r.id}')">×</button></td></tr>`;
+  });
+  h+='</tbody>';
+  if(opt.totals){ h+='<tfoot><tr><td></td>'+cols.map(c=>{ if(!opt.totals.includes(c.key)) return '<td></td>'; const s=rows.reduce((a,r)=>a+num(r[c.key]),0); return `<td class="r">${fmtN(s,c.dec||0)}</td>`; }).join('')+'<td></td></tr></tfoot>'; }
+  h+='</table></div>';
+  if(!opt.noAdd) h+=`<div style="margin-top:6px"><button class="btn sm" onclick="addRow('${arr}')">+ Add row</button></div>`+(opt.paste===false?'':pastePanel(arr));
+  return h;
+}
+function monthBar(extra=''){
+  const m=state.ui.month||thisMonth();
+  return `<div class="chips"><label>Month</label><button class="btn sm" onclick="stepMonth(-1)">◀</button><input type="month" value="${m}" onchange="state.ui.month=this.value||thisMonth();persist();render()"><button class="btn sm" onclick="stepMonth(1)">▶</button>${m!==thisMonth()?`<button class="btn sm" onclick="setUI('month',thisMonth())">This month</button>`:''}${extra}</div>`;
+}
+function stepMonth(k){ state.ui.month=addMonth(state.ui.month||thisMonth(),k); persist(); render(); }
+const panel=(title,body,small='')=>`<div class="panel"><div class="ph"><span>${title}</span>${small?`<small>${small}</small>`:''}</div><div class="pb">${body}</div></div>`;
+const kpi=(l,v,s='',cls='')=>`<div class="k ${cls}"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s}</div></div>`;
+const bar=(p,cls='')=>`<div class="bar" title="${Math.round(p*100)}%"><i class="${cls}" style="width:${Math.max(0,Math.min(100,Math.round(p*100)))}%"></i></div>`;
+const seg=(key,opts)=>opts.map(([v,l])=>`<button class="btn sm ${state.ui[key]===v?'p':''}" onclick="setUI('${key}','${v}')">${l}</button>`).join('');
+const simpleTable=(heads,rows,foot)=>`<div class="tw"><table class="sheet"><thead><tr>${heads.map(h=>`<th class="${h[1]?'r':''}">${h[0]}</th>`).join('')}</tr></thead><tbody>${rows.join('')||`<tr><td class="calc" colspan="${heads.length}" style="text-align:center;color:var(--muted)">Nothing to show.</td></tr>`}</tbody>${foot?`<tfoot>${foot}</tfoot>`:''}</table></div>`;
+
+/* ---------- pages ---------- */
+const NAV=[
+  {g:'Overview',items:[['dashboard','Dashboard'],['meeting','Meeting Screen']]},
+  {g:'Setup',items:[['setup','Systems & Areas'],['scope','Scope & Schedule'],['rates','Rental Rates']]},
+  {g:'Daily entry',items:[['execution','Execution & Targets'],['labour','Labour'],['consumables','Consumables'],['ledger','Received / Dispatch']]},
+  {g:'Rental',items:[['items','Item-wise Material'],['rent','Rent Calculation'],['invoices','Invoice Check']]},
+  {g:'Owned',items:[['owned','Owned Material']]},
+  {g:'Store',items:[['store','Store Stock'],['prpo','PR & PO'],['contractors','Contractor Sheet']]},
+  {g:'Analysis',items:[['rentbuy','Rent vs Buy']]},
+  {g:'File',items:[['data','Backup & Settings']]},
+];
+const PAGES={};
+
+function scopeHero(){
+  const bySys={}, byArea={};
+  state.scope.filter(sc=>sysFilter(sc.systemId)).forEach(sc=>{ const st=scopeStatus(sc), ex=Math.min(st.executed,st.scope||st.executed);
+    const g=bySys[sc.systemId]||(bySys[sc.systemId]={sc:0,ex:0,areas:new Set(),el:0}); g.sc+=st.scope; g.ex+=ex; g.areas.add(sc.areaId); g.el++; });
+  const sys=Object.entries(bySys), T=sys.reduce((a,[,g])=>({sc:a.sc+g.sc,ex:a.ex+g.ex,el:a.el+g.el}),{sc:0,ex:0,el:0});
+  if(!T.sc) return `<div class="hero"><div class="hero-l"><span class="hl">Overall formwork scope</span><b>Not entered yet</b><small>Add every element with its scope sqm on Scope &amp; Schedule. This box then shows total scope, done and balance.</small><button class="btn p sm" onclick="go('scope')">Enter scope →</button></div></div>`;
+  const pc=T.ex/T.sc;
+  return `<div class="hero"><div class="hero-l"><span class="hl">Overall formwork scope${(state.ui.sysSel||[]).length?' (ticked systems)':''}</span>
+    <div class="hero-nums"><div><b>${fmtN(T.sc)}</b><small>Total scope sqm</small></div><div><b class="g">${fmtN(T.ex)}</b><small>Done sqm</small></div><div><b class="a">${fmtN(T.sc-T.ex)}</b><small>Balance sqm</small></div><div><b>${fmtN(pc*100,1)}%</b><small>Complete</small></div></div>
+    <div class="hero-bar" title="${fmtN(pc*100,1)}% complete"><i style="width:${Math.min(100,pc*100)}%"></i></div><small>${T.el} elements · ${sys.length} system${sys.length===1?'':'s'} · <a href="#" onclick="go('scope');return false">see all elements</a></small></div>
+    <div class="hero-r">${sys.sort((a,b)=>b[1].sc-a[1].sc).map(([s,g])=>`<div class="hrow"><span>${esc(sysName(s))}<small>${g.areas.size} area${g.areas.size===1?'':'s'}</small></span><div class="bar"><i class="${g.ex>=g.sc?'g':''}" style="width:${Math.min(100,g.ex/g.sc*100)}%"></i></div><b>${fmtN(g.ex)} / ${fmtN(g.sc)}</b><em>${fmtN(g.ex/g.sc*100)}%</em></div>`).join('')}</div></div>`;
+}
+const THEMES=[['classic','Original','light','#dde2e0','#15232d','#0e6b8c','#e0a526'],['white','White & blue','light','#f4f6fa','#ffffff','#2563eb','#f59e0b'],['navy','Navy & white','light','#eef1f6','#14213d','#1f4e9c','#f4a21c'],['sand','Sand & teal','light','#f5efe7','#2b2620','#0f766e','#c2410c'],['mint','Mint & peach','light','#f3faf6','#e3f5ec','#2b9878','#f2955f'],['softdark','Soft dark','dark','#211d1a','#1b1815','#d9a15e','#d9a15e'],['black','Black & gold','dark','#0e0e0f','#08080a','#e2a540','#e2a540']];
+function applyTheme(){ document.documentElement.setAttribute('data-th', THEMES.some(t=>t[0]===state.meta.theme)? state.meta.theme : 'classic'); }
+function openThemes(){
+  const old=document.getElementById('cfm'); if(old) old.remove();
+  const cur=state.meta.theme||'classic';
+  const d=document.createElement('div'); d.id='cfm'; d.className='cfm';
+  d.innerHTML=`<div class="cfm-box wide" role="dialog" aria-modal="true" aria-label="Choose colours"><p><b>Choose colours</b><br><span style="color:var(--muted);font-size:13px">Tap a look to try it. It is saved for all your devices.</span></p><div class="thgrid">${THEMES.map(([k,n,m,bg,side,ac,ac2])=>`<button class="thcard ${k===cur?'on':''}" onclick="pickTheme('${k}')"><span class="thprev"><span class="s" style="background:${side}"></span><span class="m" style="background:${bg}"><i style="background:${ac};width:70%"></i><i style="background:${ac2};width:45%"></i><i style="background:${m==='dark'?'#ffffff33':'#00000022'};width:85%"></i></span></span><span class="n">${n}${k===cur?' ✓':''}</span></button>`).join('')}</div><div class="acts" style="justify-content:flex-end"><button class="btn p" id="cfmNo">Done</button></div></div>`;
+  d.querySelector('#cfmNo').onclick=()=>d.remove(); d.onclick=e=>{ if(e.target===d) d.remove(); };
+  document.body.appendChild(d);
+}
+function pickTheme(k){ state.meta.theme=k; touchMeta('theme'); applyTheme(); save(); openThemes(); }
+const ICONS={
+ dashboard:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+ meeting:'<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M12 16v4M8 20h8M7 12l3-3 2 2 4-4"/>',
+ setup:'<path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>',
+ scope:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/>',
+ rates:'<path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/>',
+ execution:'<path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/>',
+ labour:'<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-5 6-5s6 1.7 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 14.2c2.6.3 4.5 2 4.5 4.8"/>',
+ consumables:'<path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/>',
+ ledger:'<path d="M3 6h11v9H3zM14 9h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>',
+ items:'<path d="M3 8l9-5 9 5-9 5zM3 8v8l9 5 9-5V8M12 13v8"/>',
+ rent:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2M12 11h2M16 11h0M8 15h2M12 15h2M16 15h0M8 18h2M12 18h2"/>',
+ invoices:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6M9 16h3"/>',
+ owned:'<path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5M3 17.5l9 4.5 9-4.5"/>',
+ store:'<path d="M3 21V9l9-5 9 5v12M7 21v-8h10v8M7 17h10"/>',
+ prpo:'<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l3 12h11l2-8H6.2"/>',
+ contractors:'<path d="M4 17h16M5.5 17a6.5 6.5 0 0 1 13 0M10 10.6V6.5h4v4.1M3 20h18"/>',
+ rentbuy:'<path d="M12 3v18M7 21h10M5 7h14M5 7l-3 6a3 3 0 0 0 6 0zM19 7l-3 6a3 3 0 0 0 6 0z"/>',
+ data:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>'
+};
+const ico=k=>`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]||ICONS.dashboard}</svg>`;
+function sideBadges(){
+  const b={};
+  try{
+    const inv=state.invoices.filter(i=>{ const d=invoiceDiff(i); return !d.partial&&Math.abs(d.diff)>num(state.meta.tolerance); }).length; if(inv) b.invoices=[inv,'bd'];
+    const late=state.prpo.filter(p=>prStatus(p)[0]==='bd').length, open=state.prpo.filter(p=>!p.receivedDate).length; if(late) b.prpo=[late,'bd']; else if(open) b.prpo=[open,'na'];
+    const ro=state.storeItems.filter(i=>{ const st=storeStatus(i,storeBal(i.id)); return st[0]==='bd'; }).length; if(ro) b.store=[ro,'bd'];
+    const od=state.scope.filter(sc=>scopeStatus(sc).status==='bd').length; if(od) b.scope=[od,'bd'];
+    const idle=idleList().length; if(idle) b.dashboard=[idle,'wn'];
+  }catch(e){}
+  return b;
+}
+function sideHTML(){
+  const B=sideBadges();
+  let sc=0,ex=0; state.scope.forEach(x=>{ const st=scopeStatus(x); sc+=st.scope; ex+=Math.min(st.executed,st.scope||st.executed); });
+  const pc=sc?ex/sc:0, R=17, C=2*Math.PI*R;
+  const ring=`<svg class="ring" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="${R}" class="rt"/><circle cx="22" cy="22" r="${R}" class="rv" stroke-dasharray="${(C*pc).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 22 22)"/></svg><b class="rp">${sc?Math.round(pc*100)+'%':'—'}</b>`;
+  return `<div class="brand"><div class="logo" aria-hidden="true">F</div><div class="bt"><b>FormTrack</b><span>Formwork tracking</span></div><button class="mini-t" onclick="toggleSide()" title="${state.ui.sideMini?'Show menu labels':'Shrink menu'}" aria-label="${state.ui.sideMini?'Expand menu':'Collapse menu'}">${state.ui.sideMini?'»':'«'}</button></div>
+  <button class="pcard" onclick="openProjects()" title="Projects – tap to switch or add a project"><span class="psw" aria-hidden="true">⇅</span><span class="rw">${ring}</span><span class="pt">${state.meta.company?`<small>${esc(state.meta.company)}</small>`:''}<b>${esc(state.meta.project)}</b><em>${sc?`${fmtN(ex)} of ${fmtN(sc)} sqm done`:'Scope not entered'}</em></span></button>
+  <nav class="navw">${NAV.map(g=>`<div class="ng"><span>${g.g}</span></div>`+g.items.map(([k,l])=>{ const bd=B[k]; return `<button class="nl ${state.route===k?'on':''}" onclick="go('${k}')" title="${l}">${ico(k)}<span class="lb">${l}</span>${bd?`<span class="bdg ${bd[1]}">${bd[0]}</span>`:''}</button>`; }).join('')).join('')}</nav>
+  <div class="ucard"><div class="av" aria-hidden="true">${esc((state.meta.user||'').trim().split(/\s+/).filter(Boolean).map(w=>w[0]).join('').slice(0,2).toUpperCase()||'+')}</div><div class="ut"><button class="unm" onclick="editName('user',this)" title="Tap to edit your name">${esc(state.meta.user||'Add your name')}</button></div><span class="sdot ${SYNC.status==='error'?'bd':SYNC.status==='saving'||SYNC.status==='loading'?'wn':'ok'}" title="Save status"></span></div>`;
+}
+function toggleSide(){ state.ui.sideMini=!state.ui.sideMini; persist(); render(); }
+function editName(key,el){
+  const inp=document.createElement('input'); inp.className='nameedit'+(key==='project'?' big':''); inp.value=state.meta[key]||''; inp.placeholder=key==='company'?'Company name':key==='user'?'Your name':'Project name'; inp.setAttribute('aria-label',inp.placeholder);
+  el.replaceWith(inp); inp.focus(); inp.select(); let done=false;
+  const fin=ok=>{ if(done) return; done=true; const v=inp.value.trim(); if(ok && (v||key!=='project') && v!==(state.meta[key]||'')){ setMeta(key,v); toast('Name saved'); } else render(); };
+  inp.onkeydown=e=>{ if(e.key==='Enter') fin(true); if(e.key==='Escape') fin(false); }; inp.onblur=()=>fin(true);
+}
+PAGES.dashboard=()=>{
+  const m=state.ui.month||thisMonth(), todate=state.ui.period==='todate', pl=todate?'to date ('+monthLabel(m)+')':monthLabel(m);
+  const cg=costGrouped(), tot=cg.reduce((a,g)=>{['rent','lab','cons','own','sqm','total'].forEach(f=>a[f]+=g[f]); return a;},{rent:0,lab:0,cons:0,own:0,sqm:0,total:0});
+  const lg=labourGrouped(), lmd=lg.reduce((a,g)=>a+g.md,0), lsq=lg.filter(g=>g.md>0).reduce((a,g)=>a+g.sqm,0);
+  const idle=idleList().filter(x=>sysFilter(x.s.id)), idleSqm=idle.reduce((a,x)=>a+x.idle,0), idleCost=idle.reduce((a,x)=>a+x.cost,0);
+  const scopes=state.scope.filter(sc=>sysFilter(sc.systemId)).map(sc=>({sc,st:scopeStatus(sc)}));
+  const sTot=scopes.reduce((a,x)=>a+x.st.scope,0), sDone=scopes.reduce((a,x)=>a+Math.min(x.st.executed,x.st.scope),0);
+  const late=scopes.filter(x=>x.st.status==='bd'||x.st.status==='wn');
+  const tShort=state.targets.filter(t=>(!t.systemId||sysFilter(t.systemId))).map(t=>({t,st:targetStatus(t)})).filter(x=>x.st.status==='bd'||x.st.status==='wn');
+
+  let h=scopeHero()+monthBar(`<span style="width:12px"></span><label>Period</label>${seg('period',[['month','This month'],['todate','Project to date']])}<span style="width:12px"></span><label>Break-up</label>${seg('groupBy',[['system','System'],['area','System + Area'],['element','System + Element']])}`);
+  h+=`<div class="chips"><label>Systems</label>${state.systems.map(s=>`<label class="ck"><input type="checkbox" ${(state.ui.sysSel||[]).includes(s.id)?'checked':''} onchange="toggleSys('${s.id}')"> ${esc(s.name)}</label>`).join('')}<span class="muted" style="font-size:11px">${(state.ui.sysSel||[]).length?'Combined total of ticked systems':'None ticked = all systems'}</span></div>`;
+
+  h+=`<div class="kpis">
+    ${kpi('Executed',fmtN(tot.sqm)+' sqm',pl)}
+    ${kpi('Formwork cost',money(tot.total),pl)}
+    ${kpi('Cost per sqm',tot.sqm?money(tot.total/tot.sqm):'—','all costs ÷ executed')}
+    ${kpi('Labour productivity',lmd?fmtN(lsq/lmd,2):'—','sqm per manday')}
+    ${kpi('Scope complete',sTot?fmtN(sDone/sTot*100,1)+'%':'—',sTot?fmtN(sDone)+' of '+fmtN(sTot)+' sqm':'add scope',sTot&&sDone>=sTot?'good':'')}
+    ${kpi('Idle material',fmtN(idleSqm,1)+' sqm',idleCost?money(idleCost)+' rent / month':'',idleSqm?'bad':'good')}
+    ${kpi('Delayed items',late.length+tShort.length,'schedule + targets',late.length+tShort.length?'bad':'good')}
+  </div>`;
+
+  // 1. System cost
+  const cRows=cg.map(g=>`<tr><td class="v">${groupLabel(g)}</td><td class="calc r">${fmtN(g.sqm,1)}</td><td class="calc r">${money(g.rent)}</td><td class="calc r">${money(g.lab)}</td><td class="calc r">${money(g.cons)}</td><td class="calc r">${money(g.own)}</td><td class="calc r"><b>${money(g.total)}</b></td><td class="calc r"><b>${g.sqm?money(g.total/g.sqm):(g.total?PILL('bd','no output'):'—')}</b></td></tr>`);
+  h+=panel('1. System cost per sqm – '+pl, simpleTable([['Group'],['Executed sqm',1],['Rent / bill',1],['Labour',1],['Consumables',1],['Owned material',1],['Total cost',1],['Cost per sqm',1]],cRows,
+    `<tr><td>${(state.ui.sysSel||[]).length>1?'Combined (ticked systems)':'Total'}</td><td class="r">${fmtN(tot.sqm,1)}</td><td class="r">${money(tot.rent)}</td><td class="r">${money(tot.lab)}</td><td class="r">${money(tot.cons)}</td><td class="r">${money(tot.own)}</td><td class="r">${money(tot.total)}</td><td class="r">${tot.sqm?money(tot.total/tot.sqm):'—'}</td></tr>`)
+    +`<p class="note" style="margin-top:6px">Rent uses the vendor bill when entered on Invoice Check, otherwise the calculated rent. Area rent is shared to elements by executed sqm. "No output" means cost was paid in a period with nothing executed.</p>`);
+
+  // 2. Scope
+  const sg=scopeGrouped();
+  h+=panel('2. Total scope – system & area wise'+(state.ui.groupBy==='element'?' (by element)':''), simpleTable([['System'],['Area'],...(state.ui.groupBy==='element'?[['Element']]:[]),['Scope sqm',1],['Executed sqm',1],['Balance sqm',1],['% done',1],['Progress']],
+    sg.map(g=>{const p=g.scope?g.executed/g.scope:0; return `<tr><td class="v">${esc(sysName(g.s))}</td><td class="v">${esc(areaName(g.a))}</td>${state.ui.groupBy==='element'?`<td class="v">${esc(g.el||'(whole area)')}</td>`:''}<td class="calc r">${fmtN(g.scope,1)}</td><td class="calc r">${fmtN(g.executed,1)}</td><td class="calc r">${fmtN(Math.max(0,g.scope-g.executed),1)}</td><td class="calc r">${fmtN(p*100,1)}%</td><td class="v">${bar(p,p>=1?'g':'')}</td></tr>`;}),
+    sTot?`<tr><td>Total</td><td></td>${state.ui.groupBy==='element'?'<td></td>':''}<td class="r">${fmtN(sTot,1)}</td><td class="r">${fmtN(sDone,1)}</td><td class="r">${fmtN(sTot-sDone,1)}</td><td class="r">${fmtN(sDone/sTot*100,1)}%</td><td></td></tr>`:'')
+    +(state.scope.length?'':`<p class="note" style="margin-top:6px">Enter scope on the <a href="#" onclick="go('scope');return false">Scope & Schedule</a> page.</p>`));
+
+  // 3. Repetition
+  const rr=repetitionRows();
+  h+=panel('3. Repetition (executed ÷ average material on site)', simpleTable([['System'],['Area'],[monthLabel(m)+' – avg on site sqm',1],['Executed sqm',1],['Repetitions',1],['To date – avg on site sqm',1],['Executed sqm',1],['Repetitions',1]],
+    rr.map(r=>`<tr><td class="v">${esc(r.s.name)}${r.owned?' <span class="muted">(owned)</span>':''}</td><td class="v">${r.a?esc(areaName(r.a)):'All'}</td><td class="calc r">${fmtN(r.dM,1)}</td><td class="calc r">${fmtN(r.eM,1)}</td><td class="calc r"><b>${r.dM?fmtN(r.rM,2):'—'}</b></td><td class="calc r">${fmtN(r.dT,1)}</td><td class="calc r">${fmtN(r.eT,1)}</td><td class="calc r"><b>${r.dT?fmtN(r.rT,2):'—'}</b></td></tr>`))
+    +`<p class="note" style="margin-top:6px">Average on site counts only days when material was on site. Owned systems use the sqm in the Owned Material register.</p>`);
+
+  // 4. Labour productivity
+  h+=panel('4. Labour productivity – '+pl, simpleTable([['Group'],['Mandays',1],['Executed sqm',1],['Sqm per manday',1],['Standard',1],['Efficiency'],['Labour cost',1],['Labour cost per sqm',1]],
+    lg.map(g=>{ const act=g.md?g.sqm/g.md:0, std=num((sysObj(g.s)||{}).stdSqmPerManday), eff=std&&g.md?act/std:0;
+      const lbl= state.ui.groupBy==='area'? `${esc(sysName(g.s))} › ${esc(areaName(g.a))}` : state.ui.groupBy==='element'? `${esc(sysName(g.s))} › ${esc(g.el)}` : esc(sysName(g.s));
+      return `<tr><td class="v">${lbl}</td><td class="calc r">${fmtN(g.md,1)}</td><td class="calc r">${fmtN(g.sqm,1)}</td><td class="calc r"><b>${g.md?fmtN(act,2):'—'}</b></td><td class="calc r">${std?fmtN(std,2):'—'}</td><td class="v">${eff?PILL(eff>=1?'ok':eff>=0.8?'wn':'bd',fmtN(eff*100)+'%'):PILL('na',g.md?'set standard':'no labour entered')}</td><td class="calc r">${money(g.cost)}</td><td class="calc r">${g.sqm?money(g.cost/g.sqm):'—'}</td></tr>`;}),
+    lmd?`<tr><td>Total</td><td class="r">${fmtN(lmd,1)}</td><td class="r">${fmtN(lsq,1)}</td><td class="r">${fmtN(lsq/lmd,2)}</td><td></td><td></td><td class="r">${money(lg.reduce((a,g)=>a+g.cost,0))}</td><td></td></tr>`:''));
+
+  // 5. Idle material
+  h+=panel('5. Idle material (today)', simpleTable([['System'],['Area'],['On site sqm',1],['Idle sqm',1],['Why'],['Rent lost / month',1]],
+    idle.map(x=>`<tr><td class="v">${esc(x.s.name)}${x.owned?' <span class="muted">(owned)</span>':''}</td><td class="v">${x.a?esc(areaName(x.a)):'—'}</td><td class="calc r">${fmtN(x.onSite,2)}</td><td class="calc r neg">${fmtN(x.idle,2)}</td><td class="v">${x.reasons.map(r=>PILL('wn',esc(r))).join(' ')}</td><td class="calc r">${x.owned?'—':money(x.cost)}</td></tr>`),
+    idle.length?`<tr><td>Total</td><td></td><td></td><td class="r">${fmtN(idleSqm,2)}</td><td></td><td class="r">${money(idleCost)}</td></tr>`:'')
+    +`<p class="note" style="margin-top:6px">Idle = above required sqm, OR no execution in that system/area for ${num(state.meta.idleDays)||7}+ days, OR all scope in that area finished but material still on site. Change the day limit in Backup & Settings.</p>`);
+
+  // 6. Delay
+  h+=panel('6. Delayed work', `<h4 class="sub-h">Against planned dates</h4>`+simpleTable([['System'],['Area'],['Element'],['Planned'],['Actual start'],['% done',1],['Planned % today',1],['Status']],
+    late.sort((a,b)=>b.st.late-a.st.late).map(({sc,st})=>`<tr><td class="v">${esc(sysName(sc.systemId))}</td><td class="v">${esc(areaName(sc.areaId))}</td><td class="v">${esc(sc.element||'(whole area)')}</td><td class="v">${esc(sc.plannedStart||'?')} → ${esc(sc.plannedFinish||'?')}</td><td class="v">${esc(st.actualStart||'—')}</td><td class="calc r">${fmtN(st.pct*100)}%</td><td class="calc r">${st.plannedPct===null?'—':fmtN(st.plannedPct*100)+'%'}</td><td class="v">${PILL(st.status,st.label)}</td></tr>`))
+    +`<h4 class="sub-h">Against monthly targets</h4>`+simpleTable([['Month'],['Area'],['System'],['Target sqm',1],['Expected by today',1],['Achieved sqm',1],['Short by',1],['Status']],
+    tShort.map(({t,st})=>`<tr><td class="v">${monthLabel(t.month)}</td><td class="v">${esc(areaName(t.areaId))}</td><td class="v">${t.systemId?esc(sysName(t.systemId)):'All'}</td><td class="calc r">${fmtN(st.tgt)}</td><td class="calc r">${fmtN(st.expected)}</td><td class="calc r">${fmtN(st.ach)}</td><td class="calc r neg">${fmtN(st.short)}</td><td class="v">${PILL(st.status,st.label)}</td></tr>`)));
+
+  h+=panel('Alerts',alertsHtml());
+  return h;
+};
+function alertsHtml(){
+  const out=[];
+  state.rates.forEach(r=>{ const s=sysObj(r.systemId); if(s&&s.ownership==='Rental'&&!num(r.rate)&&balanceOn(r.systemId,r.areaId,todayStr())>0) out.push(['wn',`${esc(s.name)} – ${esc(areaName(r.areaId))}: material on site but rental rate not entered.`]); });
+  state.invoices.forEach(i=>{ const d=invoiceDiff(i); if(!d.partial&&Math.abs(d.diff)>num(state.meta.tolerance)) out.push(['bd',`Invoice ${esc(i.invoiceNo||'')} ${esc(sysName(i.systemId))} ${monthLabel(i.month)}: ${d.diff>0?'over':'under'}-billed by ${money(Math.abs(d.diff))} (≈ ${fmtN(Math.abs(d.sqm),1)} sqm).`]); });
+  state.consItems.forEach(c=>{ const s=consStock(c.id); if(s<0) out.push(['bd',`${esc(c.item)}: issued more than received (${fmtN(s,2)} ${esc(c.unit)}).`]); else if(num(c.minStock)&&s<num(c.minStock)) out.push(['wn',`${esc(c.item)}: stock ${fmtN(s,2)} ${esc(c.unit)} below minimum ${fmtN(c.minStock)}.`]); });
+  state.owned.forEach(o=>{ const c=ownedCalc(o); if(c.lifeLeft<=0.1) out.push(['wn',`${esc(sysName(o.systemId))} – ${esc(o.item)}: ${c.lifeLeft<=0?'expected life used up':'under 10% life left'} (${fmtN(c.used,1)}/${c.exp} uses).`]); });
+  ownedSystems().forEach(s=>{ if(state.execution.some(e=>e.systemId===s.id)&&!ownedSqm(s.id)) out.push(['wn',`${esc(s.name)}: no Sqm items in Owned Material, so its repetition and material cost can't be worked out.`]); });
+  state.storeItems.forEach(i=>{ const st=storeStatus(i,storeBal(i.id)); if(st[1].startsWith('Raise PR')) out.push(['wn',`${esc(i.item)}: store stock below minimum – ${st[1]}.`]); else if(st[1]==='Check entries') out.push(['bd',`${esc(i.item)}: store figures go negative – check movements.`]); });
+  state.prpo.forEach(p=>{ const st=prStatus(p); if(st[0]==='bd') out.push(['bd',`${esc(p.item||'PR '+(p.prNo||''))}: ${st[1]} (required by ${esc(p.requiredBy)}).`]); });
+  const lb=state.meta.lastBackup, days=lb?dayDiff(lb,todayStr()):null;
+  if(days===null||days>=7) out.push(['wn',`Last backup: ${lb||'never'}. Download one from "Backup & Settings".`]);
+  return out.length? `<ul class="alerts">${out.map(([c,t])=>`<li>${PILL(c,c==='bd'?'ACTION':'CHECK')}<span>${t}</span></li>`).join('')}</ul>` : `<p class="note">No alerts.</p>`;
+}
+
+PAGES.setup=()=>{
+  let h=`<p class="note">Each formwork system is <b>Rental</b> or <b>Owned</b>. Rental systems are charged either <b>per sqm per month</b> (rent from the sqm Received / Dispatch ledger and area rates) or <b>per piece per day</b> (rent from item movements and item rates, e.g. scaffolding). <b>Dispatch day</b> says whether the vendor still charges the day material goes back.</p>`;
+  h+=`<div class="grid2">`+panel('Formwork systems',table('systems',[{key:'name',label:'System'},{key:'ownership',label:'Rental / Owned',type:'select',options:OWNERSHIP},{key:'vendor',label:'Vendor'},{key:'rentBasis',label:'Rent basis',type:'select',options:['Sqm per month','Per piece per day']},{key:'dispatchDay',label:'Dispatch day',type:'select',options:['Charged','Not charged']},{key:'stdSqmPerManday',label:'Std sqm / manday',type:'number',r:1}]))+panel('Areas',table('areas',[{key:'name',label:'Area name'}]))+`</div>`;
+  h+=projectsPanel();
+  h+=panel('Company & project',`<p class="note">These names show at the top of every page, on the Meeting Screen and in presentations. Change them any time.</p><div class="frm"><label>Company name<input value="${esc(state.meta.company||'')}" placeholder="e.g. ABC Infra Ltd" onchange="setMeta('company',this.value)"></label><label>Your name<input value="${esc(state.meta.user||'')}" placeholder="Shown on reports and presentations" onchange="setMeta('user',this.value)"></label><label>Project<input value="${esc(state.meta.project)}" onchange="setMeta('project',this.value)"></label><label>Client<input value="${esc(state.meta.client)}" onchange="setMeta('client',this.value)"></label><label>Location<input value="${esc(state.meta.location)}" onchange="setMeta('location',this.value)"></label></div>`);
+  return h;
+};
+
+PAGES.scope=()=>{
+  let h=`<p class="note">One row per <b>system + area + element</b> (e.g. Aluminium › Pile Cap › PC-1). Leave Element blank to treat the whole area as one item. Execution entries are matched to these rows by the same system, area and element name. Planned dates are used for delay tracking.</p>`;
+  h+=panel('Scope & schedule',table('scope',[
+    {key:'systemId',label:'System',type:'system'},{key:'areaId',label:'Area',type:'area'},{key:'element',label:'Element'},
+    {key:'scopeSqm',label:'Scope sqm',type:'number',r:1},{key:'plannedStart',label:'Planned start',type:'date'},{key:'plannedFinish',label:'Planned finish',type:'date'},
+    {label:'Executed',r:1,calc:sc=>fmtN(scopeStatus(sc).executed,1)},
+    {label:'Balance',r:1,calc:sc=>fmtN(scopeStatus(sc).balance,1)},
+    {label:'Progress',calc:sc=>{const s=scopeStatus(sc); return bar(s.pct,s.pct>=1?'g':'');}},
+    {label:'Actual start',calc:sc=>esc(scopeStatus(sc).actualStart||'—')},
+    {label:'Status',calc:sc=>{const s=scopeStatus(sc); return PILL(s.status,s.label);}}],{totals:['scopeSqm'],dec:1}));
+  const unmatched=state.execution.filter(e=>!state.scope.some(sc=>sc.systemId===e.systemId&&sc.areaId===e.areaId&&(!String(sc.element||'').trim()||elKey(sc.element)===elKey(e.element))));
+  if(unmatched.length) h+=`<div class="banner">${PILL('wn','CHECK')} ${unmatched.length} execution entr${unmatched.length>1?'ies do':'y does'} not match any scope row (${fmtN(sumSqm(unmatched),1)} sqm). Check system/area/element names, or add the scope row.</div>`;
+  return h;
+};
+
+PAGES.rates=()=>{
+  let h=(rentalSystems().some(s=>isPcs(s.id))?`<div class="banner">${PILL('na','NOTE')} Per-piece-per-day systems (${rentalSystems().filter(s=>isPcs(s.id)).map(s=>esc(s.name)).join(', ')}) take their rates from the <a href="#" onclick="go('items');return false">Item-wise Material</a> page; their rows here only set the area.</div>`:'')+`<p class="note">One row per rental system and area. <b>Rate</b> is per sqm per month. <b>Required sqm</b> is what the site actually needs; anything on site above it is charged as excess and shows as idle. Leave 0 to skip.</p>`;
+  h+=panel('Rental rates by area',table('rates',[
+    {key:'systemId',label:'System',type:'system',filter:s=>s.ownership==='Rental'},
+    {key:'areaId',label:'Area',type:'area'},
+    {key:'rate',label:`Rate (${cur()}/sqm/month)`,type:'number',r:1},
+    {key:'requiredSqm',label:'Required sqm',type:'number',r:1},
+    {label:'On site today (sqm)',r:1,calc:r=>fmtN(balanceOn(r.systemId,r.areaId,todayStr()),2)},
+    {label:'Full-month rent at today\'s qty',r:1,calc:r=>money(Math.max(0,balanceOn(r.systemId,r.areaId,todayStr()))*num(r.rate))}]));
+  return h;
+};
+
+PAGES.execution=()=>{
+  const m=state.ui.month||thisMonth();
+  const rows=state.execution.filter(e=>monthOf(e.date)===m).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  let h=monthBar()+`<p class="note">Log every shuttering/pour with system, area and element. Pick the element from the list so it matches your Scope rows.</p>`;
+  h+=panel('Execution log – '+monthLabel(m),table('execution',[
+    {key:'date',label:'Date',type:'date'},{key:'systemId',label:'System',type:'system'},{key:'areaId',label:'Area',type:'area'},{key:'element',label:'Element',type:'element'},{key:'sqm',label:'Sqm',type:'number',r:1},{key:'remarks',label:'Remarks'},
+    {label:'Scope',calc:e=>state.scope.some(sc=>sc.systemId===e.systemId&&sc.areaId===e.areaId&&(!String(sc.element||'').trim()||elKey(sc.element)===elKey(e.element)))?PILL('ok','matched'):PILL('wn','no scope')}],{rows,totals:['sqm']}),'entries dated in this month');
+  const trows=state.targets.filter(t=>t.month===m);
+  h+=panel('Monthly targets – '+monthLabel(m),table('targets',[{key:'month',label:'Month',type:'month'},{key:'areaId',label:'Area',type:'area'},{key:'systemId',label:'System',type:'system',blank:'All systems'},{key:'targetSqm',label:'Target sqm',type:'number',r:1},
+    {label:'Achieved',r:1,calc:t=>fmtN(targetStatus(t).ach)},{label:'Progress',calc:t=>{const s=targetStatus(t); return bar(s.tgt?s.ach/s.tgt:0,s.ach>=s.tgt?'g':'');}},{label:'Status',calc:t=>{const s=targetStatus(t); return PILL(s.status,s.label);}}],{rows:trows,totals:['targetSqm']}));
+  return h;
+};
+
+PAGES.labour=()=>{
+  const m=state.ui.month||thisMonth();
+  const rows=state.labour.filter(r=>monthOf(r.date)===m).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  let h=monthBar()+`<p class="note">One row per gang per day. Add the element if the gang worked on one element, so productivity can be seen element-wise. 1 manday = 1 person for ${stdH()} hours.</p>`;
+  h+=panel('Daily labour log – '+monthLabel(m),table('labour',[
+    {key:'date',label:'Date',type:'date'},{key:'systemId',label:'System',type:'system'},{key:'areaId',label:'Area',type:'area'},{key:'element',label:'Element (optional)',type:'element'},
+    {key:'carpenters',label:'Carpenters',type:'number',r:1},{key:'helpers',label:'Helpers',type:'number',r:1},{key:'hours',label:'Hours',type:'number',r:1},
+    {label:'Mandays',r:1,calc:r=>fmtN(mandays([r]),2)},{label:'Cost',r:1,calc:r=>money(labourCost([r]))},{key:'remarks',label:'Remarks'}],{rows,totals:['carpenters','helpers']}),'entries dated in this month');
+  h+=panel('Wages',`<div class="frm"><label>Carpenter wage (${cur()}/day)<input type="number" value="${num(state.meta.carpenterWage)}" onchange="setMeta('carpenterWage',this.value,true)"></label><label>Helper wage (${cur()}/day)<input type="number" value="${num(state.meta.helperWage)}" onchange="setMeta('helperWage',this.value,true)"></label><label>Standard hours per day<input type="number" value="${stdH()}" onchange="setMeta('stdHours',this.value,true)"></label></div><p class="note" style="margin-top:8px">Standard sqm per manday for each system is set on Systems & Areas.</p>`);
+  return h;
+};
+
+PAGES.consumables=()=>{
+  const m=state.ui.month||thisMonth();
+  let h=`<p class="note">Set each consumable once with its rate. Record what is received into store and what is issued. Issued value is charged to the system/area you pick; leave System blank to share it across all systems by executed sqm.</p>`;
+  h+=panel('Consumable items & stock',table('consItems',[
+    {key:'item',label:'Item'},{key:'unit',label:'Unit',type:'select',options:['Nos','Ltr','Kg','Rmt','Sqm','Set','Box']},
+    {key:'unitCost',label:`Rate (${cur()}/unit)`,type:'number',r:1},{key:'minStock',label:'Min stock',type:'number',r:1},
+    {label:'Received',r:1,calc:c=>fmtN(consQty(c.id,'Received'),2)},{label:'Issued',r:1,calc:c=>fmtN(consQty(c.id,'Issued'),2)},
+    {label:'In stock',r:1,calc:c=>{const s=consStock(c.id); return `<span class="${s<0?'neg':''}">${fmtN(s,2)}</span>`;}},
+    {label:'Stock value',r:1,calc:c=>money(Math.max(0,consStock(c.id))*num(c.unitCost))},
+    {label:'Status',calc:c=>{const s=consStock(c.id); return s<0?PILL('bd','Issued > received'):(num(c.minStock)&&s<num(c.minStock)?PILL('wn','Reorder'):PILL('ok','OK'));}}]));
+  const rows=state.consTx.filter(t=>monthOf(t.date)===m).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  h+=monthBar()+panel('Received / issued – '+monthLabel(m),table('consTx',[
+    {key:'date',label:'Date',type:'date'},{key:'itemId',label:'Item',type:'cons'},{key:'type',label:'Type',type:'select',options:['Received','Issued']},{key:'qty',label:'Qty',type:'number',r:1},
+    {key:'systemId',label:'Issued to system',type:'system',blank:'Shared'},{key:'areaId',label:'Area',type:'area',blank:'All'},
+    {label:'Value',r:1,calc:t=>money(consCostTx(t))},{key:'remarks',label:'Remarks'}],{rows}),'entries dated in this month');
+  return h;
+};
+
+PAGES.ledger=()=>{
+  const f=state.ui.ledgerSys||'';
+  const rows=state.ledger.filter(t=>!f||t.systemId===f).slice().sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  let h=`<p class="note">Enter every challan: material <b>Received</b> on site and <b>Dispatched</b> back to the vendor, in sqm (nos optional). <b>Damage claim</b> records a vendor charge in ${cur()} and does not change the balance.</p>`;
+  h+=`<div class="chips"><label>System</label><select onchange="setUI('ledgerSys',this.value)"><option value="">All</option>${rentalSystems().map(s=>`<option value="${s.id}" ${s.id===f?'selected':''}>${esc(s.name)}</option>`).join('')}</select></div>`;
+  h+=panel('Received / Dispatch ledger',table('ledger',[
+    {key:'date',label:'Date',type:'date'},{key:'systemId',label:'System',type:'system',filter:s=>s.ownership==='Rental'},{key:'areaId',label:'Area',type:'area'},
+    {key:'type',label:'Type',type:'select',options:LEDGER_TYPES},{key:'challan',label:'Challan no.'},{key:'item',label:'Item (optional)'},
+    {key:'sqm',label:'Sqm',type:'number',r:1},{key:'nos',label:'Nos',type:'number',r:1},{key:'amount',label:`Claim (${cur()})`,type:'number',r:1},{key:'remarks',label:'Remarks'}],{rows}));
+  const bal=rentalSystems().filter(s=>(!f||s.id===f)&&!isPcs(s.id));
+  const today=todayStr(), sumL=(sId,aId,type,k)=>state.ledger.filter(t=>t.systemId===sId&&(aId===null||t.areaId===aId)&&t.type===type&&t.date&&t.date<=today).reduce((a,t)=>a+num(t[k]),0);
+  const G={rs:0,ds:0,rn:0,dn:0}; const brows=[];
+  const itemNos=(sId,type)=>state.itemTx.filter(t=>t.systemId===sId&&t.type===type&&t.date&&t.date<=today).reduce((a,t)=>a+num(t.nos),0);
+  bal.forEach(s=>{ const S={rs:0,ds:0,rn:0,dn:0}; const areas=ledgerAreas(s.id); const useItems=state.ledger.filter(t=>t.systemId===s.id).every(t=>!num(t.nos)) && state.itemTx.some(t=>t.systemId===s.id);
+    const nosCell=v=>useItems?'<span class="muted">—</span>':fmtN(v);
+    areas.forEach(a=>{ const rs=sumL(s.id,a,'Received','sqm'), ds=sumL(s.id,a,'Dispatched','sqm'), rn=sumL(s.id,a,'Received','nos'), dn=sumL(s.id,a,'Dispatched','nos'); if(!rs&&!ds&&!rn&&!dn) return;
+      S.rs+=rs; S.ds+=ds; S.rn+=rn; S.dn+=dn;
+      brows.push(`<tr><td class="v">${esc(s.name)}</td><td class="v">${esc(areaName(a))}</td><td class="calc r">${fmtN(rs,2)}</td><td class="calc r">${fmtN(ds,2)}</td><td class="calc r"><b>${fmtN(rs-ds,2)}</b></td><td class="calc r">${nosCell(rn)}</td><td class="calc r">${nosCell(dn)}</td><td class="calc r"><b>${nosCell(rn-dn)}</b></td><td class="calc r">${rs?fmtN(ds/rs*100,1)+'%':'—'}</td></tr>`); });
+    if(useItems){ S.rn=itemNos(s.id,'Received'); S.dn=itemNos(s.id,'Dispatched'); }
+    if((areas.length>1||useItems) && (S.rs||S.ds)) brows.push(`<tr class="subt"><td class="v"><b>${esc(s.name)} total</b></td><td class="v"></td><td class="calc r"><b>${fmtN(S.rs,2)}</b></td><td class="calc r"><b>${fmtN(S.ds,2)}</b></td><td class="calc r"><b>${fmtN(S.rs-S.ds,2)}</b></td><td class="calc r"><b>${fmtN(S.rn)}</b></td><td class="calc r"><b>${fmtN(S.dn)}</b></td><td class="calc r"><b>${fmtN(S.rn-S.dn)}</b></td><td class="calc r"><b>${S.rs?fmtN(S.ds/S.rs*100,1)+'%':'—'}</b></td></tr>`);
+    G.rs+=S.rs; G.ds+=S.ds; G.rn+=S.rn; G.dn+=S.dn; });
+  h+=panel('Balance on site today – received, dispatched and on site',`<div class="kpis">${kpi('Total received',fmtN(G.rs,2)+' sqm',fmtN(G.rn)+' nos')}${kpi('Total dispatched',fmtN(G.ds,2)+' sqm',fmtN(G.dn)+' nos')}${kpi('On site now',fmtN(G.rs-G.ds,2)+' sqm',fmtN(G.rn-G.dn)+' nos','warn')}${kpi('Returned so far',G.rs?fmtN(G.ds/G.rs*100,1)+'%':'—','of received sqm')}</div>`+simpleTable([['System'],['Area'],['Received sqm',1],['Dispatched sqm',1],['On site sqm',1],['Received nos',1],['Dispatched nos',1],['On site nos',1],['Returned %',1]],brows,`<tr><td>Grand total</td><td></td><td class="r">${fmtN(G.rs,2)}</td><td class="r">${fmtN(G.ds,2)}</td><td class="r">${fmtN(G.rs-G.ds,2)}</td><td class="r">${fmtN(G.rn)}</td><td class="r">${fmtN(G.dn)}</td><td class="r">${fmtN(G.rn-G.dn)}</td><td class="r">${G.rs?fmtN(G.ds/G.rs*100,1)+'%':'—'}</td></tr>`)+`<p class="note" style="margin-top:6px">Counted from all challans dated up to today${f?' for the selected system':''}. Piece-rated vendors (scaffolding) are on Item-wise Material. Where pieces are tracked item by item (Aluminium), the nos total comes from Item-wise Material and is shown on the vendor's total row.</p>`);
+  return h;
+};
+
+function curItemSys(){ const withItems=state.systems.filter(s=>state.items.some(i=>i.systemId===s.id)); const c=state.ui.itemSys; if(c && state.systems.some(s=>s.id===c)) return c; return (withItems[0]||rentalSystems()[0]||state.systems[0]||{}).id||''; }
+function itemStatus(it,t){
+  const boq=num(it.boq);
+  if(t.d>t.r+1e-9) return ['bd','Returned more than received'];
+  if(t.r>0 && t.d>=t.r-1e-9) return ['ok','Fully returned'];
+  if(boq>0 && t.r<boq-1e-9) return [t.d?'wn':'na', t.r? (t.d?'Part returned · pending receipt':'Pending receipt') : 'Not received'];
+  if(t.d>0) return ['wn','Part returned'];
+  return ['na','Not returned yet'];
+}
+PAGES.items=()=>{
+  const sId=curItemSys(), s=sysObj(sId), pcs=isPcs(sId), f=state.ui.itemFilter||'all', mf=state.ui.itemTxMonth||'';
+  const its=state.items.filter(i=>i.systemId===sId);
+  const T=new Map(its.map(i=>[i.id,itemTotals(i.id)]));
+  const tot=its.reduce((a,i)=>{ const t=T.get(i.id); a.r+=t.r; a.d+=t.d; a.sq+=Math.max(0,t.bal)*num(i.sqmPerNo); a.kg+=Math.max(0,t.bal)*num(i.kgPerNo); a.rs+=t.r*num(i.sqmPerNo); a.ds+=t.d*num(i.sqmPerNo); if(t.r>0&&t.d>=t.r) a.full++; return a; },{r:0,d:0,sq:0,kg:0,rs:0,ds:0,full:0});
+  let h=`<div class="chips"><label>System</label>${state.systems.filter(x=>x.ownership==='Rental'||state.items.some(i=>i.systemId===x.id)).map(x=>`<button class="btn sm ${x.id===sId?'p':''}" onclick="setUI('itemSys','${x.id}')">${esc(x.name)}</button>`).join('')}</div>`;
+  h+=`<div class="kpis">${kpi('Received',fmtN(tot.r)+' nos',tot.rs?fmtN(tot.rs,2)+' sqm':'')}${kpi('Returned',fmtN(tot.d)+' nos',tot.ds?fmtN(tot.ds,2)+' sqm':'')}${kpi('Still on site',fmtN(tot.r-tot.d)+' nos',tot.sq?fmtN(tot.sq,2)+' sqm':(tot.kg?fmtN(tot.kg/1000,2)+' MT':''),tot.r-tot.d>0?'warn':'good')}${kpi('Items fully returned',tot.full+' / '+its.length)}${pcs?kpi('Rent per day now',money(its.reduce((a,i)=>a+Math.max(0,itemBalOn(i.id,null,todayStr()))*num(i.ratePcDay),0)),'at today\'s balance'):''}</div>`;
+  const filt=i=>{ const st=itemStatus(i,T.get(i.id))[1]; return f==='all' || (f==='site'&&T.get(i.id).bal>0) || (f==='pending'&&/Pending|Not received/.test(st)) || (f==='returned'&&st==='Fully returned') || (f==='check'&&itemStatus(i,T.get(i.id))[0]==='bd'); };
+  h+=`<div class="chips"><label>Show</label>${[['all','All items'],['site','Still on site'],['pending','Pending receipt'],['returned','Fully returned'],['check','Errors']].map(([k,l])=>`<button class="btn sm ${f===k?'p':''}" onclick="setUI('itemFilter','${k}')">${l}</button>`).join('')}</div>`;
+  const cols=[{key:'code',label:'Code',w:90},{key:'item',label:'Item',w:250},{key:'sqmPerNo',label:'Sqm / no',type:'number',r:1},{key:'kgPerNo',label:'Kg / no',type:'number',r:1},{key:'boq',label:'BOQ (nos)',type:'number',r:1}];
+  if(pcs) cols.push({key:'ratePcDay',label:`Rate (${cur()}/pc/day)`,type:'number',r:1});
+  cols.push({label:'Received',r:1,calc:i=>fmtN(T.get(i.id).r)},{label:'Returned',r:1,calc:i=>fmtN(T.get(i.id).d)},
+    {label:'On site',r:1,calc:i=>{const b=T.get(i.id).bal; return `<b class="${b<0?'neg':''}">${fmtN(b)}</b>`;}},
+    {label:'Sqm on site',r:1,calc:i=>num(i.sqmPerNo)?fmtN(Math.max(0,T.get(i.id).bal)*num(i.sqmPerNo),2):'—'},
+    {label:'Last received',calc:i=>esc(T.get(i.id).lastR||'—')},{label:'Last returned',calc:i=>esc(T.get(i.id).lastD||'—')},
+    {label:'Status',calc:i=>{const [c,t]=itemStatus(i,T.get(i.id)); return PILL(c,t);}});
+  h+=panel(`${esc(s?s.name:'')} – item balance`,table('items',cols,{rows:its.filter(filt)}),`${its.filter(filt).length} of ${its.length} items`);
+  // document-wise summary
+  const docs=new Map();
+  state.itemTx.filter(t=>t.systemId===sId).forEach(t=>{ const k=t.date+'|'+t.type+'|'+(t.doc||''); const it=itemObj(t.itemId)||{}; if(!docs.has(k)) docs.set(k,{date:t.date,type:t.type,doc:t.doc,lines:0,nos:0,sqm:0,kg:0,areas:new Set()}); const g=docs.get(k); g.lines++; g.nos+=num(t.nos); g.sqm+=num(t.nos)*num(it.sqmPerNo); g.kg+=num(t.nos)*num(it.kgPerNo); if(t.areaId) g.areas.add(areaName(t.areaId)); });
+  let cum=0;
+  const drows=[...docs.values()].sort((a,b)=>a.date.localeCompare(b.date)||a.type.localeCompare(b.type)).map(g=>{ cum+= g.type==='Received'? g.nos : -g.nos; return `<tr><td class="v">${esc(g.date)}</td><td class="v">${PILL(g.type==='Received'?'ok':'wn',g.type==='Received'?'Received':'Returned')}</td><td class="v">${esc(g.doc||'—')}</td><td class="v">${esc([...g.areas].join(', ')||'—')}</td><td class="calc r">${g.lines}</td><td class="calc r">${fmtN(g.nos)}</td><td class="calc r">${g.sqm?fmtN(g.sqm,2):'—'}</td><td class="calc r">${g.kg?fmtN(g.kg/1000,2):'—'}</td><td class="calc r">${fmtN(cum)}</td></tr>`; });
+  h+=panel('Date-wise received & returned (by challan / document)',simpleTable([['Date'],['Type'],['Document'],['Area'],['Item lines',1],['Nos',1],['Sqm',1],['MT',1],['Balance on site (nos)',1]],drows));
+  // movement entry
+  const months=[...new Set(state.itemTx.filter(t=>t.systemId===sId).map(t=>monthOf(t.date)))].filter(Boolean).sort();
+  const rows=state.itemTx.filter(t=>t.systemId===sId && (!mf||monthOf(t.date)===mf)).sort((a,b)=>(a.date||'').localeCompare(b.date||'')||(a.doc||'').localeCompare(b.doc||''));
+  h+=`<div class="chips"><label>Movements for</label><select onchange="setUI('itemTxMonth',this.value)"><option value="">All months</option>${months.map(m=>`<option value="${m}" ${m===mf?'selected':''}>${monthLabel(m)}</option>`).join('')}</select></div>`;
+  h+=panel('Item movements – enter each challan line',table('itemTx',[{key:'date',label:'Date',type:'date'},{key:'doc',label:'Challan / document',w:140},{key:'itemId',label:'Item',type:'itemsel',w:260},{key:'type',label:'Type',type:'select',options:['Received','Dispatched']},{key:'nos',label:'Nos',type:'number',r:1},{key:'areaId',label:'Area',type:'area'},
+    {label:'Sqm',r:1,calc:t=>{const it=itemObj(t.itemId); return it&&num(it.sqmPerNo)?fmtN(num(t.nos)*num(it.sqmPerNo),2):'—';}},{key:'remarks',label:'Remarks'}],{rows,totals:['nos']}),rows.length+' lines');
+  if(!pcs && s && s.ownership==='Rental') h+=`<p class="note">For sqm-rated systems the rent still comes from the sqm Received / Dispatch ledger. This page tracks pieces item by item, so you can see exactly what is still to go back.</p>`;
+  return h;
+};
+
+PAGES.rent=()=>{
+  const m=state.ui.month||thisMonth();
+  let h=monthBar()+`<p class="note">Sqm systems: rent = sum of daily sqm on site × rate ÷ ${daysInMonth(m)} (actual days in ${monthLabel(m)}). Piece systems: rent = sum of daily pieces on site × rate per piece per day. Whether the dispatch day is charged is set per system on Systems & Areas.</p>`;
+  rentalSystems().forEach(s=>{
+    const as=ledgerAreas(s.id); if(!as.length) return;
+    if(isPcs(s.id)){
+      const its=state.items.filter(i=>i.systemId===s.id); let tr=0,tp=0;
+      const rows=its.map(it=>{ let pd=0,rr=0; as.forEach(a=>{ const x=monthRent(s.id,a,m).byItem[it.id]; if(x){ pd+=x.pd; rr+=x.rent; } }); tr+=rr; tp+=pd; const bal=itemBalOn(it.id,null,todayStr());
+        return (pd||bal)? `<tr><td class="v">${esc(it.item)}</td><td class="calc r">${fmtN(it.ratePcDay,2)}</td><td class="calc r">${fmtN(bal)}</td><td class="calc r">${fmtN(pd)}</td><td class="calc r">${money(rr)}</td></tr>` : ''; }).filter(Boolean);
+      h+=panel(esc(s.name)+' – '+monthLabel(m)+' (per piece per day)',simpleTable([['Item'],[`Rate (${cur()}/pc/day)`,1],['On site today (nos)',1],['Piece-days',1],['Rent',1]],rows,`<tr><td>Total</td><td></td><td></td><td class="r">${fmtN(tp)}</td><td class="r">${money(tr)}</td></tr>`)+`<p class="note" style="margin-top:6px">Dispatch day ${dispCharged(s.id)?'is':'is not'} charged for this vendor.</p>`, systemMonthRent(s.id,m).partial?'month to date':'');
+      return;
+    }
+    let tot={sd:0,rent:0,ex:0};
+    const body=as.map(a=>{ const x=monthRent(s.id,a,m); tot.sd+=x.sqmDays; tot.rent+=x.rent; tot.ex+=x.excess;
+      return `<tr><td class="v">${esc(areaName(a))}</td><td class="calc r">${fmtN(x.rate)}</td><td class="calc r">${x.req?fmtN(x.req,2):'—'}</td><td class="calc r">${fmtN(x.peak,2)}</td><td class="calc r">${x.daysCounted}/${x.dim}</td><td class="calc r">${fmtN(x.sqmDays,1)}</td><td class="calc r">${money(x.rent)}</td><td class="calc r ${x.excess>0?'neg':''}">${money(x.excess)}</td></tr>`; });
+    const dmg=damageClaims(s.id,m);
+    h+=panel(esc(s.name)+' – '+monthLabel(m),simpleTable([['Area'],['Rate',1],['Required sqm',1],['Peak sqm',1],['Days',1],['Sqm-days',1],['Rent',1],['Excess rent',1]],body,`<tr><td>Total</td><td></td><td></td><td></td><td></td><td class="r">${fmtN(tot.sd,1)}</td><td class="r">${money(tot.rent)}</td><td class="r">${money(tot.ex)}</td></tr>`)+(dmg?`<p class="note" style="margin-top:6px">Damage claims this month: <b>${money(dmg)}</b></p>`:''), systemMonthRent(s.id,m).partial?'month to date':'');
+  });
+  const months=allMonthsUpTo(thisMonth());
+  h+=panel('Month-wise rent summary',simpleTable([['Month'],...rentalSystems().map(s=>[esc(s.name),1]),['Total',1],['Of which excess',1]],months.map(mm=>{ let t=0,e=0; const cells=rentalSystems().map(s=>{const r=systemMonthRent(s.id,mm); t+=r.rent; e+=r.excess; return `<td class="calc r">${money(r.rent)}</td>`;}).join(''); return `<tr><td class="v">${monthLabel(mm)}</td>${cells}<td class="calc r"><b>${money(t)}</b></td><td class="calc r ${e>0?'neg':''}">${money(e)}</td></tr>`; }))+`<div style="margin-top:6px"><button class="btn sm" onclick="exportRentCSV()">Export summary (CSV)</button></div>`);
+  return h;
+};
+
+PAGES.invoices=()=>{
+  let h=`<p class="note">Enter each vendor bill. It is compared with the rent calculated from your ledger; only differences above <b>${money(state.meta.tolerance)}</b> are flagged. The dashboard uses this bill amount as the system's rent for that month.</p>`;
+  h+=panel('Vendor invoices',table('invoices',[
+    {key:'month',label:'Bill month',type:'month'},{key:'systemId',label:'System',type:'system',filter:s=>s.ownership==='Rental'},{key:'invoiceNo',label:'Invoice no.'},
+    {key:'amount',label:`Invoice rent (${cur()})`,type:'number',r:1},{label:'Our calculation',r:1,calc:i=>money(invoiceDiff(i).calc)},
+    {label:'Difference',r:1,calc:i=>{const d=invoiceDiff(i).diff; return `<span class="${d>0?'neg':d<0?'pos':''}">${d>0?'+':''}${money(d)}</span>`;}},
+    {label:'≈ Sqm',r:1,calc:i=>fmtN(invoiceDiff(i).sqm,1)},
+    {label:'Status',calc:i=>{const d=invoiceDiff(i); if(d.partial) return PILL('na','Month running'); return Math.abs(d.diff)>num(state.meta.tolerance)? PILL('bd',d.diff>0?'Over-billed':'Under-billed') : PILL('ok','OK');}},
+    {key:'remarks',label:'Remarks'}],{totals:['amount']}));
+  return h;
+};
+
+PAGES.owned=()=>{
+  let h=`<p class="note">Purchased material. Cost per use = (purchase + repair − scrap) ÷ expected uses. Uses are worked out automatically: executed sqm of that system ÷ sqm of owned material (items with unit "Sqm").</p>`;
+  h+=panel('Owned material register',table('owned',[
+    {key:'systemId',label:'System',type:'system',filter:s=>s.ownership==='Owned'},{key:'item',label:'Item'},{key:'unit',label:'Unit',type:'select',options:['Sqm','Nos','Rmt','Set']},
+    {key:'qty',label:'Qty',type:'number',r:1},{key:'totalCost',label:`Purchase cost (${cur()})`,type:'number',r:1},{key:'expectedReps',label:'Expected uses',type:'number',r:1},
+    {key:'repairCost',label:`Repair (${cur()})`,type:'number',r:1},{key:'scrapValue',label:`Scrap value (${cur()})`,type:'number',r:1},
+    {label:'Uses so far',r:1,calc:o=>fmtN(ownedCalc(o).used,1)},{label:'Cost per use',r:1,calc:o=>money(ownedCalc(o).perUse)},
+    {label:'Life left',calc:o=>{const l=ownedCalc(o).lifeLeft; return bar(l,l<=0.1?'b':'g');}},{label:'Book value',r:1,calc:o=>money(ownedCalc(o).book)}],{totals:['totalCost']}));
+  return h;
+};
+
+PAGES.rentbuy=()=>{
+  let h=`<p class="note">Enter the purchase cost per sqm for each rental system. Break-even = purchase cost ÷ monthly rent per sqm. If the material stays longer than the break-even, buying would likely have been cheaper (ignoring repairs, transport and resale).</p>`;
+  const months=allMonthsUpTo(thisMonth());
+  h+=panel('Rent vs buy',simpleTable([['System'],[`Buy cost (${cur()}/sqm)`,1],[`Avg rent (${cur()}/sqm/month)`,1],['Break-even (months)',1],['Months on site',1],['Rent paid to date',1],['Cost to buy peak qty',1],['Verdict']],
+    rentalSystems().map(s=>{
+      const ar=avgRate(s.id), bc=num(s.buyCostPerSqm), be=ar&&bc?bc/ar:0;
+      const onMonths=months.filter(m=>systemMonthRent(s.id,m).sqmDays>0).length;
+      const peakQty=ledgerAreas(s.id).reduce((a,ar2)=>a+Math.max(0,...months.map(m=>monthRent(s.id,ar2,m).peak)),0);
+      const paid=months.reduce((a,m)=>a+systemMonthRent(s.id,m).rent,0);
+      const v=!bc||!ar? PILL('na','Enter buy cost') : (onMonths>=be? PILL('wn','Buying would have been cheaper') : PILL('ok','Renting is cheaper so far'));
+      return `<tr><td class="v">${esc(s.name)}</td><td><input type="number" step="any" class="c r" value="${bc||''}" onchange="setField('systems','${s.id}','buyCostPerSqm',this.value,true)"></td><td class="calc r">${fmtN(ar)}</td><td class="calc r">${be?fmtN(be,1):'—'}</td><td class="calc r">${onMonths}</td><td class="calc r">${money(paid)}</td><td class="calc r">${bc?money(peakQty*bc):'—'}</td><td class="v">${v}</td></tr>`;})));
+  return h;
+};
+
+PAGES.data=()=>{
+  let h=panel('Backup',`<p class="note">All data is stored in <b>this browser on this device</b>. Clearing browser data or opening the file in another browser starts empty. Download a backup regularly and keep it on Drive or WhatsApp.</p><div class="acts"><button class="btn p" onclick="downloadBackup()">Download backup (.json)</button><button class="btn" onclick="document.getElementById('restoreFile').click()">Restore from backup</button></div>`)+panel('Vendor data from Excel trackers',`<p class="note">Reloads the vendor receipts, returns, items and rates exactly as in your Excel trackers (data up to Oct 2026). Use this if you reset, or to undo changes to those vendors. Your execution, scope, labour and consumables are not touched.</p>${typeof VENDOR_DATA==='undefined'?'<p class="note"><i>In the offline app your vendor data lives in your storage file.</i></p>':'<button class="btn" onclick="loadVendorData()">Load vendor data from trackers</button>'}<p class="note" style="margin-top:8px">Last backup: <b>${esc(state.meta.lastBackup||'never')}</b></p>`);
+  h+=panel('Download everything as Excel',`<p class="note">One .xlsx file with a sheet for each part: execution, scope, labour, challans, vendor items, bills, store stock, contractor sheet, PR &amp; PO, rent month-wise. Keep a copy every week on Google Drive or email.</p><button class="btn p" onclick="exportExcel()">⬇ Download Excel (all data)</button>`);
+  h+=panel('Export single tables (CSV)',`<div class="acts"><button class="btn" onclick="exportCSV('storeItems')">Store stock</button><button class="btn" onclick="exportCSV('storeTx')">Store movements</button><button class="btn" onclick="exportCSV('contractorSheet')">Contractor sheet</button><button class="btn" onclick="exportCSV('prpo')">PR &amp; PO</button><button class="btn" onclick="exportCostCSV()">Dashboard cost table</button><button class="btn" onclick="exportCSV('scope')">Scope & schedule</button><button class="btn" onclick="exportCSV('execution')">Execution</button><button class="btn" onclick="exportCSV('labour')">Labour</button><button class="btn" onclick="exportCSV('consTx')">Consumables</button><button class="btn" onclick="exportCSV('ledger')">Received / Dispatch</button><button class="btn" onclick="exportCSV('itemTx')">Item movements</button><button class="btn" onclick="exportCSV('items')">Item balance</button><button class="btn" onclick="exportRentCSV()">Month-wise rent</button><button class="btn" onclick="exportCSV('invoices')">Invoices</button><button class="btn" onclick="exportCSV('owned')">Owned material</button></div>`);
+  h+=panel('Settings',`<div class="frm"><label>Idle after no work for (days)<input type="number" value="${num(state.meta.idleDays)||7}" onchange="setMeta('idleDays',this.value,true)"></label><label>Invoice tolerance (${cur()})<input type="number" value="${num(state.meta.tolerance)}" onchange="setMeta('tolerance',this.value,true)"></label><label>Currency symbol<input value="${esc(cur())}" onchange="setMeta('currency',this.value)"></label></div>`);
+  h+=panel('Reset',`<p class="note">Removes every entry on this device. Download a backup first.</p><button class="btn d" onclick="resetAll()">Reset all data</button>`);
+  return h;
+};
+
+
+/* practice data not included in this version */
+const DEMO_PLAN=[], DEMO_TARGETS={}; const hasDemo=()=>false;
+function loadDemoData(){ toast('Practice data is not included in this version.'); }
+function removeDemoData(){
+  askConfirm('Remove all PRACTICE data (scope, execution, labour, targets, consumable and store entries, practice contractors and PRs)? Your vendor data and anything you typed yourself stays.',()=>{
+  ['scope','execution','labour','targets','consTx','storeTx','contractors','prpo'].forEach(k=>state[k]=(state[k]||[]).filter(r=>{ if(r.demo){ tomb(r.id); return false; } return true; }));
+  const set=state.meta.demoSet||{};
+  if(set.carpenterWage) state.meta.carpenterWage=0; if(set.helperWage) state.meta.helperWage=0;
+  Object.keys(set).filter(k=>k.startsWith('std|')).forEach(k=>{ const s=sysObj(k.slice(4)); if(s) s.stdSqmPerManday=0; });
+  const oil=state.consItems.find(c=>norm(c.item)==='shuttering oil'), cone=state.consItems.find(c=>norm(c.item)==='tie cone');
+  const ply=state.storeItems.find(i=>norm(i.item)==='plywood 18 mm'), run=state.storeItems.find(i=>norm(i.item)==='runner 75x75');
+  if(ply&&set.plyRate) ply.rate=0; if(ply&&set.plyMin) ply.minStock=0; if(run&&set.runRate) run.rate=0; if(run&&set.runMin) run.minStock=0;
+  if(oil&&set.oilCost) oil.unitCost=0; if(oil&&set.oilMin) oil.minStock=0; if(cone&&set.coneCost) cone.unitCost=0;
+  state.meta.demoSet={}; save(); toast('Practice data removed.');
+  },'Remove practice data');
+}
+
+/* ================= HOW TO USE ================= */
+const step=(n,title,en,bn,link)=>`<div class="hstep"><div class="hn">${n}</div><div><div class="ht">${title}${link?` <a href="#" onclick="go('${link}');return false" class="hlink">Open →</a>`:''}</div><div class="hen">${en}</div><div class="hbn">${bn}</div></div></div>`;
+PAGES.help=()=>{
+  let h=`<div class="banner"><div><b>Practice first.</b> Load practice data to see every dashboard section working, then remove it before entering real site data.<div class="hbn">আগে Practice data load করে দেখুন সব কিছু কীভাবে কাজ করে। আসল site data দেওয়ার আগে Practice data remove করে দেবেন।</div></div><div class="acts">${hasDemo()?`<button class="btn d" onclick="removeDemoData()">Remove practice data</button>`:`<button class="btn p" onclick="loadDemoData()">Load practice data</button>`}</div></div>`;
+  h+=panel('A. One-time setup (do once per project)',
+    step(1,'Systems & Areas','Check each formwork system: Rental or Owned, rent basis (sqm per month or per piece per day) and whether the dispatch day is charged. Add your areas. Enter standard sqm per manday for productivity.','প্রতিটা system Rental না Owned, rent কীভাবে হয় (sqm per month না per piece per day), আর dispatch-এর দিন charge হয় কিনা ঠিক করুন। Area যোগ করুন। Productivity-র জন্য standard sqm per manday দিন।','setup')+
+    step(2,'Rental Rates','One row per system + area: rate per sqm per month and the required sqm. Anything on site above required sqm is shown as excess / idle.','প্রতিটা system + area-র জন্য rate (₹/sqm/month) আর required sqm দিন। Required-এর বেশি material site-এ থাকলে সেটা excess/idle দেখাবে।','rates')+
+    step(3,'Item-wise Material – rates & sqm/no','For piece-rated vendors (scaffolding) enter the rate per piece per day. For panels enter sqm per no., so pieces convert to sqm.','Scaffolding-এর মতো per piece rent হলে প্রতিটা item-এর rate/pc/day দিন। Panel-এর ক্ষেত্রে sqm per no. দিন, তাহলে nos থেকে sqm হিসাব হবে।','items')+
+    step(4,'Scope & Schedule','List every element: system › area › element (e.g. Aluminium › Pile Cap › PC-01) with scope sqm and planned start / finish. This drives scope %, delay and element-wise cost.','প্রতিটা element-এর scope sqm আর planned start/finish দিন (যেমন Aluminium › Pile Cap › PC-01)। এখান থেকেই scope %, delay আর element-wise cost হিসাব হয়।','scope')+
+    step(5,'Wages & consumables','Enter carpenter and helper daily wage (Labour page) and consumable rates with minimum stock (Consumables page).','Labour page-এ carpenter ও helper-এর daily wage দিন। Consumables page-এ প্রতিটা item-এর rate আর minimum stock দিন।','labour'));
+  h+=panel('B. Every day (10 minutes)',
+    step(1,'Execution','Each shuttering / pour: date, system, area, element (pick from the list) and sqm. If the Scope column says "no scope", the element name does not match.','প্রতিটা shuttering/pour-এর date, system, area, element (list থেকে বাছুন) আর sqm দিন। "no scope" দেখালে element-এর নাম Scope-এর সাথে মিলছে না।','execution')+
+    step(2,'Labour','One row per gang per day: system, area, element, carpenters, helpers, hours.','প্রতিদিন প্রতিটা gang-এর জন্য একটা row: system, area, element, carpenter, helper, hours।','labour')+
+    step(3,'Consumables','Record what the store received and what was issued, and to which system / area.','Store-এ কী এল আর কোন system/area-তে কত issue হল, লিখুন।','consumables')+
+    step(4,'Material challans','Rent (sqm vendors): add each challan on Received / Dispatch in sqm by area. Pieces: add the same challan line by line on Item-wise Material, so you always know what is still to return.','Sqm-rate vendor-এর rent-এর জন্য প্রতিটা challan Received / Dispatch-এ area-wise sqm-এ দিন। কোন item কতগুলো ফেরত দেওয়া বাকি জানতে একই challan Item-wise Material-এ item ধরে দিন।','ledger'));
+  h+=panel('C. Every month',
+    step(1,'Invoice Check','Enter each vendor bill (excl. GST). Differences above the tolerance are flagged with the sqm involved. The dashboard then uses the bill as that month\'s rent.','প্রতিটা vendor bill (GST ছাড়া) দিন। Tolerance-এর বেশি পার্থক্য হলে কত sqm-এর জন্য, সেটা দেখাবে। Dashboard তখন ওই মাসের rent হিসেবে bill-এর amount নেবে।','invoices')+
+    step(2,'Targets','Set next month\'s target sqm per area (Execution & Targets).','পরের মাসের area-wise target sqm দিন (Execution & Targets)।','execution')+
+    step(3,'Review the Dashboard','Switch Period to "Project to date" and Break-up to System + Element. Act on idle material and delayed items.','Period "Project to date" আর Break-up "System + Element" করে দেখুন। Idle material আর delayed item-এর উপর action নিন।','dashboard')+
+    step(4,'Backup & export','Download a backup (.json) and keep it on Drive / WhatsApp. Export CSV for Excel or HO reports.','Backup (.json) download করে Drive/WhatsApp-এ রাখুন। Excel বা HO report-এর জন্য CSV export করুন।','data'));
+  h+=panel('D. Reading the Dashboard',
+    step(1,'System cost per sqm','All costs (rent or bill, labour, consumables, owned material) ÷ executed sqm. "No output" = cost paid in a period with nothing executed.','সব খরচ (rent/bill, labour, consumables, owned material) ÷ executed sqm। "No output" মানে খরচ হয়েছে কিন্তু কাজ হয়নি।')+
+    step(2,'Total scope','Scope, executed, balance and % done for each system and area (or element).','প্রতিটা system আর area (বা element)-এর scope, executed, balance আর % done।')+
+    step(3,'Repetition','Executed sqm ÷ average material on site, for the month and to date. Low repetition = too much material for the work done.','Executed sqm ÷ site-এ গড় material। Repetition কম মানে কাজের তুলনায় material বেশি।')+
+    step(4,'Labour productivity','Sqm per manday against your standard. Below 80% shows red.','Standard-এর তুলনায় sqm per manday। 80%-এর নিচে লাল দেখায়।')+
+    step(5,'Idle material','Material above requirement, or with no work for 7+ days, or in a finished area. Return it to stop rent.','Required-এর বেশি, ৭ দিনের বেশি কাজ নেই, বা area শেষ, এমন material। ফেরত দিলে rent বন্ধ হবে।')+
+    step(6,'Delayed work','Elements late against planned dates, and areas behind the monthly target.','Planned date-এর চেয়ে পিছিয়ে থাকা element, আর monthly target-এর চেয়ে পিছিয়ে থাকা area।'));
+  h+=panel('Important',`<ul class="hlist"><li>Data is saved only in <b>this browser on this device</b>. Always use the same browser and download a backup every week.<div class="hbn">Data শুধু এই device-এর এই browser-এ save হয়। সবসময় একই browser ব্যবহার করুন আর প্রতি সপ্তাহে backup নিন।</div></li><li>To move to another phone or PC: Backup on the old one → open the file on the new one → Restore from backup.<div class="hbn">অন্য phone/PC-তে নিতে: পুরোনোটায় Backup → নতুনটায় file খুলে Restore from backup।</div></li><li>Yellow cells are for typing. Grey cells are calculated.<div class="hbn">হলুদ cell-এ লিখবেন, ধূসর cell নিজে থেকে হিসাব হয়।</div></li></ul>`);
+  return h;
+};
+
+
+/* =====================================================================
+   V4 ADDITIONS — Store stock, PR & PO, Contractor sheet, Meeting screen,
+   Paste from Excel, online sync, Excel download.   
+   ===================================================================== */
+
+/* ---------- STORE STOCK ---------- */
+const STORE_TYPES=['Received (purchase)','Issued to contractor','Returned good','Returned damaged','Missing','Repaired','Scrapped'];
+const storeObj = id => state.storeItems.find(i=>i.id===id);
+const conName = id => (state.contractors.find(c=>c.id===id)||{}).name || '—';
+// flow of one item: store, with contractors, damaged, missing, scrapped
+function storeBal(itemId, conId){
+  const b={received:0,issued:0,retGood:0,retDam:0,missing:0,repaired:0,scrapped:0};
+  state.storeTx.forEach(t=>{ if(t.itemId!==itemId || (conId && t.contractorId!==conId)) return; const q=num(t.qty);
+    switch(t.type){ case 'Received (purchase)': b.received+=q; break; case 'Issued to contractor': b.issued+=q; break; case 'Returned good': b.retGood+=q; break;
+      case 'Returned damaged': b.retDam+=q; break; case 'Missing': b.missing+=q; break; case 'Repaired': b.repaired+=q; break; case 'Scrapped': b.scrapped+=q; break; } });
+  const it=storeObj(itemId)||{}, cons=it.kind==='Consumable';
+  b.withCon = cons? 0 : b.issued-b.retGood-b.retDam-b.missing;
+  b.used = cons? b.issued-b.retGood : 0;
+  b.inStore = b.received-b.issued+b.retGood+b.repaired;
+  b.damaged = b.retDam-b.repaired-b.scrapped;
+  b.total = b.inStore+b.withCon+b.damaged;
+  return b;
+}
+const openPOQty = item => state.prpo.filter(p=>!p.receivedDate && norm(p.item)===norm(item)).reduce((a,p)=>a+num(p.qty),0);
+function storeStatus(it,b){
+  if(b.inStore<-1e-9||b.withCon<-1e-9||b.damaged<-1e-9) return ['bd','Check entries'];
+  const min=num(it.minStock), po=openPOQty(it.item);
+  if(min>0 && b.inStore+po<min) return ['bd',`Raise PR ${fmtN(min*2-b.inStore-po)} ${esc(it.unit)}`];
+  if(min>0 && b.inStore<min) return ['wn','Low – PO pending'];
+  return ['ok','OK'];
+}
+PAGES.store=()=>{
+  const its=state.storeItems, B=new Map(its.map(i=>[i.id,storeBal(i.id)]));
+  const val=f=>its.reduce((a,i)=>a+Math.max(0,B.get(i.id)[f])*num(i.rate),0);
+  const reorder=its.filter(i=>storeStatus(i,B.get(i.id))[1].startsWith('Raise PR'));
+  let h=`<p class="note">Your own formwork material (plywood, runners, props…) and store consumables. <b>Reusable</b> items are tracked out to contractors and back. <b>Consumable</b> items (nails, oil, binding wire) are used up when issued.</p>`;
+  h+=`<div class="kpis">${kpi('In store',money(val('inStore')),its.length+' items')}${kpi('With contractors',money(val('withCon')),'reusable material out')}${kpi('Damaged (not repaired)',money(val('damaged')),'',val('damaged')?'warn':'')}${kpi('Missing',money(its.reduce((a,i)=>a+B.get(i.id).missing*num(i.rate),0)),'estimated value',its.some(i=>B.get(i.id).missing)?'bad':'good')}${kpi('Items to order',reorder.length,reorder.length?'raise PR':'all above minimum',reorder.length?'bad':'good')}</div>`;
+  h+=panel('Stock by item',table('storeItems',[
+    {key:'item',label:'Item',w:170},{key:'kind',label:'Type',type:'select',options:['Reusable','Consumable'],w:110},{key:'unit',label:'Unit',type:'select',options:['Sheets','Sqm','Rmt','Nos','Kg','Ltr','Set','Box'],w:90},
+    {key:'rate',label:`Rate (${cur()}/unit)`,type:'number',r:1},{key:'minStock',label:'Min. in store',type:'number',r:1},
+    {label:'In store',r:1,calc:i=>`<b>${fmtN(B.get(i.id).inStore)}</b>`},
+    {label:'With contractors',r:1,calc:i=>i.kind==='Consumable'?'—':fmtN(B.get(i.id).withCon)},
+    {label:'Used',r:1,calc:i=>i.kind==='Consumable'?fmtN(B.get(i.id).used):'—'},
+    {label:'Damaged',r:1,calc:i=>fmtN(B.get(i.id).damaged)},{label:'Missing',r:1,calc:i=>fmtN(B.get(i.id).missing)},{label:'Scrapped',r:1,calc:i=>fmtN(B.get(i.id).scrapped)},
+    {label:'Open PO',r:1,calc:i=>fmtN(openPOQty(i.item))},
+    {label:'Status',calc:i=>{const [c,t]=storeStatus(i,B.get(i.id)); return PILL(c,t);}}]));
+  const m=state.ui.month||thisMonth();
+  const rows=state.storeTx.filter(t=>!state.ui.storeAll? monthOf(t.date)===m : true).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  h+=monthBar(`<span style="width:10px"></span><label class="ck"><input type="checkbox" ${state.ui.storeAll?'checked':''} onchange="setUI('storeAll',this.checked)"> Show all months</label>`);
+  h+=panel('Store movements'+(state.ui.storeAll?'':' – '+monthLabel(m)),table('storeTx',[
+    {key:'date',label:'Date',type:'date'},{key:'type',label:'Movement',type:'select',options:STORE_TYPES,w:160},{key:'itemId',label:'Item',type:'storeitem',w:170},
+    {key:'qty',label:'Qty',type:'number',r:1},{key:'contractorId',label:'Contractor',type:'contractor',w:150},{key:'areaId',label:'Area',type:'area'},
+    {key:'doc',label:'Challan / GRN / slip'},{key:'remarks',label:'Remarks'}],{rows,totals:['qty']}),rows.length+' entries');
+  h+=`<div class="grid2">`+panel('Contractors',table('contractors',[{key:'name',label:'Contractor name',w:180},{key:'phone',label:'Phone'}]))+
+     panel('How movements work',`<ul class="hlist"><li><b>Received (purchase)</b> – into the store.</li><li><b>Issued to contractor</b> – out of the store to a contractor (for consumables this means used).</li><li><b>Returned good</b> – back into the store.</li><li><b>Returned damaged</b> – back, but goes to the damaged pile.</li><li><b>Missing</b> – the contractor cannot return it.</li><li><b>Repaired</b> – damaged item fixed, back into the store.</li><li><b>Scrapped</b> – damaged item written off.</li></ul>`)+`</div>`;
+  return h;
+};
+
+/* ---------- PR & PO ---------- */
+function prStatus(p){
+  const today=todayStr(), late=p.requiredBy && p.requiredBy<today;
+  if(p.receivedDate) return ['ok','Received'];
+  if(p.poDate) return [late?'bd':'wn', late?'PO – late':'PO placed'];
+  if(p.prDate) return [late?'bd':'na', late?'PR – late':'PR raised'];
+  return ['na','Draft'];
+}
+PAGES.prpo=()=>{
+  const f=state.ui.prFilter||'Open';
+  const open=state.prpo.filter(p=>!p.receivedDate), late=open.filter(p=>prStatus(p)[0]==='bd');
+  const rows=state.prpo.filter(p=>f==='All'||(f==='Open'&&!p.receivedDate)||(f==='Late'&&prStatus(p)[0]==='bd')||(f==='Received'&&p.receivedDate)).sort((a,b)=>(a.prDate||'').localeCompare(b.prDate||''));
+  const sugg=state.storeItems.filter(i=>storeStatus(i,storeBal(i.id))[1].startsWith('Raise PR'));
+  const csugg=state.consItems.filter(c=>num(c.minStock)&&consStock(c.id)+openPOQty(c.item)<num(c.minStock));
+  let h=`<div class="kpis">${kpi('PR waiting for PO',open.filter(p=>!p.poDate).length)}${kpi('PO waiting for delivery',open.filter(p=>p.poDate).length)}${kpi('Late',late.length,'past required date',late.length?'bad':'good')}${kpi('Open value',money(open.reduce((a,p)=>a+num(p.value),0)))}</div>`;
+  if(sugg.length||csugg.length) h+=panel('Suggested – stock below minimum',simpleTable([['Item'],['In store',1],['Minimum',1],['Open PO',1],['Suggested qty',1],['']],
+    sugg.map(i=>{const b=storeBal(i.id), q=num(i.minStock)*2-b.inStore-openPOQty(i.item); return `<tr><td class="v">${esc(i.item)}</td><td class="calc r">${fmtN(b.inStore)} ${esc(i.unit)}</td><td class="calc r">${fmtN(i.minStock)}</td><td class="calc r">${fmtN(openPOQty(i.item))}</td><td class="calc r"><b>${fmtN(q)}</b></td><td class="v"><button class="btn sm p" onclick="raisePR('${esc(i.item).replace(/'/g,"\\'")}',${q},'${esc(i.unit)}',${num(i.rate)},'Material')">Raise PR</button></td></tr>`;})
+    .concat(csugg.map(c=>{const s=consStock(c.id), q=num(c.minStock)*2-s-openPOQty(c.item); return `<tr><td class="v">${esc(c.item)}</td><td class="calc r">${fmtN(s)} ${esc(c.unit)}</td><td class="calc r">${fmtN(c.minStock)}</td><td class="calc r">${fmtN(openPOQty(c.item))}</td><td class="calc r"><b>${fmtN(q)}</b></td><td class="v"><button class="btn sm p" onclick="raisePR('${esc(c.item).replace(/'/g,"\\'")}',${q},'${esc(c.unit)}',${num(c.unitCost)},'Consumable')">Raise PR</button></td></tr>`;}))));
+  h+=`<div class="chips"><label>Show</label>${['Open','Late','Received','All'].map(x=>`<button class="btn sm ${x===f?'p':''}" onclick="setUI('prFilter','${x}')">${x}</button>`).join('')}</div>`;
+  h+=panel('Purchase requests & orders',table('prpo',[{key:'category',label:'Category',type:'select',options:['Material','Consumable','Machinery','Service','Other']},{key:'item',label:'Item',w:160},{key:'qty',label:'Qty',type:'number',r:1},{key:'unit',label:'Unit'},{key:'value',label:`Value (${cur()})`,type:'number',r:1},{key:'vendor',label:'Vendor'},{key:'prNo',label:'PR no.'},{key:'prDate',label:'PR date',type:'date'},{key:'poNo',label:'PO no.'},{key:'poDate',label:'PO date',type:'date'},{key:'requiredBy',label:'Required by',type:'date'},{key:'receivedDate',label:'Received on',type:'date'},
+    {label:'Status',calc:p=>{const [c,t]=prStatus(p); return PILL(c,t);}},{label:'Days open',r:1,calc:p=>p.prDate?fmtN(dayDiff(p.prDate,p.receivedDate||todayStr())):'—'},{key:'remarks',label:'Remarks'}],{rows,totals:['value']}),'showing: '+f);
+  h+=`<p class="note">When material arrives, enter <b>Received on</b> here and add a <b>Received (purchase)</b> movement on Store Stock so the stock goes up.</p>`;
+  return h;
+};
+function raisePR(item,qty,unit,rate,cat){ state.prpo.push(Object.assign({id:uid(),_u:nowMs()},DEFAULTS.prpo(),{item,qty:Math.max(0,Math.round(qty)),unit,value:Math.round(Math.max(0,qty)*rate),category:cat})); state.ui.prFilter='Open'; save(); toast('PR row added – fill PR no. and required date.'); }
+
+/* ---------- CONTRACTOR SHEET (private) ---------- */
+PAGES.contractors=()=>{
+  const reus=state.storeItems.filter(i=>i.kind!=='Consumable');
+  let h=`<div class="banner">${PILL('na','PRIVATE')} <span>For your record only. This page is never shown on the Meeting Screen. Estimated cost = (damaged + missing) × item rate. Nothing is charged automatically.</span></div>`;
+  const rowsAll=[]; let grand=0;
+  state.contractors.forEach(c=>{
+    let ctot=0; const lines=[];
+    reus.forEach(i=>{ const b=storeBal(i.id,c.id); if(!b.issued&&!b.retGood&&!b.retDam&&!b.missing) return; const est=(b.retDam+b.missing)*num(i.rate); ctot+=est;
+      lines.push(`<tr><td class="v">${esc(i.item)}</td><td class="calc r">${fmtN(b.issued)}</td><td class="calc r">${fmtN(b.retGood)}</td><td class="calc r ${b.retDam?'neg':''}">${fmtN(b.retDam)}</td><td class="calc r ${b.missing?'neg':''}">${fmtN(b.missing)}</td><td class="calc r"><b>${fmtN(b.withCon)}</b></td><td class="calc r">${b.issued?fmtN((b.retDam+b.missing)/b.issued*100,1)+'%':'—'}</td><td class="calc r">${money(est)}</td></tr>`); });
+    grand+=ctot;
+    rowsAll.push(panel(esc(c.name),simpleTable([['Item'],['Taken',1],['Returned good',1],['Returned damaged',1],['Missing',1],['Still holding',1],['Damage + missing %',1],['Est. cost',1]],lines,lines.length?`<tr><td>Total</td><td></td><td></td><td></td><td></td><td></td><td></td><td class="r">${money(ctot)}</td></tr>`:''),money(ctot)+' estimated'));
+  });
+  h+=`<div class="kpis">${kpi('Contractors',state.contractors.length)}${kpi('Estimated damage + missing',money(grand),'all contractors',grand?'bad':'good')}</div>`;
+  h+=`<div class="grid2">`+panel('1. Add your contractors',table('contractors',[{key:'name',label:'Contractor name',w:200},{key:'phone',label:'Phone'}]))+
+     panel('2. Record what they take and return',`<ol class="hlist"><li>Open <a href="#" onclick="go('store');return false"><b>Store Stock</b></a> → <b>Store movements</b>.</li><li>Add a row: date, <b>Issued to contractor</b>, item, qty, contractor.</li><li>When material comes back, add <b>Returned good</b>, <b>Returned damaged</b> or <b>Missing</b> for that contractor.</li><li>This sheet fills in by itself. Rates come from <b>Rate</b> on Store Stock.</li></ol><p class="note">Have it in Excel already? Use <b>Paste rows from Excel</b> under Store movements.</p><button class="btn p sm" onclick="go('store')">Go to Store movements →</button>`)+`</div>`;
+  h+=rowsAll.join('')||`<p class="note">Add contractors on Store Stock, then record issues and returns there.</p>`;
+  return h;
+};
+
+/* ---------- MEETING SCREEN ---------- */
+const MEET_CARDS=[['attention','Needs attention'],['progress','Work progress'],['cost','Cost per sqm'],['rental','Rental material on site'],['bills','Vendor bill check'],['idle','Idle material'],['delays','Delayed work'],['stock','Store stock'],['labour','Labour productivity']];
+function withUI(o,fn){ const keep={}; Object.keys(o).forEach(k=>{ keep[k]=state.ui[k]; state.ui[k]=o[k]; }); try{ return fn(); } finally{ Object.assign(state.ui,keep); } }
+const hashStr=s=>{ let h=5381; for(let i=0;i<s.length;i++) h=((h<<5)+h+s.charCodeAt(i))|0; return (h>>>0).toString(36); };
+function meetCard(key){
+  const m=state.ui.month||thisMonth(), warn=[]; let html='';
+  if(key==='attention'){
+    const items=[];
+    state.invoices.forEach(i=>{ const d=invoiceDiff(i); if(!d.partial&&Math.abs(d.diff)>num(state.meta.tolerance)) items.push(['r',`${esc(sysName(i.systemId))} ${monthLabel(i.month)} bill ${d.diff>0?'higher':'lower'} by ${money(Math.abs(d.diff))}`,`About ${fmtN(Math.abs(d.sqm),0)} sqm ${d.diff>0?'more':'less'} than our records`]); });
+    idleList().forEach(x=>items.push(['a',`${esc(x.s.name)}${x.a?' – '+esc(areaName(x.a)):''}: ${fmtN(x.idle,0)} sqm idle`,x.reasons.join(', ')+(x.cost?` · ${money(x.cost)} rent per month`:'')]));
+    state.scope.forEach(sc=>{ const st=scopeStatus(sc); if(st.status==='bd') items.push(['r',`${esc(sc.element||areaName(sc.areaId))}: ${st.label}`,`${esc(sysName(sc.systemId))} · ${fmtN(st.pct*100)}% done`]); });
+    state.storeItems.forEach(i=>{ const s=storeStatus(i,storeBal(i.id)); if(s[1].startsWith('Raise PR')) items.push(['a',`${esc(i.item)}: ${s[1]}`,'Store stock below minimum']); });
+    html=items.length? `<ul class="mlist">${items.slice(0,8).map(([c,t,s])=>`<li><span class="mdot ${c}"></span><div><b>${t}</b><small>${s}</small></div></li>`).join('')}</ul>${items.length>8?`<p class="note">+${items.length-8} more</p>`:''}` : `<p class="mok">Nothing needs attention.</p>`;
+  }
+  if(key==='progress'){
+    const bySys={}; state.scope.forEach(sc=>{ const st=scopeStatus(sc); const g=bySys[sc.systemId]||(bySys[sc.systemId]={sc:0,ex:0}); g.sc+=st.scope; g.ex+=Math.min(st.executed,st.scope); });
+    const tot=Object.values(bySys).reduce((a,g)=>({sc:a.sc+g.sc,ex:a.ex+g.ex}),{sc:0,ex:0});
+    const tg=state.targets.filter(t=>t.month===m).reduce((a,t)=>a+num(t.targetSqm),0), ach=pouredInMonth(m);
+    if(!tot.sc) warn.push('No scope entered');
+    html=`<div class="mbig"><div><span>Total work done</span><b>${tot.sc?fmtN(tot.ex/tot.sc*100,1)+'%':'—'}</b><small>${fmtN(tot.ex)} of ${fmtN(tot.sc)} sqm</small></div><div><span>${monthLabel(m)}</span><b>${fmtN(ach)} sqm</b><small>${tg?'target '+fmtN(tg)+' sqm ('+fmtN(ach/tg*100)+'%)':'no target set'}</small></div></div>`+
+      Object.entries(bySys).map(([s,g])=>`<div class="mrow"><span>${esc(sysName(s))}</span>${bar(g.sc?g.ex/g.sc:0,g.ex>=g.sc?'g':'')}<b>${g.sc?fmtN(g.ex/g.sc*100)+'%':'—'}</b></div>`).join('');
+  }
+  if(key==='cost'){
+    const mon=withUI({period:'month',groupBy:'system',sysSel:[]},costGrouped), td=withUI({period:'todate',groupBy:'system',sysSel:[]},costGrouped);
+    const T=a=>a.reduce((x,g)=>({c:x.c+g.total,s:x.s+g.sqm}),{c:0,s:0}), tm=T(mon), tt=T(td);
+    if(!tt.s) warn.push('No execution entered, so cost per sqm cannot be worked out');
+    rentalSystems().forEach(s=>{ const r=systemMonthRent(s.id,addMonth(m,-1)); if(r.rent>0 && invoiceFor(s.id,addMonth(m,-1))===null) warn.push(`${s.name} bill for ${monthLabel(addMonth(m,-1))} not entered – calculated rent used`); });
+    html=`<div class="mbig"><div><span>${monthLabel(m)}</span><b>${tm.s?money(tm.c/tm.s):'—'}</b><small>per sqm · ${money(tm.c)} total</small></div><div><span>Project to date</span><b>${tt.s?money(tt.c/tt.s):'—'}</b><small>per sqm · ${money(tt.c)} total</small></div></div>`+
+      simpleTable([['System'],['This month',1],['To date',1]],td.map(g=>{ const x=mon.find(y=>y.s===g.s)||{total:0,sqm:0}; return `<tr><td class="v">${esc(sysName(g.s))}</td><td class="calc r">${x.sqm?money(x.total/x.sqm):(x.total?'no output':'—')}</td><td class="calc r">${g.sqm?money(g.total/g.sqm):(g.total?'no output':'—')}</td></tr>`; }));
+  }
+  if(key==='rental'){
+    state.rates.forEach(r=>{ const s=sysObj(r.systemId); if(s&&s.ownership==='Rental'&&!isPcs(s.id)&&!num(r.rate)&&balanceOn(r.systemId,r.areaId,todayStr())>0) warn.push(`${s.name} – ${areaName(r.areaId)}: rate missing`); });
+    html=simpleTable([['Vendor'],['On site',1],['Rent (month)',1],['Extra',1]],rentalSystems().map(s=>{ const today=todayStr(); let on, ex=0;
+      if(isPcs(s.id)){ on=fmtN(state.items.filter(i=>i.systemId===s.id).reduce((a,i)=>a+Math.max(0,itemBalOn(i.id,null,today)),0))+' pcs'; }
+      else { let q=0; ledgerAreas(s.id).forEach(a=>{ const b=Math.max(0,balanceOn(s.id,a,today)); q+=b; const rr=rateRow(s.id,a); if(rr&&num(rr.requiredSqm)) ex+=Math.max(0,b-num(rr.requiredSqm)); }); on=fmtN(q)+' sqm'; }
+      return `<tr><td class="v">${esc(s.name)}</td><td class="calc r">${on}</td><td class="calc r">${money(systemMonthRent(s.id,m).rent)}</td><td class="calc r ${ex?'neg':''}">${ex?fmtN(ex)+' sqm':'—'}</td></tr>`; }));
+  }
+  if(key==='bills'){
+    const inv=state.invoices.slice().sort((a,b)=>b.month.localeCompare(a.month)).slice(0,8);
+    if(!inv.length) warn.push('No vendor bills entered');
+    html=simpleTable([['Vendor'],['Month'],['Bill',1],['Our calculation',1],['Difference',1],['']],inv.map(i=>{ const d=invoiceDiff(i), bad=!d.partial&&Math.abs(d.diff)>num(state.meta.tolerance); return `<tr><td class="v">${esc(sysName(i.systemId))}</td><td class="v">${monthLabel(i.month)}</td><td class="calc r">${money(i.amount)}</td><td class="calc r">${money(d.calc)}</td><td class="calc r ${bad&&d.diff>0?'neg':''}">${d.diff>0?'+':''}${money(d.diff)}</td><td class="v">${d.partial?PILL('na','Month running'):bad?PILL('bd',d.diff>0?'Over-billed':'Under-billed'):PILL('ok','OK')}</td></tr>`; }));
+  }
+  if(key==='idle'){
+    const il=idleList();
+    html=il.length? simpleTable([['Vendor'],['Area'],['Idle',1],['Why'],['Rent lost / month',1]],il.map(x=>`<tr><td class="v">${esc(x.s.name)}</td><td class="v">${x.a?esc(areaName(x.a)):'—'}</td><td class="calc r neg">${fmtN(x.idle)} sqm</td><td class="v">${esc(x.reasons.join(', '))}</td><td class="calc r">${x.owned?'—':money(x.cost)}</td></tr>`),`<tr><td>Total</td><td></td><td class="r">${fmtN(il.reduce((a,x)=>a+x.idle,0))} sqm</td><td></td><td class="r">${money(il.reduce((a,x)=>a+x.cost,0))}</td></tr>`) : `<p class="mok">No idle material.</p>`;
+    if(!state.execution.length) warn.push('No execution entered – "no work for X days" may be wrong');
+  }
+  if(key==='delays'){
+    const late=state.scope.map(sc=>({sc,st:scopeStatus(sc)})).filter(x=>x.st.status==='bd'||x.st.status==='wn').sort((a,b)=>b.st.late-a.st.late);
+    const ts=state.targets.map(t=>({t,st:targetStatus(t)})).filter(x=>x.st.status==='bd'||(x.st.status==='wn'&&x.t.month===m));
+    html=(late.length||ts.length)? simpleTable([['What'],['Detail'],['Status']],late.slice(0,8).map(({sc,st})=>`<tr><td class="v">${esc(sc.element||'(whole area)')}</td><td class="v">${esc(sysName(sc.systemId))} · ${esc(areaName(sc.areaId))} · ${fmtN(st.pct*100)}% done</td><td class="v">${PILL(st.status,st.label)}</td></tr>`).concat(ts.slice(0,5).map(({t,st})=>`<tr><td class="v">${monthLabel(t.month)} target</td><td class="v">${esc(areaName(t.areaId))}: ${fmtN(st.ach)} of ${fmtN(st.tgt)} sqm</td><td class="v">${PILL(st.status,st.label)}</td></tr>`))) : `<p class="mok">Nothing delayed.</p>`;
+  }
+  if(key==='stock'){
+    const its=state.storeItems; if(!its.length) warn.push('No store items entered');
+    if(its.some(i=>storeStatus(i,storeBal(i.id))[0]==='bd'&&storeStatus(i,storeBal(i.id))[1]==='Check entries')) warn.push('Some store items show negative stock');
+    html=simpleTable([['Item'],['In store',1],['With contractors',1],['Damaged',1],['Status']],its.map(i=>{ const b=storeBal(i.id), s=storeStatus(i,b); return `<tr><td class="v">${esc(i.item)}</td><td class="calc r">${fmtN(b.inStore)} ${esc(i.unit)}</td><td class="calc r">${i.kind==='Consumable'?'—':fmtN(b.withCon)}</td><td class="calc r">${fmtN(b.damaged)}</td><td class="v">${PILL(s[0],s[1])}</td></tr>`; }));
+  }
+  if(key==='labour'){
+    const lg=withUI({period:'month',groupBy:'system',sysSel:[]},labourGrouped);
+    if(!state.labour.some(r=>monthOf(r.date)===m)) warn.push('No labour entered this month');
+    html=simpleTable([['System'],['Mandays',1],['Sqm per manday',1],['Standard',1],['']],lg.map(g=>{ const act=g.md?g.sqm/g.md:0, std=num((sysObj(g.s)||{}).stdSqmPerManday), eff=std&&g.md?act/std:0; return `<tr><td class="v">${esc(sysName(g.s))}</td><td class="calc r">${fmtN(g.md)}</td><td class="calc r"><b>${g.md?fmtN(act,1):'—'}</b></td><td class="calc r">${std?fmtN(std,1):'—'}</td><td class="v">${eff?PILL(eff>=1?'ok':eff>=0.8?'wn':'bd',fmtN(eff*100)+'%'):''}</td></tr>`; }));
+  }
+  if(hasDemo()) warn.unshift('Practice data is loaded – remove it before a real meeting');
+  return {html, warn, hash:hashStr(html)};
+}
+function meetState(key,c){ const ap=state.meeting.approved[key]; if(!ap) return ['na','Not approved']; return ap===c.hash? ['ok','Approved'] : ['wn','Changed since approval']; }
+function meetVisible(){ return MEET_CARDS.filter(([k])=>state.meeting.cards[k]); }
+function approveCard(k){ state.meeting.approved[k]=meetCard(k).hash; touchMeeting(); save(); }
+function approveAll(){ meetVisible().forEach(([k])=>state.meeting.approved[k]=meetCard(k).hash); touchMeeting(); save(); toast('All shown cards approved.'); }
+function toggleCard(k,on){ state.meeting.cards[k]=on; touchMeeting(); save(); }
+PAGES.meeting=()=>{
+  const vis=meetVisible(), C={}; MEET_CARDS.forEach(([k])=>C[k]=meetCard(k));
+  const ready=vis.filter(([k])=>meetState(k,C[k])[0]==='ok').length;
+  let h=monthBar()+`<div class="kpis">${kpi('Cards switched on',vis.length+' / '+MEET_CARDS.length)}${kpi('Approved & unchanged',ready+' / '+vis.length,'',ready===vis.length&&vis.length?'good':'warn')}${kpi('Warnings',vis.reduce((a,[k])=>a+C[k].warn.length,0),'check before showing',vis.some(([k])=>C[k].warn.length)?'warn':'good')}${kpi('Locked meetings',state.meeting.locks.length)}</div>`;
+  h+=`<div class="acts" style="margin-bottom:12px"><button class="btn p" onclick="present()">▶ Present now</button><button class="btn" onclick="approveAll()">Approve all shown cards</button><button class="btn" onclick="lockMeeting()">🔒 Lock for meeting</button><label class="ck"><input type="checkbox" ${state.meeting.requireApproval?'checked':''} onchange="state.meeting.requireApproval=this.checked;touchMeeting();save()"> Show only approved cards</label></div>`;
+  h+=panel('1. Choose what is shown and check it',`<div class="tw"><table class="sheet"><thead><tr><th>Show</th><th>Card</th><th>Check before meeting</th><th>Approval</th><th></th></tr></thead><tbody>${MEET_CARDS.map(([k,t])=>{ const c=C[k], st=meetState(k,c); return `<tr><td class="v" style="text-align:center"><input type="checkbox" ${state.meeting.cards[k]?'checked':''} onchange="toggleCard('${k}',this.checked)" aria-label="Show ${t}"></td><td class="v"><b>${t}</b></td><td class="v">${c.warn.length?c.warn.map(w=>`<div>${PILL('wn','CHECK')} ${esc(w)}</div>`).join(''):PILL('ok','No issues found')}</td><td class="v">${state.meeting.cards[k]?PILL(st[0],st[1]):PILL('na','Hidden')}</td><td class="v">${state.meeting.cards[k]?`<button class="btn sm" onclick="approveCard('${k}')">Approve</button>`:''}</td></tr>`; }).join('')}</tbody></table></div><p class="note" style="margin-top:6px">A card you approved shows "Changed since approval" if its numbers change afterwards, so nothing new reaches the meeting without your check.</p>`);
+  h+=panel('2. Preview – what the meeting will see',`<div class="mgrid">${vis.filter(([k])=>!state.meeting.requireApproval||meetState(k,C[k])[0]==='ok').map(([k,t])=>`<div class="mcard"><h4>${t}</h4>${C[k].html}</div>`).join('')||'<p class="note">No cards to show yet. Switch cards on and approve them above.</p>'}</div>`);
+  h+=panel('3. Locked meetings',state.meeting.locks.length? simpleTable([['Meeting'],['Locked on'],['Cards',1],['']],state.meeting.locks.slice().reverse().map(L=>`<tr><td class="v"><b>${esc(L.title)}</b></td><td class="v">${esc(L.created)}</td><td class="calc r">${L.cards.length}</td><td class="v"><button class="btn sm p" onclick="present('${L.id}')">▶ Present</button> <button class="btn sm d" onclick="delLock('${L.id}')">Delete</button></td></tr>`)) : `<p class="note">Lock the screen before a meeting. The locked copy keeps exactly these numbers, even if data changes later, so you can always show what you presented.</p>`);
+  return h;
+};
+function lockMeeting(){
+  const vis=meetVisible().filter(([k])=>!state.meeting.requireApproval||meetState(k,meetCard(k))[0]==='ok');
+  if(!vis.length){ toast('Nothing to lock – switch on and approve some cards first.'); return; }
+  const title=`Meeting ${new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})} – ${monthLabel(state.ui.month||thisMonth())}`;
+  state.meeting.locks.push({id:uid(),title,created:new Date().toLocaleString('en-IN'),month:state.ui.month||thisMonth(),cards:vis.map(([k,t])=>({key:k,title:t,html:meetCard(k).html}))});
+  if(state.meeting.locks.length>12) state.meeting.locks.shift(); touchMeeting();
+  save(); toast('🔒 Locked: '+title);
+}
+function delLock(id){ askConfirm('Delete this locked meeting copy?',()=>{ state.meeting.locks=state.meeting.locks.filter(L=>L.id!==id); touchMeeting(); save(); },'Delete'); }
+function present(lockId){
+  let title, cards;
+  if(lockId){ const L=state.meeting.locks.find(x=>x.id===lockId); if(!L) return; title=L.title+' (locked)'; cards=L.cards; }
+  else { title='Formwork status – '+monthLabel(state.ui.month||thisMonth()); cards=meetVisible().map(([k,t])=>({key:k,title:t,c:meetCard(k)})).filter(x=>!state.meeting.requireApproval||meetState(x.key,x.c)[0]==='ok').map(x=>({title:x.title,html:x.c.html})); }
+  if(!cards.length){ toast('No approved cards to present.'); return; }
+  const d=document.createElement('div'); d.id='present'; d.className='present';
+  d.innerHTML=`<div class="phead"><div>${state.meta.company?`<span class="pco">${esc(state.meta.company)}</span>`:''}<b>${esc(state.meta.project)}</b><span>${esc(title)}</span></div><button class="btn" onclick="closePresent()">Exit ✕</button></div><div class="mgrid big">${cards.map(c=>`<div class="mcard"><h4>${c.title}</h4>${c.html}</div>`).join('')}</div><div class="pfoot">${state.meta.user?'Prepared by '+esc(state.meta.user)+' · ':''}${new Date().toLocaleDateString('en-IN')}</div>`;
+  document.body.appendChild(d); document.body.classList.add('presenting');
+  try{ if(d.requestFullscreen && !EMBED) d.requestFullscreen().catch(()=>{}); }catch(e){}
+}
+function closePresent(){ const d=document.getElementById('present'); if(d) d.remove(); document.body.classList.remove('presenting'); try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e){} }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closePresent(); });
+
+/* ---------- PASTE FROM EXCEL ---------- */
+const PCOLS={}, PPRESET={ itemTx:()=>({systemId:curItemSys()}) };
+const stripTags=s=>String(s||'').replace(/<[^>]+>/g,'').trim();
+const byName=(list,key,raw)=>{ const r=norm(raw); const x=list.find(o=>norm(o[key])===r) || list.find(o=>norm(o[key]).startsWith(r)&&r.length>=3); return x? x.id : undefined; };
+const MON={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,sept:9,oct:10,nov:11,dec:12};
+function parseDate(raw){
+  raw=String(raw).trim(); let m;
+  if(/^\d{5}(\.\d+)?$/.test(raw)){ const d=new Date(Date.UTC(1899,11,30)+Math.floor(+raw)*86400000); return d.toISOString().slice(0,10); }
+  if((m=/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/.exec(raw))) return `${m[1]}-${pad(+m[2])}-${pad(+m[3])}`;
+  if((m=/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})$/.exec(raw))){ const y=m[3].length===2?'20'+m[3]:m[3]; return `${y}-${pad(+m[2])}-${pad(+m[1])}`; }
+  if((m=/^(\d{1,2})[-\s\/]?([A-Za-z]{3,4})[A-Za-z]*[-\s\/,]*(\d{2,4})$/.exec(raw))){ const mo=MON[m[2].toLowerCase()]; if(!mo) return undefined; const y=m[3].length===2?'20'+m[3]:m[3]; return `${y}-${pad(mo)}-${pad(+m[1])}`; }
+  return undefined;
+}
+function parseMonth(raw){
+  raw=String(raw).trim(); let m;
+  if((m=/^(\d{4})[-\/](\d{1,2})$/.exec(raw))) return `${m[1]}-${pad(+m[2])}`;
+  if((m=/^(\d{1,2})[-\/](\d{4})$/.exec(raw))) return `${m[2]}-${pad(+m[1])}`;
+  if((m=/^([A-Za-z]{3,4})[A-Za-z]*[-\s\/,']*(\d{2,4})$/.exec(raw))){ const mo=MON[m[1].toLowerCase()]; if(!mo) return undefined; return `${m[2].length===2?'20'+m[2]:m[2]}-${pad(mo)}`; }
+  const d=parseDate(raw); return d? d.slice(0,7) : undefined;
+}
+function parseCell(c,raw,row){
+  switch(c.type){
+    case 'number': { const n=parseFloat(String(raw).replace(/[,₹\s]/g,'').replace(/^\((.*)\)$/,'-$1')); return isNaN(n)?undefined:n; }
+    case 'date': return parseDate(raw);
+    case 'month': return parseMonth(raw);
+    case 'select': return c.options.find(o=>norm(o)===norm(raw)) || c.options.find(o=>norm(o).startsWith(norm(raw))&&norm(raw).length>=3);
+    case 'system': return byName(c.filter?state.systems.filter(c.filter):state.systems,'name',raw);
+    case 'area': return byName(state.areas,'name',raw);
+    case 'cons': return byName(state.consItems,'item',raw);
+    case 'storeitem': return byName(state.storeItems,'item',raw);
+    case 'contractor': return byName(state.contractors,'name',raw);
+    case 'itemsel': { const its=state.items.filter(i=>i.systemId===row.systemId); const r=norm(raw); const x=its.find(i=>norm(i.code)===r)||its.find(i=>norm(i.item)===r)||its.find(i=>norm((i.code?i.code+' – ':'')+i.item)===r); return x?x.id:undefined; }
+    default: return String(raw);
+  }
+}
+function pastePanel(arr){
+  const cols=(PCOLS[arr]||[]).filter(c=>!c.calc), msg=(state.ui.pasteMsg||{})[arr];
+  return `<details class="paste noprint" ${msg?'open':''}><summary>Paste rows from Excel</summary>
+   <p class="note">In Excel, arrange columns in this order: <b>${cols.map(c=>esc(stripTags(c.label))).join(' · ')}</b>. Select the rows, press Ctrl+C, click in the box and press Ctrl+V. A heading row is skipped automatically. Dates like 24-10-2026, 24/10/26 or 24-Oct-2026 all work; names are matched to your lists.</p>
+   <textarea id="pb-${arr}" rows="4" placeholder="Paste here (Ctrl+V)"></textarea>
+   <div class="acts"><button class="btn p sm" onclick="doPaste('${arr}')">Add pasted rows</button></div>
+   ${msg?`<div class="pmsg">${msg}</div>`:''}</details>`;
+}
+function doPaste(arr){
+  const box=document.getElementById('pb-'+arr), txt=(box&&box.value||'').replace(/\r/g,'');
+  const cols=(PCOLS[arr]||[]).filter(c=>!c.calc);
+  const lines=txt.split('\n').filter(l=>l.trim()); if(!lines.length){ toast('Paste the Excel rows into the box first.'); return; }
+  let added=0; const errs=[], newRows=[];
+  lines.forEach((line,li)=>{
+    const cells=line.split('\t');
+    if(li===0 && cells.some((v,i)=>cols[i]&&norm(v)===norm(stripTags(cols[i].label)))) return;
+    const row=Object.assign({id:uid()},DEFAULTS[arr](),PPRESET[arr]?PPRESET[arr]():{}); let bad=null;
+    cols.forEach((c,i)=>{ if(bad) return; const raw=(cells[i]??'').trim(); if(raw==='') return; const v=parseCell(c,raw,row); if(v===undefined) bad=`Line ${li+1}: "${esc(raw)}" not recognised as ${esc(stripTags(c.label))}`; else row[c.key]=v; });
+    if(bad) errs.push(bad); else { newRows.push(row); added++; }
+  });
+  newRows.forEach(r=>r._u=nowMs()); state[arr].push(...newRows);
+  state.ui.pasteMsg=state.ui.pasteMsg||{};
+  state.ui.pasteMsg[arr]=`<b>${added} row${added===1?'':'s'} added.</b>${errs.length?` ${errs.length} skipped:<br>`+errs.slice(0,8).join('<br>')+(errs.length>8?'<br>…':'')+'<br>Fix those lines in Excel and paste them again.':''}`;
+  save(); toast(`${added} row${added===1?'':'s'} added${errs.length?', '+errs.length+' skipped':''}.`);
+}
+
+/* ---------- ONLINE SYNC ---------- */
+const SYNC={db:null,status:'local',busy:false,again:false,timer:null,retry:null,written:{},chunks:{},waiting:0,last:''};
+function syncLight(){
+  if(FILEMODE) return fsLight();
+  const map={local:['ok','✓ Saved on this device'],nodb:['wn','Saved in this browser only'],saving:['wn','Saving…'],saved:['ok','✓ All saved online'+(SYNC.last?' · '+SYNC.last:'')],error:['bd',`Not saved online – ${SYNC.waiting} change${SYNC.waiting===1?'':'s'} waiting (retrying)`],loading:['wn','Loading your data…']};
+  const [c,t]=map[SYNC.status]||map.local; return `<span class="sync ${c}" id="syncLight" title="Save status">${t}</span>`;
+}
+function setSync(s){ SYNC.status=s; const el=document.getElementById('syncLight'); if(el) el.outerHTML=syncLight(); const d=document.querySelector('#side .sdot'); if(d) d.className='sdot '+(s==='error'?'bd':s==='saving'||s==='loading'?'wn':'ok'); }
+function persistLocal(){ try{ localStorage.setItem(pkey(PRJ.cur), JSON.stringify(state)); }catch(e){} }
+function schedulePush(){ if(!SYNC.db) return; clearTimeout(SYNC.timer); SYNC.timer=setTimeout(pushRemote,700); }
+function chunkArray(arr){ const out=[]; let cur=[],size=2; for(const r of arr){ const s=JSON.stringify(r).length+1; if(cur.length&&size+s>180000){ out.push(cur); cur=[]; size=2; } cur.push(r); size+=s; } out.push(cur); return out; }
+async function pushRemote(){
+  if(!SYNC.db) return; if(SYNC.busy){ SYNC.again=true; return; }
+  SYNC.busy=true; setSync('saving');
+  try{
+    const small={}, chunks={};
+    for(const k of Object.keys(state)){
+      if(k==='pending'||k==='firstRun') continue;
+      if(Array.isArray(state[k])){
+        const cs=chunkArray(state[k]); chunks[k]=cs.length;
+        for(let i=0;i<cs.length;i++){ const id=k+'~'+i, js=JSON.stringify(cs[i]); if(SYNC.written[id]===js) continue; await SYNC.db.doc(syncCol()+'/'+id).set({rows:cs[i]}); SYNC.written[id]=js; }
+        for(let i=cs.length;i<(SYNC.chunks[k]||0);i++){ await SYNC.db.doc(syncCol()+'/'+k+'~'+i).delete(); delete SYNC.written[k+'~'+i]; }
+      } else small[k]=state[k];
+    }
+    await SYNC.db.doc(syncCol()+'/_meta').set({rev:state.rev||0,savedAt:new Date().toISOString(),chunks,small:JSON.parse(JSON.stringify(small))});
+    SYNC.chunks=chunks; state.pending=false; SYNC.waiting=0; SYNC.last=new Date().toTimeString().slice(0,5); persistLocal(); setSync('saved');
+  }catch(e){
+    console.warn('sync failed',e); setSync('error');
+    if(e&&e.code==='quota_exceeded') toast('Online storage is full. Download Excel and a backup, then ask for help to archive old data.');
+    clearTimeout(SYNC.retry); SYNC.retry=setTimeout(pushRemote,20000);
+  }finally{ SYNC.busy=false; if(SYNC.again){ SYNC.again=false; schedulePush(); } }
+}
+async function pullRemote(m){
+  const snap=await SYNC.db.collection(syncCol()).get(); const docs={}; snap.docs.forEach(d=>{ docs[d.id]=d.data(); });
+  const next=Object.assign({},m.small||{});
+  for(const [k,n] of Object.entries(m.chunks||{})){ let rows=[]; for(let i=0;i<n;i++){ const d=docs[k+'~'+i]; const r=d&&Array.isArray(d.rows)?d.rows:[]; rows=rows.concat(r); SYNC.written[k+'~'+i]=JSON.stringify(r); } next[k]=rows; }
+  const ui=state.ui, route=state.route;
+  state=hydrate(next); state.ui=Object.assign(state.ui,ui); state.route=route; state.rev=m.rev||0; state.meta.pid=PRJ.cur; state.pending=false;
+  SYNC.chunks=m.chunks||{}; SYNC.last=new Date().toTimeString().slice(0,5);
+  clearCaches(); persistLocal(); render(); setSync('saved');
+}
+async function initSync(){
+  if(!(window.claude && typeof window.claude.use==='function')){ setSync('local'); return; }
+  let db=null; try{ db=await window.claude.use('db'); }catch(e){}
+  if(!db){ setSync(EMBED?'nodb':'local'); return; }
+  SYNC.db=db; await prjPullRemote(); prjPushRemote(true); await syncAttach(); render();
+}
+async function syncAttach(){
+  const db=SYNC.db; if(!db) return;
+  if(SYNC.unsub){ try{ SYNC.unsub(); }catch(e){} SYNC.unsub=null; }
+  SYNC.written={}; SYNC.chunks={}; setSync('loading');
+  const col=syncCol();
+  try{
+    const ms=await db.doc(col+'/_meta').get();
+    if(col!==syncCol()) return;
+    if(ms.exists){ const m=ms.data(); SYNC.chunks=m.chunks||{}; if(state.pending && (state.rev||0)>(m.rev||0)) await pushRemote(); else await pullRemote(m); }
+    else await pushRemote();
+    SYNC.unsub=db.doc(col+'/_meta').onSnapshot(s=>{ if(col!==syncCol()||!s.exists||s.metadata.hasPendingWrites) return; const m=s.data(); if((m.rev||0)>(state.rev||0)&&!state.pending&&!SYNC.busy) pullRemote(m).catch(()=>{}); },()=>{});
+  }catch(e){ console.warn(e); setSync('error'); clearTimeout(SYNC.retry); SYNC.retry=setTimeout(()=>{ if(state.pending) pushRemote(); },20000); }
+}
+window.addEventListener('online',()=>{ if(SYNC.db&&state.pending) pushRemote(); });
+
+/* ---------- EXCEL DOWNLOAD ---------- */
+const XLSX_URL='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+function loadScript(src){ return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); }
+async function exportExcel(){
+  if(!window.XLSX){ toast('Preparing Excel…'); try{ await loadScript(XLSX_URL); }catch(e){ toast('Excel tool could not load (needs internet). Use the CSV buttons instead.'); return; } }
+  const wb=XLSX.utils.book_new();
+  const add=(name,rows)=>{ const ws=XLSX.utils.aoa_to_sheet(rows); ws['!cols']=(rows[0]||[]).map(()=>({wch:16})); XLSX.utils.book_append_sheet(wb,ws,name.slice(0,31)); };
+  const spec=CSV_SPEC();
+  const rent=[['Month','System','Area','Rate','Required sqm','Days','Sqm-days / pc-days','Rent','Excess rent']];
+  allMonthsUpTo(thisMonth()).forEach(m=>rentalSystems().forEach(s=>ledgerAreas(s.id).forEach(a=>{ const x=monthRent(s.id,a,m); rent.push([m,s.name,a?areaName(a):'',x.rate,x.req,x.daysCounted+'/'+x.dim,+(x.pcs?x.pcsDays:x.sqmDays).toFixed(2),Math.round(x.rent),Math.round(x.excess)]); })));
+  [['Execution','execution'],['Scope & schedule','scope'],['Labour','labour'],['Rental challans (sqm)','ledger'],['Vendor items','items'],['Vendor item movements','itemTx'],['Vendor bills','invoices'],['Store stock','storeItems'],['Store movements','storeTx'],['Contractor sheet','contractorSheet'],['PR & PO','prpo'],['Consumable movements','consTx'],['Owned material','owned']].forEach(([n,k])=>{ const sp=spec[k]; if(!sp) return; const src=k==='contractorSheet'?contractorRows():state[k]; add(n,[sp[0],...src.map(sp[1])]); });
+  add('Rent month-wise',rent);
+  const out=XLSX.write(wb,{bookType:'xlsx',type:'array'});
+  await download(`FormTrack-${slug(state.meta.project)}-${todayStr()}.xlsx`,out,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  state.meta.lastBackup=todayStr(); save();
+}
+function contractorRows(){ const out=[]; state.contractors.forEach(c=>state.storeItems.filter(i=>i.kind!=='Consumable').forEach(i=>{ const b=storeBal(i.id,c.id); if(b.issued||b.retGood||b.retDam||b.missing) out.push({c,i,b}); })); return out; }
+
+
+/* =====================================================================
+   OFFLINE APP – STORAGE FILE (Google Drive) WITH SMART MERGE
+   ===================================================================== */
+if(FILEMODE){ const fg=NAV.find(g=>g.g==='File'); if(fg) fg.items.unshift(['storage','Storage File']); }
+ICONS.storage='<path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M12 11v5M9.5 13.5L12 16l2.5-2.5"/>';
+const FS={handle:null,status:'none',name:'',busy:false,again:false,timer:null};
+const FS_API = typeof window.showSaveFilePicker==='function' && typeof window.showOpenFilePicker==='function';
+const FT_TYPES=[{description:'FormTrack storage file',accept:{'application/json':['.json']}}];
+
+/* ---- tiny IndexedDB for the file handle (laptop) ---- */
+function idbOpen(){ return new Promise((res,rej)=>{ const r=indexedDB.open('formtrack',1); r.onupgradeneeded=()=>r.result.createObjectStore('kv'); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); }
+async function idbGet(k){ try{ const db=await idbOpen(); return await new Promise(res=>{ const q=db.transaction('kv').objectStore('kv').get(k); q.onsuccess=()=>res(q.result); q.onerror=()=>res(null); }); }catch(e){ return null; } }
+async function idbSet(k,v){ try{ const db=await idbOpen(); await new Promise(res=>{ const t=db.transaction('kv','readwrite'); t.objectStore('kv').put(v,k); t.oncomplete=res; t.onerror=res; }); }catch(e){} }
+
+/* ---- export / merge ---- */
+function exportState(){
+  const out={}; Object.keys(state).forEach(k=>{ if(['ui','route','pending','firstRun','pwaFresh'].includes(k)) return; out[k]=state[k]; });
+  return {format:'formtrack',version:1,savedAt:new Date().toISOString(),savedBy:navigator.userAgent.slice(0,60),state:out};
+}
+function mergeState(raw){
+  const inc0 = raw && raw.format==='formtrack' ? raw.state : raw;
+  if(!inc0 || !Array.isArray(inc0.systems)) throw new Error('not a FormTrack file');
+  const I=hydrate(JSON.parse(JSON.stringify(inc0)));
+  let added=0, updated=0, removed=0;
+  const del=Object.assign({},state.deleted||{}); Object.entries(I.deleted||{}).forEach(([id,t])=>{ del[id]=Math.max(del[id]||0,t); });
+  const keys=new Set([...Object.keys(state),...Object.keys(I)]);
+  keys.forEach(k=>{
+    if(!Array.isArray(I[k]) && !Array.isArray(state[k])) return;
+    const mine=Array.isArray(state[k])?state[k]:[], theirs=Array.isArray(I[k])?I[k]:[];
+    const map=new Map(mine.map(r=>[r.id,r]));
+    theirs.forEach(r=>{ if(!r||!r.id) return; const m=map.get(r.id); if(!m){ if(!(del[r.id] && del[r.id]>=(r._u||0))){ map.set(r.id,r); added++; } } else if((r._u||0)>(m._u||0)){ map.set(r.id,r); updated++; } });
+    const before=map.size; const list=[...map.values()].filter(r=>!(r&&r.id&&del[r.id]&&del[r.id]>=(r._u||0)));
+    removed+=before-list.length; state[k]=list;
+  });
+  const mu=state.meta._u||{}, iu=I.meta._u||{};
+  Object.keys(I.meta).forEach(k=>{ if(k==='_u') return; if((iu[k]||0)>(mu[k]||0)){ state.meta[k]=I.meta[k]; mu[k]=iu[k]; } });
+  state.meta._u=mu;
+  if((I.meeting&&I.meeting._u||0)>(state.meeting._u||0)){ const keepLocks=state.meeting.locks; state.meeting=I.meeting; const ids=new Set(state.meeting.locks.map(L=>L.id)); keepLocks.forEach(L=>{ if(!ids.has(L.id)) state.meeting.locks.push(L); }); }
+  else { const ids=new Set(state.meeting.locks.map(L=>L.id)); (I.meeting.locks||[]).forEach(L=>{ if(!ids.has(L.id)) state.meeting.locks.push(L); }); }
+  state.deleted=del; clearCaches();
+  return {added,updated,removed,text: (added||updated||removed)? `Merged from file: ${added} new, ${updated} updated${removed?`, ${removed} removed`:''}. Your own entries were kept.` : 'Already up to date – nothing new in the file.'};
+}
+
+/* ---- laptop: automatic save to a file in the Google Drive folder ---- */
+function fsSchedule(){ if(!FS.handle||FS.status==='needperm') return; clearTimeout(FS.timer); FS.timer=setTimeout(fsWrite,900); }
+async function fsWrite(){
+  if(!FS.handle) return; if(FS.busy){ FS.again=true; return; }
+  FS.busy=true; FS.status='saving'; fsUpdLight();
+  try{
+    // pick up anything another device saved into the file first
+    try{ const f=await FS.handle.getFile(); if(f.lastModified>(state.ui.fileSeen||0)){ const t=await f.text(); if(t.trim()){ const r=mergeFile(JSON.parse(t)); if(r.added||r.updated||r.removed) toast(r.text); } } }catch(e){}
+    const w=await FS.handle.createWritable(); await w.write(JSON.stringify(exportAll())); await w.close();
+    try{ state.ui.fileSeen=(await FS.handle.getFile()).lastModified; }catch(e){ state.ui.fileSeen=Date.now(); }
+    state.ui.fileDirty=0; state.ui.fileSaved=new Date().toTimeString().slice(0,5); FS.status='ok'; persistLocal();
+  }catch(e){ FS.status = (e&&e.name==='NotAllowedError')?'needperm':'error'; console.warn(e); }
+  finally{ FS.busy=false; fsUpdLight(); if(FS.again){ FS.again=false; fsWrite(); } }
+}
+async function fsReadMerge(){
+  const f=await FS.handle.getFile(); const t=await f.text(); state.ui.fileSeen=f.lastModified;
+  if(!t.trim()) return null;
+  const r=mergeFile(JSON.parse(t)); persistLocal(); return r;
+}
+async function fsUse(h,mode){
+  FS.handle=h; FS.name=h.name; await idbSet('fileHandle',h);
+  let r=null; if(mode==='open'){ try{ r=await fsReadMerge(); }catch(e){ toast('That file is not a FormTrack storage file.'); FS.handle=null; return; } }
+  await fsWrite(); state.pwaFresh=false; render(); toast(r? r.text : 'Storage file connected – saving automatically.');
+}
+async function fsConnect(mode){
+  try{
+    const h= mode==='new' ? await window.showSaveFilePicker({suggestedName:'FormTrack-data.json',types:FT_TYPES}) : (await window.showOpenFilePicker({types:FT_TYPES,multiple:false}))[0];
+    await fsUse(h,mode);
+  }catch(e){ if(e&&e.name!=='AbortError') toast('Could not use that file: '+e.message); }
+}
+async function fsReconnect(){
+  if(!FS.handle) return; try{ const p=await FS.handle.requestPermission({mode:'readwrite'}); if(p==='granted'){ const r=await fsReadMerge(); FS.status='ok'; await fsWrite(); render(); toast(r?r.text:'Storage file reconnected.'); } }catch(e){ toast('Could not reconnect: '+e.message); }
+}
+async function fsDisconnect(){ FS.handle=null; FS.name=''; FS.status='none'; await idbSet('fileHandle',null); render(); }
+async function fsInit(){
+  if(!FILEMODE) return;
+  if(PWA && 'serviceWorker' in navigator && location.protocol.startsWith('http')){ try{ const had=!!navigator.serviceWorker.controller; navigator.serviceWorker.addEventListener('controllerchange',()=>{ if(had && !window.__ftReloaded){ window.__ftReloaded=1; persistLocal(); location.reload(); } }); navigator.serviceWorker.register('sw.js'); }catch(e){} }
+  if(!FS_API) { fsUpdLight(); return; }
+  const h=await idbGet('fileHandle'); if(!h){ fsUpdLight(); return; }
+  FS.handle=h; FS.name=h.name;
+  try{ const p=await h.queryPermission({mode:'readwrite'}); if(p==='granted'){ const r=await fsReadMerge(); FS.status='ok'; if(r&&(r.added||r.updated||r.removed)){ render(); toast(r.text); } await fsWrite(); } else { FS.status='needperm'; } }catch(e){ FS.status='needperm'; }
+  render();
+}
+
+/* ---- phone / tablet: open + save by hand ---- */
+async function fsOpenFile(file){
+  if(!file) return;
+  try{ const r=mergeFile(JSON.parse(await file.text())); state.ui.fileDirty=FS.handle?1:0; state.ui.fileOpened=new Date().toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}); state.pwaFresh=false; persistLocal(); render(); toast(r.text); if(FS.handle) fsWrite(); }
+  catch(e){ toast('That file is not a FormTrack storage file.'); }
+}
+async function fsShareSave(){
+  const data=JSON.stringify(exportAll()), name='FormTrack-data.json';
+  let file=null; try{ file=new File([data],name,{type:'application/json'}); }catch(e){}
+  if(file && navigator.canShare && navigator.canShare({files:[file]})){
+    try{ await navigator.share({files:[file],title:name}); state.ui.fileDirty=0; state.ui.fileSaved=new Date().toTimeString().slice(0,5); persistLocal(); render(); toast('Shared – send it by WhatsApp or Nearby Share.'); return; }
+    catch(e){ if(e&&e.name==='AbortError') return; }
+  }
+  await download(name,data,'application/json'); state.ui.fileDirty=0; state.ui.fileSaved=new Date().toTimeString().slice(0,5); persistLocal(); render();
+  toast('Saved to Downloads as FormTrack-data.json – send it by WhatsApp or Nearby Share.');
+}
+
+/* ---- status light ---- */
+function fsLight(){
+  const d=state.ui.fileDirty||0;
+  if(FS.handle){
+    if(FS.status==='needperm') return `<button class="sync bd" id="syncLight" onclick="fsReconnect()" title="Click to allow saving to your storage file">⚠ Click to reconnect storage file</button>`;
+    if(FS.status==='saving') return `<span class="sync wn" id="syncLight">Saving to file…</span>`;
+    if(FS.status==='error') return `<button class="sync bd" id="syncLight" onclick="fsWrite()">Not saved to file – retry</button>`;
+    return `<span class="sync ok" id="syncLight" title="${esc(FS.name)}">✓ Saved to storage file${state.ui.fileSaved?' · '+state.ui.fileSaved:''}</span>`;
+  }
+  if(d) return `<button class="sync wn" id="syncLight" onclick="go('storage')" title="Save your storage file">${d} change${d===1?'':'s'} not in storage file</button>`;
+  return `<span class="sync ok" id="syncLight">✓ Saved on this device</span>`;
+}
+function fsUpdLight(){ const el=document.getElementById('syncLight'); if(el) el.outerHTML=fsLight(); const dot=document.querySelector('#side .sdot'); if(dot) dot.className='sdot '+(FS.status==='needperm'||FS.status==='error'?'bd':FS.status==='saving'||(!FS.handle&&state.ui.fileDirty)?'wn':'ok'); }
+
+/* ---- the Storage File page ---- */
+PAGES.storage=()=>{
+  const d=state.ui.fileDirty||0;
+  let h='';
+  if(state.pwaFresh) h+=`<div class="banner">${PILL('na','START HERE')} <span><b>First time on this device?</b> Open the <b>FormTrack-data.json</b> you received (WhatsApp, Nearby Share or Downloads). Your data then appears here.</span></div>`;
+  if(FS_API){
+    h+=panel('This device: automatic saving (laptop)',
+      FS.handle? `<div class="kpis">${kpi('Storage file',esc(FS.name||'connected'),'saving automatically')}${kpi('Status',FS.status==='needperm'?'Needs your OK':FS.status==='error'?'Not saved':'Saved',state.ui.fileSaved?'last saved '+state.ui.fileSaved:'',FS.status==='needperm'||FS.status==='error'?'bad':'good')}</div>
+        ${FS.status==='needperm'?`<p class="note">Your browser asks for permission each time you open FormTrack. Click once to continue saving.</p><button class="btn p" onclick="fsReconnect()">Allow saving to ${esc(FS.name)}</button>`:''}
+        <div class="acts" style="margin-top:10px"><button class="btn p" onclick="fsShareSave()">📤 Send a copy (WhatsApp / Nearby Share)</button><button class="btn" onclick="document.getElementById('fsPick').click()">⬆ Merge a file I received</button><button class="btn" onclick="fsConnect('open')">Use a different file</button><button class="btn d" onclick="fsDisconnect()">Stop using this file</button></div>`
+      : `<p class="note">Pick your storage file once. After that every entry is saved into it automatically, and FormTrack reads it every time it opens.</p>
+        <div class="acts"><button class="btn p" onclick="fsConnect('open')">Open my storage file</button><button class="btn" onclick="fsConnect('new')">Create a new storage file</button></div>
+        <p class="note" style="margin-top:8px">Keep it in a folder on this laptop, e.g. <b>Documents › FormTrack</b>. To move data to your phone, use <b>Send a copy</b> after connecting.</p>
+        <div class="acts" style="margin-top:8px"><button class="btn" onclick="document.getElementById('fsPick').click()">⬆ Just merge a file I received</button><button class="btn" onclick="fsShareSave()">⬇ Save a copy</button></div>`);
+  } else {
+    h+=panel('This device: open and save (phone / tablet)',`<div class="kpis">${kpi('Changes not in file',d,d?'save before you leave site':'all saved to file',d?'warn':'good')}${kpi('Last opened',esc(state.ui.fileOpened||'—'))}${kpi('Last saved',esc(state.ui.fileSaved||'—'))}</div>
+      <div class="acts" style="margin-top:10px"><button class="btn p" onclick="document.getElementById('fsPick').click()">⬆ Open storage file</button><button class="btn p" onclick="fsShareSave()">⬇ Save storage file</button></div>
+      <ol class="hlist" style="margin-top:10px"><li>Your data is saved on <b>this device</b> all the time – no internet needed.</li><li>To move it to another device: tap <b>⬇ Save storage file</b> and pick <b>WhatsApp</b> or <b>Nearby Share</b> (or it goes to <b>Downloads</b>).</li><li>On the other device open FormTrack → <b>⬆ Open storage file</b> → pick <b>FormTrack-data.json</b> (WhatsApp files are in <i>Downloads</i> or <i>WhatsApp › Documents</i>). Both devices' entries are combined.</li></ol>`);
+  }
+  h+=panel('How the merge works',`<ul class="hlist"><li>Every entry remembers when it was last changed. When a file is opened, <b>new entries are added</b> and, for the same entry, <b>the newer change wins</b>.</li><li>Rows you delete stay deleted on every device.</li><li>Nothing is lost if two devices worked offline on the same day – both sets of entries are combined.</li><li>Keep the older files you receive on WhatsApp – any of them can be opened again if you ever need to go back.</li></ul>`);
+  h+=panel('Other ways to get data in',`<div class="acts"><button class="btn" onclick="document.getElementById('fsPick').click()">Merge another FormTrack file</button><button class="btn" onclick="exportExcel()">⬇ Download Excel</button></div>`);
+  return h;
+};
+
+/* =====================================================================
+   MULTIPLE PROJECTS – each project keeps its own separate data
+   ===================================================================== */
+const PRJ_KEY=STORE_KEY+'__projects', MAIN_PID='p-main';
+const pkey=pid=>pid===MAIN_PID?STORE_KEY:STORE_KEY+'__'+pid;
+let PRJ={cur:MAIN_PID,list:[]};
+function prjRead(){ try{ const r=JSON.parse(localStorage.getItem(PRJ_KEY)||'null'); if(r&&Array.isArray(r.list)) PRJ={cur:r.cur||MAIN_PID,list:r.list}; }catch(e){} }
+function prjSave(){ try{ localStorage.setItem(PRJ_KEY,JSON.stringify(PRJ)); }catch(e){} }
+function prjPct(st){ let sc=0,ex=0; try{ st.scope.forEach(x=>{ const s=scopeStatus(x); sc+=s.scope; ex+=Math.min(s.executed,s.scope||s.executed); }); }catch(e){} return sc?Math.round(ex/sc*100):null; }
+function prjSync(){
+  if(!state) return; const pid=PRJ.cur; let p=PRJ.list.find(x=>x.id===pid);
+  if(!p){ p={id:pid}; PRJ.list.push(p); }
+  p.name=state.meta.project||'Project'; p.company=state.meta.company||''; p.pct=prjPct(state); p.opened=nowMs();
+  prjSave(); if(SYNC.db) prjPushRemote();
+}
+function newPid(){ return 'p-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+function newProjectState(pid,name,company){
+  const s=seed(); s.meta.project=name||'New project'; s.meta.company=company||''; s.meta.client=''; s.meta.location='';
+  s.meta.pid=pid; s.meta.theme=state&&state.meta.theme||s.meta.theme; s.meta._u={project:nowMs(),company:nowMs()}; s.rev=0; s.route='dashboard'; return s;
+}
+function readProject(pid){ try{ const raw=localStorage.getItem(pkey(pid)); return raw?hydrate(JSON.parse(raw)):null; }catch(e){ return null; } }
+function switchProject(pid,quiet){
+  const old=document.getElementById('cfm'); if(old) old.remove();
+  if(pid===PRJ.cur){ return; }
+  prjSync(); persistLocal();
+  const p=PRJ.list.find(x=>x.id===pid);
+  const ui=state.ui;
+  state=readProject(pid)||newProjectState(pid,p&&p.name,p&&p.company);
+  state.meta.pid=pid; state.ui.sideMini=ui.sideMini; state.ui.fileDirty=ui.fileDirty; state.ui.fileSaved=ui.fileSaved; state.ui.fileOpened=ui.fileOpened; state.ui.fileSeen=ui.fileSeen;
+  state.route='dashboard'; PRJ.cur=pid; clearCaches(); persistLocal(); prjSync(); applyTheme(); render();
+  if(SYNC.db) syncAttach();
+  if(!quiet) toast('Opened project: '+state.meta.project);
+}
+function openProjects(){
+  prjSync();
+  const old=document.getElementById('cfm'); if(old) old.remove();
+  const d=document.createElement('div'); d.id='cfm'; d.className='cfm';
+  const list=[...PRJ.list].sort((a,b)=>(a.id===PRJ.cur?-1:b.id===PRJ.cur?1:(a.name||'').localeCompare(b.name||'')));
+  d.innerHTML=`<div class="cfm-box wide" role="dialog" aria-modal="true" aria-label="Projects"><p><b>Projects</b><br><span style="color:var(--muted);font-size:13px">Each project keeps its own data. Tap one to open it.</span></p>
+  <div class="prjlist">${list.map(p=>`<button class="prjrow ${p.id===PRJ.cur?'on':''}" onclick="switchProject('${p.id}')"><span class="pi">${esc((p.name||'P').trim().charAt(0).toUpperCase())}</span><span class="pn"><b>${esc(p.name||'Project')}</b><small>${p.company?esc(p.company)+' · ':''}${p.pct==null?'scope not entered':p.pct+'% of scope done'}</small></span>${p.id===PRJ.cur?'<span class="pill ok">OPEN</span>':''}</button>`).join('')}</div>
+  <div class="prjnew"><input id="prjName" placeholder="New project name, e.g. DLF Bay View" aria-label="New project name"><button class="btn p" id="prjAdd">+ Add project</button></div>
+  <div class="acts"><button class="btn" id="cfmNo">Close</button></div></div>`;
+  d.querySelector('#cfmNo').onclick=()=>d.remove(); d.onclick=e=>{ if(e.target===d) d.remove(); };
+  const inp=d.querySelector('#prjName'); const add=()=>{ const v=inp.value.trim(); if(!v){ inp.focus(); return; } addProject(v); };
+  d.querySelector('#prjAdd').onclick=add; inp.onkeydown=e=>{ if(e.key==='Enter') add(); };
+  document.body.appendChild(d);
+}
+function addProject(name){
+  if(PRJ.list.some(p=>norm(p.name)===norm(name))){ toast('A project with this name already exists.'); return; }
+  const pid=newPid(), company=state.meta.company||'';
+  prjSync(); persistLocal();
+  const s=newProjectState(pid,name,company);
+  try{ localStorage.setItem(pkey(pid),JSON.stringify(s)); }catch(e){}
+  PRJ.list.push({id:pid,name,company,pct:null}); prjSave();
+  switchProject(pid,true); toast('New project created: '+name+'. Set up its systems and areas first.'); go('setup');
+}
+function removeProject(pid){
+  const p=PRJ.list.find(x=>x.id===pid); if(!p) return;
+  if(PRJ.list.length<2){ toast('This is your only project.'); return; }
+  askConfirm(`Remove "${p.name}" and all its data from THIS device? Other devices keep their copy. Save a storage file first if you may need it.`,()=>{
+    if(pid===PRJ.cur){ const nxt=PRJ.list.find(x=>x.id!==pid); switchProject(nxt.id,true); }
+    PRJ.list=PRJ.list.filter(x=>x.id!==pid); prjSave(); try{ localStorage.removeItem(pkey(pid)); }catch(e){}
+    if(SYNC.db) prjPushRemote(true,pid); render(); toast('Project removed from this device.');
+  },'Remove project');
+}
+function projectsPanel(){
+  prjSync();
+  return panel('Projects',`<p class="note">Every project has its <b>own separate data</b> – systems, areas, challans, store, contractors, meeting. Switch any time from the project card at the top of the menu.</p>
+  <table class="sheet"><thead><tr><th>Project</th><th>Company</th><th>Scope done</th><th></th></tr></thead><tbody>${PRJ.list.map(p=>`<tr><td><b>${esc(p.name)}</b>${p.id===PRJ.cur?' '+PILL('ok','OPEN'):''}</td><td>${esc(p.company||'')}</td><td>${p.pct==null?'—':p.pct+'%'}</td><td style="white-space:nowrap">${p.id===PRJ.cur?'':`<button class="btn sm" onclick="switchProject('${p.id}')">Open</button> `}${PRJ.list.length>1?`<button class="btn sm" onclick="removeProject('${p.id}')">Remove</button>`:''}</td></tr>`).join('')}</tbody></table>
+  <div class="acts" style="margin-top:10px"><button class="btn p" onclick="openProjects()">+ New project / switch</button></div>`);
+}
+
+/* ---- storage file with ALL projects ---- */
+function stripState(s){ const out={}; Object.keys(s).forEach(k=>{ if(['ui','route','pending','firstRun','pwaFresh'].includes(k)) return; out[k]=s[k]; }); return out; }
+function exportAll(){
+  prjSync(); persistLocal();
+  const projects=PRJ.list.map(p=>{ const st= p.id===PRJ.cur? state : readProject(p.id); return st?{id:p.id,name:p.name,company:p.company,state:stripState(st)}:null; }).filter(Boolean);
+  return {format:'formtrack',version:2,savedAt:new Date().toISOString(),savedBy:navigator.userAgent.slice(0,60),current:PRJ.cur,projects};
+}
+function mergeInto(pid,inc,P){
+  if(pid===PRJ.cur){ const r=mergeState(inc); state.meta.pid=pid; return r; }
+  const saved=state; const ex=readProject(pid); let r;
+  state= ex || newProjectState(pid,P&&P.name,P&&P.company);
+  try{ r=mergeState(inc); state.meta.pid=pid; localStorage.setItem(pkey(pid),JSON.stringify(state));
+    let p=PRJ.list.find(x=>x.id===pid); if(!p){ p={id:pid}; PRJ.list.push(p); } p.name=state.meta.project; p.company=state.meta.company||''; p.pct=prjPct(state);
+  } finally { state=saved; clearCaches(); }
+  r.isNew=!ex; return r;
+}
+function mergeFile(raw){
+  if(raw&&raw.format==='formtrack'&&Array.isArray(raw.projects)){
+    let a=0,u=0,rm=0; const newNames=[];
+    raw.projects.forEach(P=>{ if(!P||!P.id||!P.state) return; const r=mergeInto(P.id,P.state,P); a+=r.added; u+=r.updated; rm+=r.removed; if(r.isNew) newNames.push(P.name||'project'); });
+    prjSync(); clearCaches();
+    const txt=(a||u||rm||newNames.length)? `Merged from file: ${a} new, ${u} updated${rm?`, ${rm} removed`:''}${newNames.length?` · new project${newNames.length>1?'s':''}: ${newNames.join(', ')}`:''}. Your own entries were kept.` : 'Already up to date – nothing new in the file.';
+    return {added:a,updated:u,removed:rm,text:txt};
+  }
+  const r=mergeState(raw); prjSync(); return r; /* older single-project file → current project */
+}
+
+/* ---- online (inside Claude): each project in its own collection ---- */
+const syncCol=()=>PRJ.cur===MAIN_PID?'ct':'ct_'+PRJ.cur.replace(/[^a-z0-9]/gi,'');
+let PRJ_REMOTE_T=null;
+function prjPushRemote(now,removedPid){
+  if(!SYNC.db) return; clearTimeout(PRJ_REMOTE_T);
+  const go_=async()=>{ try{ const ref=SYNC.db.doc('ct/_projects'); const s=await ref.get(); const rem=s.exists?(s.data().removed||{}):{}; if(removedPid) rem[removedPid]=nowMs();
+    const list=PRJ.list.map(p=>({id:p.id,name:p.name,company:p.company||'',pct:p.pct==null?null:p.pct}));
+    const other=s.exists?(s.data().list||[]):[]; other.forEach(o=>{ if(!list.find(x=>x.id===o.id)&&!rem[o.id]&&o.id!==removedPid) list.push(o); });
+    await ref.set({list,removed:rem}); }catch(e){} };
+  if(now) go_(); else PRJ_REMOTE_T=setTimeout(go_,1500);
+}
+async function prjPullRemote(){
+  try{ const s=await SYNC.db.doc('ct/_projects').get(); if(!s.exists) return; const d=s.data(), rem=d.removed||{};
+    (d.list||[]).forEach(o=>{ if(rem[o.id]) return; const p=PRJ.list.find(x=>x.id===o.id); if(!p) PRJ.list.push(o); else if(o.id!==PRJ.cur){ p.name=o.name; p.company=o.company; p.pct=o.pct; } });
+    PRJ.list=PRJ.list.filter(p=>!rem[p.id]||p.id===PRJ.cur); prjSave(); }catch(e){}
+}
+
+/* ---------- files ---------- */
+async function download(filename,text,type){ /* text may be a string or an ArrayBuffer */
+  try{
+    if(window.claude && typeof window.claude.use==='function'){
+      const dl=await window.claude.use('downloads');
+      if(dl){ try{ await dl.save({filename,data:text}); toast('Saved: '+filename); }catch(e){ if(!e||e.code!=='declined') toast('Could not save the file here ('+((e&&e.code)||'error')+'). Open the HTML file on your device to export.'); } return; }
+      if(EMBED){ toast('Saving files is not available in this view. Open the HTML file on your device to export.'); return; }
+    }
+  }catch(e){}
+  const blob=new Blob([text],{type:type||'text/plain'}); const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),2000);
+}
+function downloadBackup(){ state.meta.lastBackup=todayStr(); persist(); download(`FormTrack-backup-${slug(state.meta.project)}-${todayStr()}.json`,JSON.stringify(state,null,1),'application/json'); render(); toast('Backup downloaded.'); }
+function restoreBackup(file){
+  const rd=new FileReader();
+  rd.onload=()=>{ try{ const p=JSON.parse(rd.result); if(!p||!Array.isArray(p.systems)) throw 0; askConfirm('Replace all current data with this backup?',()=>{ state=hydrate(p); state.meta.pid=PRJ.cur; save(); prjSync(); toast('Backup restored.'); },'Restore'); }catch(e){ toast('This is not a valid FormTrack backup.'); } };
+  rd.readAsText(file);
+}
+function resetAll(){ askConfirm('Delete ALL data of this project on this device? Other projects are not touched. This cannot be undone. Download a backup first if you need it.',()=>{ const d={}; Object.keys(state).forEach(k=>{ if(Array.isArray(state[k])) state[k].forEach(r=>{ if(r&&r.id) d[r.id]=nowMs(); }); }); const nm=state.meta.project, co=state.meta.company; state=seed(); state.meta.pid=PRJ.cur; if(PRJ.cur!==MAIN_PID){ state.meta.project=nm; state.meta.company=co; } state.deleted=d; save(); },'Delete everything'); }
+const csvCell=v=>{ v=String(v??''); return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; };
+const csv=rows=>'﻿'+rows.map(r=>r.map(csvCell).join(',')).join('\n');
+function CSV_SPEC(){ return {
+    ledger:[['Date','System','Area','Type','Challan','Item','Sqm','Nos','Claim','Remarks'],t=>[t.date,sysName(t.systemId),areaName(t.areaId),t.type,t.challan,t.item,t.sqm,t.nos,t.amount,t.remarks]],
+    invoices:[['Month','System','Invoice no','Invoice rent','Our calculation','Difference','Remarks'],i=>{const d=invoiceDiff(i); return [i.month,sysName(i.systemId),i.invoiceNo,i.amount,d.calc.toFixed(0),d.diff.toFixed(0),i.remarks];}],
+    execution:[['Date','System','Area','Element','Sqm','Remarks'],e=>[e.date,sysName(e.systemId),areaName(e.areaId),e.element,e.sqm,e.remarks]],
+    owned:[['System','Item','Unit','Qty','Purchase cost','Expected uses','Uses so far','Cost per use','Book value'],o=>{const c=ownedCalc(o); return [sysName(o.systemId),o.item,o.unit,o.qty,o.totalCost,o.expectedReps,c.used.toFixed(2),c.perUse.toFixed(0),c.book.toFixed(0)];}],
+    scope:[['System','Area','Element','Scope sqm','Planned start','Planned finish','Executed','Balance','% done','Actual start','Status'],sc=>{const s=scopeStatus(sc); return [sysName(sc.systemId),areaName(sc.areaId),sc.element,sc.scopeSqm,sc.plannedStart,sc.plannedFinish,s.executed.toFixed(2),s.balance.toFixed(2),(s.pct*100).toFixed(1),s.actualStart,s.label];}],
+    labour:[['Date','System','Area','Element','Carpenters','Helpers','Hours','Mandays','Cost','Remarks'],r=>[r.date,sysName(r.systemId),areaName(r.areaId),r.element,r.carpenters,r.helpers,r.hours,mandays([r]).toFixed(2),labourCost([r]).toFixed(0),r.remarks]],
+    itemTx:[['Date','System','Document','Code','Item','Type','Nos','Area','Sqm','Remarks'],t=>{const it=itemObj(t.itemId)||{}; return [t.date,sysName(t.systemId),t.doc,it.code,it.item,t.type,t.nos,t.areaId?areaName(t.areaId):'',(num(t.nos)*num(it.sqmPerNo)).toFixed(3),t.remarks];}],
+    items:[['System','Code','Item','Sqm/no','Kg/no','BOQ','Rate/pc/day','Received','Returned','On site','Sqm on site','Last received','Last returned','Status'],i=>{const t=itemTotals(i.id); return [sysName(i.systemId),i.code,i.item,i.sqmPerNo,i.kgPerNo,i.boq,i.ratePcDay,t.r,t.d,t.bal,(Math.max(0,t.bal)*num(i.sqmPerNo)).toFixed(3),t.lastR,t.lastD,itemStatus(i,t)[1]];}],
+    consTx:[['Date','Item','Unit','Type','Qty','System','Area','Value','Remarks'],t=>{const c=consObj(t.itemId)||{}; return [t.date,c.item,c.unit,t.type,t.qty,t.systemId?sysName(t.systemId):'Shared',t.areaId?areaName(t.areaId):'All',consCostTx(t).toFixed(0),t.remarks];}],
+    storeItems:[['Item','Type','Unit','Rate','Min in store','In store','With contractors','Used','Damaged','Missing','Scrapped','Open PO','Status'],i=>{const b=storeBal(i.id); return [i.item,i.kind,i.unit,i.rate,i.minStock,b.inStore,b.withCon,b.used,b.damaged,b.missing,b.scrapped,openPOQty(i.item),stripTags(storeStatus(i,b)[1])];}],
+    storeTx:[['Date','Movement','Item','Unit','Qty','Contractor','Area','Challan / GRN','Remarks'],t=>{const it=storeObj(t.itemId)||{}; return [t.date,t.type,it.item,it.unit,t.qty,t.contractorId?conName(t.contractorId):'',t.areaId?areaName(t.areaId):'',t.doc,t.remarks];}],
+    prpo:[['Category','Item','Qty','Unit','Value','Vendor','PR no','PR date','PO no','PO date','Required by','Received on','Status','Remarks'],p=>[p.category,p.item,p.qty,p.unit,p.value,p.vendor,p.prNo,p.prDate,p.poNo,p.poDate,p.requiredBy,p.receivedDate,prStatus(p)[1],p.remarks]],
+    contractorSheet:[['Contractor','Item','Unit','Taken','Returned good','Returned damaged','Missing','Still holding','Rate','Est. cost (damaged + missing)'],x=>[x.c.name,x.i.item,x.i.unit,x.b.issued,x.b.retGood,x.b.retDam,x.b.missing,x.b.withCon,x.i.rate,(x.b.retDam+x.b.missing)*num(x.i.rate)]],
+  }; }
+function exportCSV(arr){
+  const map=CSV_SPEC()[arr], src=arr==='contractorSheet'?contractorRows():state[arr];
+  download(`${arr}-${todayStr()}.csv`,csv([map[0],...src.map(map[1])]),'text/csv');
+}
+function exportRentCSV(){
+  const rows=[['Month','System','Area','Rate','Required sqm','Days','Sqm-days','Rent','Excess rent']];
+  allMonthsUpTo(thisMonth()).forEach(m=>rentalSystems().forEach(s=>ledgerAreas(s.id).forEach(a=>{const x=monthRent(s.id,a,m); rows.push([m,s.name,areaName(a),x.rate,x.req,x.daysCounted+'/'+x.dim,x.sqmDays.toFixed(2),x.rent.toFixed(0),x.excess.toFixed(0)]);})));
+  download(`rent-summary-${todayStr()}.csv`,csv(rows),'text/csv');
+}
+function exportCostCSV(){
+  const gb=state.ui.groupBy, rows=[['Period','System','Area','Element','Executed sqm','Rent/bill','Labour','Consumables','Owned material','Total','Cost per sqm']];
+  const pl=state.ui.period==='todate'?'To date '+(state.ui.month):state.ui.month;
+  costGrouped().forEach(g=>rows.push([pl,sysName(g.s),gb==='area'?areaName(g.a):'',gb==='element'?g.el:'',g.sqm.toFixed(2),g.rent.toFixed(0),g.lab.toFixed(0),g.cons.toFixed(0),g.own.toFixed(0),g.total.toFixed(0),g.sqm?(g.total/g.sqm).toFixed(2):'']));
+  download(`system-cost-${todayStr()}.csv`,csv(rows),'text/csv');
+}
+
+/* ---------- shell ---------- */
+function go(r){ state.route=r; persist(); render(); document.getElementById('main').scrollTop=0; }
+function updateElementList(){
+  const set=new Set(); state.scope.forEach(s=>s.element&&set.add(String(s.element).trim())); state.execution.forEach(e=>e.element&&set.add(String(e.element).trim()));
+  document.getElementById('elist').innerHTML=[...set].sort().map(v=>`<option value="${esc(v)}">`).join('');
+}
+function render(){
+  applyTheme();
+  if(!PAGES[state.route]||!NAV.some(g=>g.items.some(([k])=>k===state.route))) state.route='dashboard';
+  const side=document.getElementById('side');
+  side.className=state.ui.sideMini?'mini':''; side.innerHTML=sideHTML();
+  updateElementList();
+  const main=document.getElementById('main'), st=main.scrollTop;
+  const title=NAV.flatMap(g=>g.items).find(([k])=>k===state.route);
+  let body;
+  try{ body=PAGES[state.route](); }catch(e){ console.error(e); body=`<div class="banner">${PILL('bd','ERROR')} This page could not be shown: ${esc(e.message)}. Your data is safe — download a backup from "Backup & Settings".</div>`; }
+  main.innerHTML=`<div class="mh"><div><button class="company edit ${state.meta.company?'':'empty'}" onclick="editName('company',this)" title="Click to edit company name">${state.meta.company?esc(state.meta.company):'+ Add company name'}</button><button class="projname edit" onclick="editName('project',this)" title="Click to edit project name">${esc(state.meta.project)}</button><button class="prjsw" onclick="openProjects()" title="Switch project or add a new one">⇅ Projects${PRJ.list.length>1?` (${PRJ.list.length})`:''}</button><h1>${title[1]}${state.meta.location?`<span class="loc">${esc(state.meta.location)}</span>`:''}</h1></div><div class="acts noprint">${syncLight()}<button class="btn sm" onclick="openThemes()">🎨 Colours</button><button class="btn sm" onclick="exportExcel()">⬇ Excel</button><button class="btn sm" onclick="downloadBackup()">Backup</button>${EMBED?'':'<button class="btn sm" onclick="window.print()">Print</button>'}</div></div>`+(hasDemo()&&state.route!=='help'?`<div class="banner demo">${PILL('wn','PRACTICE DATA')} <span>Scope, execution, labour, targets, consumables, store entries, contractors and PRs marked PRACTICE are sample data. Vendor material data is real.</span><button class="btn sm d" onclick="removeDemoData()">Remove practice data</button></div>`:'')+body;
+  main.scrollTop=st;
+}
+load(); prjSync(); if(state.firstRun){ delete state.firstRun; if(!FILEMODE) loadDemoData(true); state.route='dashboard'; state.pending=true; persistLocal(); } render(); initSync(); fsInit();
+
+</script>
+</body>
+</html>
