@@ -252,9 +252,9 @@ input.nameedit.big{font:700 32px/1.1 "Barlow Condensed","Arial Narrow",sans-seri
 <div id="toast"></div>
 <datalist id="elist"></datalist>
 <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="if(this.files[0])restoreBackup(this.files[0]);this.value=''">
-<input type="file" id="fsPick" accept=".json,application/json" style="display:none" onchange="fsOpenFile(this.files[0]);this.value=''">
+<input type="file" id="fsPick" style="display:none" onchange="fsOpenFile(this.files[0]);this.value=''">
 
-<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.10.24-1909";</script>
+<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.10.25-0932"; window.__FORMTRACK_VERNAME="25 Oct 09:32";</script>
 <script>
 /* FormTrack */
 const STORE_KEY = 'fct_v2_nilesh';
@@ -806,7 +806,7 @@ function sideHTML(){
   let sc=0,ex=0; state.scope.forEach(x=>{ const st=scopeStatus(x); sc+=st.scope; ex+=Math.min(st.executed,st.scope||st.executed); });
   const pc=sc?ex/sc:0, R=17, C=2*Math.PI*R;
   const ring=`<svg class="ring" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="${R}" class="rt"/><circle cx="22" cy="22" r="${R}" class="rv" stroke-dasharray="${(C*pc).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 22 22)"/></svg><b class="rp">${sc?Math.round(pc*100)+'%':'—'}</b>`;
-  return `<div class="brand"><div class="logo" aria-hidden="true">F</div><div class="bt"><b>FormTrack</b><span>Formwork tracking</span></div><button class="mini-t" onclick="toggleSide()" title="${state.ui.sideMini?'Show menu labels':'Shrink menu'}" aria-label="${state.ui.sideMini?'Expand menu':'Collapse menu'}">${state.ui.sideMini?'»':'«'}</button></div>
+  return `<div class="brand"><div class="logo" aria-hidden="true">F</div><div class="bt"><b>FormTrack</b><span>Formwork tracking${window.__FORMTRACK_VERNAME?` · ver ${esc(window.__FORMTRACK_VERNAME)}`:''}</span></div><button class="mini-t" onclick="toggleSide()" title="${state.ui.sideMini?'Show menu labels':'Shrink menu'}" aria-label="${state.ui.sideMini?'Expand menu':'Collapse menu'}">${state.ui.sideMini?'»':'«'}</button></div>
   <button class="pcard" onclick="openProjects()" title="Projects – tap to switch or add a project"><span class="psw" aria-hidden="true">⇅</span><span class="rw">${ring}</span><span class="pt">${state.meta.company?`<small>${esc(state.meta.company)}</small>`:''}<b>${esc(state.meta.project)}</b><em>${sc?`${fmtN(ex)} of ${fmtN(sc)} sqm done`:'Scope not entered'}</em></span></button>
   <nav class="navw">${NAV.map(g=>`<div class="ng"><span>${g.g}</span></div>`+g.items.map(([k,l])=>{ const bd=B[k]; return `<button class="nl ${state.route===k?'on':''}" onclick="go('${k}')" title="${l}">${ico(k)}<span class="lb">${l}</span>${bd?`<span class="bdg ${bd[1]}">${bd[0]}</span>`:''}</button>`; }).join('')).join('')}</nav>
   <div class="ucard"><div class="av" aria-hidden="true">${esc((state.meta.user||'').trim().split(/\s+/).filter(Boolean).map(w=>w[0]).join('').slice(0,2).toUpperCase()||'+')}</div><div class="ut"><button class="unm" onclick="editName('user',this)" title="Tap to edit your name">${esc(state.meta.user||'Add your name')}</button></div><span class="sdot ${SYNC.status==='error'?'bd':SYNC.status==='saving'||SYNC.status==='loading'?'wn':'ok'}" title="Save status"></span></div>`;
@@ -1513,7 +1513,9 @@ function contractorRows(){ const out=[]; state.contractors.forEach(c=>state.stor
 if(FILEMODE){ const fg=NAV.find(g=>g.g==='File'); if(fg) fg.items.unshift(['storage','Storage File']); }
 ICONS.storage='<path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M12 11v5M9.5 13.5L12 16l2.5-2.5"/>';
 const FS={handle:null,status:'none',name:'',busy:false,again:false,timer:null};
-const FS_API = typeof window.showSaveFilePicker==='function' && typeof window.showOpenFilePicker==='function';
+const MOBILE = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent||'') || !!(navigator.userAgentData&&navigator.userAgentData.mobile) || (navigator.maxTouchPoints>1 && /Macintosh/.test(navigator.userAgent||''));
+/* automatic file saving only on laptops/desktops – phones and tablets cannot write back into a picked file reliably */
+const FS_API = !MOBILE && typeof window.showSaveFilePicker==='function' && typeof window.showOpenFilePicker==='function';
 const FT_TYPES=[{description:'FormTrack storage file',accept:{'application/json':['.json']}}];
 
 /* ---- tiny IndexedDB for the file handle (laptop) ---- */
@@ -1587,7 +1589,7 @@ async function fsDisconnect(){ FS.handle=null; FS.name=''; FS.status='none'; awa
 async function fsInit(){
   if(!FILEMODE) return;
   if(PWA && 'serviceWorker' in navigator && location.protocol.startsWith('http')){ try{ const had=!!navigator.serviceWorker.controller; navigator.serviceWorker.addEventListener('controllerchange',()=>{ if(had && !window.__ftReloaded){ window.__ftReloaded=1; persistLocal(); location.reload(); } }); navigator.serviceWorker.register('sw.js'); }catch(e){} }
-  if(!FS_API) { fsUpdLight(); return; }
+  if(!FS_API) { if(await idbGet('fileHandle')) await idbSet('fileHandle',null); FS.handle=null; FS.status='none'; fsUpdLight(); render(); return; }
   const h=await idbGet('fileHandle'); if(!h){ fsUpdLight(); return; }
   FS.handle=h; FS.name=h.name;
   try{ const p=await h.queryPermission({mode:'readwrite'}); if(p==='granted'){ const r=await fsReadMerge(); FS.status='ok'; if(r&&(r.added||r.updated||r.removed)){ render(); toast(r.text); } await fsWrite(); } else { FS.status='needperm'; } }catch(e){ FS.status='needperm'; }
@@ -1617,7 +1619,7 @@ function fsLight(){
   if(FS.handle){
     if(FS.status==='needperm') return `<button class="sync bd" id="syncLight" onclick="fsReconnect()" title="Click to allow saving to your storage file">⚠ Click to reconnect storage file</button>`;
     if(FS.status==='saving') return `<span class="sync wn" id="syncLight">Saving to file…</span>`;
-    if(FS.status==='error') return `<button class="sync bd" id="syncLight" onclick="fsWrite()">Not saved to file – retry</button>`;
+    if(FS.status==='error') return `<button class="sync bd" id="syncLight" onclick="fsWrite()" title="Your entries are safe on this device. Only the copy in the storage file is behind.">Storage file not updated – tap to retry</button>`;
     return `<span class="sync ok" id="syncLight" title="${esc(FS.name)}">✓ Saved to storage file${state.ui.fileSaved?' · '+state.ui.fileSaved:''}</span>`;
   }
   if(d) return `<button class="sync wn" id="syncLight" onclick="go('storage')" title="Save your storage file">${d} change${d===1?'':'s'} not in storage file</button>`;
@@ -1781,7 +1783,7 @@ async function download(filename,text,type){ /* text may be a string or an Array
 function downloadBackup(){ state.meta.lastBackup=todayStr(); persist(); download(`FormTrack-backup-${slug(state.meta.project)}-${todayStr()}.json`,JSON.stringify(state,null,1),'application/json'); render(); toast('Backup downloaded.'); }
 function restoreBackup(file){
   const rd=new FileReader();
-  rd.onload=()=>{ try{ const p=JSON.parse(rd.result); if(!p||!Array.isArray(p.systems)) throw 0; askConfirm('Replace all current data with this backup?',()=>{ state=hydrate(p); state.meta.pid=PRJ.cur; save(); prjSync(); toast('Backup restored.'); },'Restore'); }catch(e){ toast('This is not a valid FormTrack backup.'); } };
+  rd.onload=()=>{ let p0; try{ p0=JSON.parse(rd.result); }catch(e){ toast('This file could not be read – it may not have downloaded fully. Download it again and retry.'); return; } try{ const p=p0; if(p&&p.format==='formtrack'){ const r=mergeFile(p); state.pwaFresh=false; save(); toast(r.text); return; } if(!p||!Array.isArray(p.systems)) throw 0; askConfirm('Replace all current data with this backup?',()=>{ state=hydrate(p); state.meta.pid=PRJ.cur; save(); prjSync(); toast('Backup restored.'); },'Restore'); }catch(e){ toast('This is not a valid FormTrack backup.'); } };
   rd.readAsText(file);
 }
 function resetAll(){ askConfirm('Delete ALL data of this project on this device? Other projects are not touched. This cannot be undone. Download a backup first if you need it.',()=>{ const d={}; Object.keys(state).forEach(k=>{ if(Array.isArray(state[k])) state[k].forEach(r=>{ if(r&&r.id) d[r.id]=nowMs(); }); }); const nm=state.meta.project, co=state.meta.company; state=seed(); state.meta.pid=PRJ.cur; if(PRJ.cur!==MAIN_PID){ state.meta.project=nm; state.meta.company=co; } state.deleted=d; save(); },'Delete everything'); }
