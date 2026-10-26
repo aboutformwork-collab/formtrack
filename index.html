@@ -223,7 +223,7 @@ input.nameedit.big{font:700 32px/1.1 "Barlow Condensed","Arial Narrow",sans-seri
 #side.mini .ng{padding:8px 4px 2px}
 @media (prefers-reduced-motion:reduce){#side,#side .nl{transition:none}#side .nl:hover{transform:none}}
 @media (max-width:820px){#side,#side.mini{width:100%;flex:0 0 auto;flex-direction:row;padding:6px 8px;gap:4px;align-items:center}#side .brand{margin:0;padding:4px 8px;border:0}.mini-t,.pcard,.ucard,#side .ng{display:none!important}.navw{flex-direction:row;gap:4px}#side .nl{flex:0 0 auto;padding:8px 12px}#side .nl .lb{display:inline!important}#side .nl.on{box-shadow:inset 0 -3px 0 var(--accent2)}#side .bdg{position:static}}
-.sheet tr.subt td{background:color-mix(in srgb,var(--accent) 10%,var(--calc))}
+.sheet tr.subt td{background:color-mix(in srgb,var(--accent) 10%,var(--calc))}.sheet tr.grp td{background:var(--th-bg);color:var(--th-fg);padding-top:7px;padding-bottom:7px}.sheet tr.grp td small{color:inherit;opacity:.75}
 .thf{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .fbtn{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 3px;border:1px solid color-mix(in srgb,currentColor 35%,transparent);border-radius:4px;background:color-mix(in srgb,#fff 12%,transparent);color:inherit;font-size:11px;line-height:1;cursor:pointer}
 .fbtn.on{background:#fff;color:var(--accent);border-color:#fff}
@@ -274,7 +274,8 @@ input.nameedit.big{font:700 32px/1.1 "Barlow Condensed","Arial Narrow",sans-seri
 .phview{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:zoom-out}.phview img{max-width:94vw;max-height:86vh;border-radius:6px}.phview span{color:#ccc;font-size:12px}
 .mb-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-bottom:12px}.mb-tiles>div{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}.mb-tiles>div.hl{background:color-mix(in srgb,var(--accent) 7%,var(--paper));border-color:color-mix(in srgb,var(--accent) 35%,var(--line))}
 .mb-tiles span{font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:700}.mb-tiles b{font:700 28px/1.15 "Barlow Condensed","Arial Narrow",sans-serif;color:var(--title)}.mb-tiles b small{font-size:14px;color:var(--muted)}.mb-tiles em{font-style:normal;font-size:12px;color:var(--muted)}
-.mb-tab td,.mb-tab th{font-size:13.5px}.mb-present .mb-tiles b{font-size:36px}
+.mb-tiles>div.xs{border-color:color-mix(in srgb,var(--bad,#c0392b) 35%,var(--line))}.mb-tiles>div.xs b{color:var(--bad,#c0392b)}.rspick{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:4px 12px;max-height:260px;overflow:auto;padding:2px}.rspick .rsck{font-size:13px;padding:3px 6px;border-radius:6px}.rspick .rsck.on{background:color-mix(in srgb,var(--accent) 9%,var(--paper));font-weight:600}.mb-tab td,.mb-tab th{font-size:13.5px}.mb-present .mb-tiles b{font-size:36px}
+.addmat{border-style:dashed;color:var(--accent)}.frm.amat{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 14px}.frm.amat label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--muted)}.frm.amat input,.frm.amat select{padding:8px;border:1px solid var(--line);border-radius:6px;font:inherit;background:var(--in);color:var(--ink)}
 .fpb{display:flex;gap:8px;justify-content:flex-end;padding:8px 2px 2px}.fpb .btn{min-width:78px}.fpb .btn[disabled]{opacity:.5}
 .fltbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 6px;font-size:13px}
 .tsum{margin-top:8px}.tsum .sheet td,.tsum .sheet th{padding:5px 10px}
@@ -310,7 +311,7 @@ input.nameedit.big{font:700 32px/1.1 "Barlow Condensed","Arial Narrow",sans-seri
 <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="if(this.files[0])restoreBackup(this.files[0]);this.value=''">
 <input type="file" id="fsPick" style="display:none" onchange="fsOpenFile(this.files[0]);this.value=''">
 
-<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.10.25-1614"; window.__FORMTRACK_VERNAME="25 Oct 16:14";</script>
+<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.10.26-2311"; window.__FORMTRACK_VERNAME="26 Oct 23:11";</script>
 <script>
 /* FormTrack */
 const STORE_KEY = 'formtrack_data_v2';
@@ -416,6 +417,14 @@ function hydrate(p){
   ['consItems','scope','labour','consTx','usage','targets','items','itemTx','storeItems','storeTx','contractors','prpo','ownedTx','machines','machineTx','consNorms','manAreas','manSystems','practices','notes','calcs'].forEach(k=>{ if(!Array.isArray(out[k])) out[k]=s[k]; });
   if(!out.deleted||typeof out.deleted!=='object'||Array.isArray(out.deleted)) out.deleted={};
   out.meeting=Object.assign(s.meeting,out.meeting||{}); ['cards','approved'].forEach(k=>{ if(!out.meeting[k]||typeof out.meeting[k]!=='object') out.meeting[k]=s.meeting[k]; }); if(!Array.isArray(out.meeting.locks)) out.meeting.locks=[];
+  /* consumables kept in Store Stock (old versions) move to the one consumables list */
+  { const ci=out.storeItems.filter(i=>i&&i.kind==='Consumable'); if(ci.length){ const ids=new Set(ci.map(i=>i.id)), now=Date.now();
+    const nm=x=>String(x||'').trim().toLowerCase().replace(/\s+/g,' '), map={};
+    ci.forEach(i=>{ const same=out.consItems.find(c=>c.id!=='c-'+i.id&&nm(c.item)===nm(i.item)&&nm(c.unit)===nm(i.unit)); if(same){ map[i.id]=same.id; if(!num(same.unitCost)&&num(i.rate)){ same.unitCost=num(i.rate); same._u=now; } if(!num(same.minStock)&&num(i.minStock)){ same.minStock=num(i.minStock); same._u=now; } out.deleted[i.id]=now; return; }
+      map[i.id]='c-'+i.id; const nid='c-'+i.id; if(!out.consItems.some(c=>c.id===nid)) out.consItems.push({id:nid,_u:now,item:i.item,unit:i.unit||'Nos',unitCost:num(i.rate),minStock:num(i.minStock)}); out.deleted[i.id]=now; });
+    out.storeTx.filter(t=>ids.has(t.itemId)).forEach(t=>{ const nid='c-'+t.id; const ty=t.type==='Received (purchase)'||t.type==='Returned good'?'Received':'Issued';
+      if(!out.consTx.some(x=>x.id===nid)) out.consTx.push({id:nid,_u:now,date:t.date,itemId:map[t.itemId],type:ty,qty:num(t.qty),systemId:'',areaId:t.areaId||'',contractorId:t.contractorId||'',doc:t.doc||'',remarks:[t.type!=='Received (purchase)'&&t.type!=='Issued to contractor'?t.type:'',t.remarks].filter(Boolean).join(' · ')}); out.deleted[t.id]=now; });
+    out.storeItems=out.storeItems.filter(i=>!ids.has(i.id)); out.storeTx=out.storeTx.filter(t=>!ids.has(t.itemId)); } }
   out.systems.forEach(x=>{ if(!x.rentBasis) x.rentBasis='Sqm per month'; if(!x.dispatchDay) x.dispatchDay=out.meta.chargeDispatchDay===false?'Not charged':'Charged'; });
   return out;
 }
@@ -462,6 +471,54 @@ function balanceOn(sId,aId,d){
   }
   C.bal.set(k,b); return b;
 }
+/* rent start: 3 options per material (system) */
+const RENT_MODES=['From received date','Own date per challan','Fixed start date'];
+function rentFromDate(t,sys){ const md=(sys&&sys.rentMode)||RENT_MODES[0];
+  if(md==='Own date per challan') return t.rentFrom||t.date;
+  if(md==='Fixed start date'&&sys.rentStart) return t.date>sys.rentStart?t.date:sys.rentStart;
+  return t.date; }
+function rentBalOn(sId,aId,d){
+  const k='R|'+sId+'|'+aId+'|'+d; if(C.bal.has(k)) return C.bal.get(k);
+  const sys=sysObj(sId); let b=0;
+  for(const t of state.ledger){
+    if(t.systemId!==sId || t.areaId!==aId || !t.date) continue;
+    if(t.type==='Received' && rentFromDate(t,sys)<=d) b+=num(t.sqm);
+    else if(t.type==='Dispatched' && (dispCharged(sId) ? t.date<d : t.date<=d)) b-=num(t.sqm);
+  }
+  C.bal.set(k,b); return b;
+}
+function itemRentBalOn(itemId,aId,d){
+  const k='R|'+itemId+'|'+aId+'|'+d; if(C.ibal.has(k)) return C.ibal.get(k);
+  const it=itemObj(itemId), sys=it?sysObj(it.systemId):null, dc=it?dispCharged(it.systemId):true; let b=0;
+  for(const t of state.itemTx){
+    if(t.itemId!==itemId || !t.date || (aId!==null && (t.areaId||'')!==aId)) continue;
+    if(t.type==='Received' && rentFromDate(t,sys)<=d) b+=num(t.nos);
+    else if(t.type==='Dispatched' && (dc ? t.date<d : t.date<=d)) b-=num(t.nos);
+  }
+  C.ibal.set(k,b); return b;
+}
+function setSysField(id,k,v){ const x=sysObj(id); if(!x) return; x[k]=v; x._u=nowMs(); if(k==='rentMode'&&v===RENT_MODES[2]&&!x.rentStart){ const first=state.ledger.concat(state.itemTx).filter(t=>t.systemId===id&&t.type==='Received'&&t.date).map(t=>t.date).sort()[0]; x.rentStart=first||todayStr(); } save(); }
+function addMaterial(){
+  const old=document.getElementById('cfm'); if(old) old.remove();
+  const d=document.createElement('div'); d.id='cfm'; d.className='cfm';
+  d.innerHTML=`<div class="cfm-box wide" role="dialog" aria-modal="true" aria-label="Add material"><p><b>Add rental material</b></p>
+  <div class="frm amat"><label>Material / system name<input id="amN" placeholder="e.g. Cuplock – Sri Balaji"></label><label>Vendor<input id="amV" placeholder="Vendor name"></label>
+  <label>Rent basis<select id="amB"><option>Sqm per month</option><option>Per piece per day</option></select></label><label>Executed in<select id="amU"><option>Sqm</option><option>Cum</option></select></label>
+  <label>Dispatch day<select id="amD"><option>Charged</option><option>Not charged</option></select></label>
+  <label>Rent starts<select id="amM">${RENT_MODES.map(m=>`<option>${m}</option>`).join('')}</select></label><label id="amSL" style="display:none">Rent start date<input id="amS" type="date"></label></div>
+  <div class="acts"><button class="btn" id="cfmNo">Cancel</button><button class="btn p" id="amOk">Add material</button></div></div>`;
+  document.body.appendChild(d);
+  const $=id=>d.querySelector('#'+id);
+  $('amM').onchange=()=>{ $('amSL').style.display=$('amM').value===RENT_MODES[2]?'':'none'; };
+  $('cfmNo').onclick=()=>d.remove(); d.onclick=e=>{ if(e.target===d) d.remove(); };
+  $('amOk').onclick=()=>{ const n=$('amN').value.trim(); if(!n){ $('amN').focus(); return; }
+    if(state.systems.some(x=>norm(x.name)===norm(n))){ toast('This material already exists.'); return; }
+    const id='sys-'+slug(n)+'-'+Date.now().toString(36).slice(-4);
+    state.systems.push({id,_u:nowMs(),name:n,ownership:'Rental',vendor:$('amV').value.trim(),buyCostPerSqm:0,stdSqmPerManday:0,rentBasis:$('amB').value,dispatchDay:$('amD').value,execUnit:$('amU').value,rentMode:$('amM').value,rentStart:$('amM').value===RENT_MODES[2]?($('amS').value||todayStr()):''});
+    state.ui.ledgerSys=id; d.remove(); save();
+    toast($('amB').value==='Per piece per day'?'Material added – add its items and rates on Item-wise Material.':'Material added – set its rate per area on Rental Rates, then enter challans.'); };
+  setTimeout(()=>$('amN').focus(),50);
+}
 function balanceNosOn(sId,aId,d){
   let b=0;
   for(const t of state.ledger){
@@ -490,7 +547,7 @@ function monthRent(sId,aId,m){
     const dim=daysInMonth(m), today=todayStr(), its=state.items.filter(i=>i.systemId===sId);
     let rent=0,pcsDays=0,daysCounted=0; const byItem={};
     for(let day=1; day<=dim; day++){ const d=m+'-'+pad(day); if(d>today) break; daysCounted++;
-      its.forEach(it=>{ const b=Math.max(0,itemBalOn(it.id,aId,d)); if(!b) return; pcsDays+=b; rent+=b*num(it.ratePcDay); const x=byItem[it.id]||(byItem[it.id]={pd:0,rent:0}); x.pd+=b; x.rent+=b*num(it.ratePcDay); }); }
+      its.forEach(it=>{ const b=Math.max(0,itemRentBalOn(it.id,aId,d)); if(!b) return; pcsDays+=b; rent+=b*num(it.ratePcDay); const x=byItem[it.id]||(byItem[it.id]={pd:0,rent:0}); x.pd+=b; x.rent+=b*num(it.ratePcDay); }); }
     const res={rate:0,req:0,dim,daysCounted,sqmDays:0,pcsDays,peak:0,rent,excess:0,partial:daysCounted<dim,byItem,pcs:true};
     C.rent.set(key,res); return res;
   }
@@ -499,7 +556,7 @@ function monthRent(sId,aId,m){
   let sqmDays=0, excessDays=0, daysCounted=0, peak=0;
   for(let day=1; day<=dim; day++){
     const d=m+'-'+pad(day); if(d>today) break;
-    const b=Math.max(0,balanceOn(sId,aId,d));
+    const b=Math.max(0,rentBalOn(sId,aId,d));
     sqmDays+=b; daysCounted++; peak=Math.max(peak,b);
     if(req>0) excessDays+=Math.max(0,b-req);
   }
@@ -544,7 +601,10 @@ const labourCost = rows => rows.reduce((a,r)=>a+(num(r.carpenters)*num(state.met
 
 /* ---------- consumables ---------- */
 const consQty = (id,type,m) => state.consTx.filter(t=>t.itemId===id && t.type===type && (!m||monthOf(t.date)===m)).reduce((a,t)=>a+num(t.qty),0);
-const consStock = id => consQty(id,'Received')-consQty(id,'Issued');
+const CONS_TYPES=['Received','Issued','Damaged','Returned to vendor','Missing'];
+const consDmgLeft = id => Math.max(0,consQty(id,'Damaged')-consQty(id,'Returned to vendor'));
+/* good stock = received − issued − damaged − missing; "returned to vendor" first clears the damaged pile */
+const consStock = id => consQty(id,'Received')-consQty(id,'Issued')-consQty(id,'Damaged')-consQty(id,'Missing')-Math.max(0,consQty(id,'Returned to vendor')-consQty(id,'Damaged'));
 const consCostTx = t => num(t.qty)*num((consObj(t.itemId)||{}).unitCost);
 
 /* ---------- owned ---------- */
@@ -563,7 +623,7 @@ function ownedCostPerSqm(sId){ const q=ownedSqm(sId); if(!q) return 0; return st
 function monthBuckets(m){
   if(C.buckets.has(m)) return C.buckets.get(m);
   const B=new Map();
-  const get=(s,a,e,label)=>{ const k=s+'|'+a+'|'+e; if(!B.has(k)) B.set(k,{s,a,ek:e,el:label||e||NOT_SPEC,rent:0,lab:0,cons:0,own:0,sqm:0,cum:0}); return B.get(k); };
+  const get=(s,a,e,label)=>{ const k=s+'|'+a+'|'+e; if(!B.has(k)) B.set(k,{s,a,ek:e,el:label||e||NOT_SPEC,rent:0,xs:0,lab:0,cons:0,own:0,sqm:0,cum:0}); return B.get(k); };
   execRows({m}).forEach(r=>{ const b=get(r.systemId,r.areaId||'',elKey(r.element),String(r.element||'').trim()); b.sqm+=num(r.sqm); b.cum+=num(r.cum); });
   const outBuckets=()=>[...B.values()].filter(b=>b.sqm>0);
   function alloc(field,amt,s,a,e){
@@ -578,7 +638,7 @@ function monthBuckets(m){
   rentalSystems().forEach(s=>{
     const areas=ledgerAreas(s.id), calc=areas.reduce((x,a)=>x+monthRent(s.id,a,m).rent,0);
     const inv=invoiceFor(s.id,m), f=(inv!==null && calc>0)? inv/calc : 1;
-    areas.forEach(a=>alloc('rent',monthRent(s.id,a,m).rent*f,s.id,a));
+    areas.forEach(a=>{ const r=monthRent(s.id,a,m); alloc('rent',(r.rent-r.excess)*f,s.id,a); alloc('xs',r.excess*f,s.id,a); }); /* rent as per required sqm + excess above it */
     if(inv!==null && calc===0) alloc('rent',inv,s.id,null);
     alloc('rent',damageClaims(s.id,m),s.id,null);
   });
@@ -598,10 +658,10 @@ function costGrouped(){
   periodMonths().forEach(m=>monthBuckets(m).forEach(b=>{
     if(!sysFilter(b.s)) return;
     const k=groupKey(b);
-    if(!G.has(k)) G.set(k,{s:b.s,a:b.a,el:b.el,ek:b.ek,rent:0,lab:0,cons:0,own:0,sqm:0,cum:0});
-    const g=G.get(k); ['rent','lab','cons','own','sqm','cum'].forEach(f=>g[f]+=num(b[f]));
+    if(!G.has(k)) G.set(k,{s:b.s,a:b.a,el:b.el,ek:b.ek,rent:0,xs:0,lab:0,cons:0,own:0,sqm:0,cum:0});
+    const g=G.get(k); ['rent','xs','lab','cons','own','sqm','cum'].forEach(f=>g[f]+=num(b[f]));
   }));
-  return [...G.values()].map(g=>Object.assign(g,{total:g.rent+g.lab+g.cons+g.own})).sort((x,y)=>sysName(x.s).localeCompare(sysName(y.s))||areaName(x.a).localeCompare(areaName(y.a))||x.el.localeCompare(y.el));
+  return [...G.values()].map(g=>Object.assign(g,{total:g.rent+g.xs+g.lab+g.cons+g.own,base:g.rent+g.lab+g.cons+g.own})).sort((x,y)=>sysName(x.s).localeCompare(sysName(y.s))||areaName(x.a).localeCompare(areaName(y.a))||x.el.localeCompare(y.el));
 }
 function groupLabel(g){
   const gb=state.ui.groupBy;
@@ -714,7 +774,7 @@ function idleList(){
 /* ---------- row editing ---------- */
 const defDate = () => { const m=state.ui.month||thisMonth(); return m===thisMonth()? todayStr() : m+'-01'; };
 const DEFAULTS = {
-  systems:()=>({name:'New system',ownership:'Rental',vendor:'',buyCostPerSqm:0,stdSqmPerManday:0,rentBasis:'Sqm per month',dispatchDay:'Charged'}),
+  systems:()=>({name:'New system',ownership:'Rental',vendor:'',buyCostPerSqm:0,stdSqmPerManday:0,rentBasis:'Sqm per month',dispatchDay:'Charged',rentMode:'From received date',rentStart:''}),
   areas:()=>({name:'New area'}),
   rates:()=>({systemId:rentalSystems()[0]?.id||'',areaId:state.areas[0]?.id||'',rate:0,requiredSqm:0}),
   scope:()=>({systemId:state.systems[0]?.id||'',areaId:state.areas[0]?.id||'',element:'',scopeSqm:0,plannedStart:'',plannedFinish:''}),
@@ -732,17 +792,22 @@ const DEFAULTS = {
   notes:()=>({date:todayStr(),title:'',text:''}),
   calcs:()=>({sheet:state.ui.calcSheet||'Sheet 1',desc:'',expr:'',unit:''}),
   manAreas:()=>({name:'',scope:0,done:0}),
-  manSystems:()=>({name:'',unit:'Sqm',qtyM:0,rentM:0,otherM:0,qty:0,rent:0,other:0}),
+  manSystems:()=>({name:'',unit:'Sqm',qtyM:0,rentM:0,xsM:0,otherM:0,qty:0,rent:0,xs:0,other:0}),
   consNorms:()=>({systemId:state.systems[0]?.id||'',itemId:state.consItems[0]?.id||'',qty:1,per:0,remarks:''}),
-  consTx:()=>({date:defDate(),itemId:state.consItems[0]?.id||'',type:'Issued',qty:0,systemId:'',areaId:'',remarks:''}),
+  consTx:()=>({date:defDate(),itemId:state.consItems[0]?.id||'',type:'Issued',qty:0,systemId:'',areaId:'',contractorId:'',doc:'',remarks:''}),
+  rentStore:()=>({date:defDate(),type:'Issued to contractor',itemId:(rentStoreItems()[0]||{}).id||'',qty:0,contractorId:state.contractors[0]?.id||'',areaId:'',doc:'',remarks:'',rental:1}),
+  consRec:()=>Object.assign(DEFAULTS.consTx(),{type:'Received'}),
+  consIss:()=>Object.assign(DEFAULTS.consTx(),{type:'Issued'}),
   items:()=>({systemId:curItemSys(),code:'',item:'New item',sqmPerNo:0,kgPerNo:0,boq:0,ratePcDay:0}),
   storeItems:()=>({item:'New item',kind:'Reusable',unit:'Nos',rate:0,minStock:0}),
-  storeTx:()=>({date:defDate(),type:'Issued to contractor',itemId:state.storeItems[0]?.id||'',qty:0,contractorId:state.contractors[0]?.id||'',areaId:'',doc:'',remarks:''}),
+  storeTx:()=>({date:defDate(),type:'Issued to contractor',itemId:(storeTabItems()[0]||{}).id||'',qty:0,contractorId:state.contractors[0]?.id||'',areaId:'',doc:'',remarks:''}),
   contractors:()=>({name:'New contractor',phone:''}),
   prpo:()=>({category:'Material',item:'',qty:0,unit:'',value:0,vendor:'',prNo:'',prDate:todayStr(),poNo:'',poDate:'',requiredBy:'',receivedDate:'',remarks:''}),
   itemTx:()=>({date:todayStr(),systemId:curItemSys(),areaId:'',doc:'',itemId:state.items.find(i=>i.systemId===curItemSys())?.id||'',type:'Received',nos:0,remarks:''}),
 };
-function addRow(arr){ const r=Object.assign({id:uid(),_u:nowMs()},DEFAULTS[arr]()); state[arr].push(r); if(Object.values(tflt(arr)).some(Boolean)) FKEEP.add(r.id); save(); }
+/* virtual tables: one data list shown as two tables (consumables Received / Issued) */
+const VARR={consRec:'consTx',consIss:'consTx',rentStore:'storeTx',rsItems:'items'}; const RA=a=>VARR[a]||a;
+function addRow(arr){ const r=Object.assign({id:uid(),_u:nowMs()},DEFAULTS[arr]()); state[RA(arr)].push(r); if(Object.values(tflt(arr)).some(Boolean)) FKEEP.add(r.id); save(); }
 function delRow(arr,id){
   const used=(test)=>{ if(test){ toast('This is used in other entries — delete or change those first.'); return true; } return false; };
   if(arr==='systems' && used(['ledger','owned','execution','labour','scope','rates','items','itemTx'].some(k=>state[k].some(r=>r.systemId===id)))) return;
@@ -751,9 +816,9 @@ function delRow(arr,id){
   if(arr==='items' && used(state.itemTx.some(t=>t.itemId===id))) return;
   if(arr==='storeItems' && used(state.storeTx.some(t=>t.itemId===id))) return;
   if(arr==='contractors' && used(state.storeTx.some(t=>t.contractorId===id))) return;
-  askConfirm('Delete this row?',()=>{ const row=state[arr].find(r=>r.id===id); if(row&&Array.isArray(row.photos)) row.photos.forEach(p=>phDel(p)); state[arr]=state[arr].filter(r=>r.id!==id); tomb(id); save(); },'Delete');
+  arr=RA(arr); askConfirm('Delete this row?',()=>{ const row=state[arr].find(r=>r.id===id); if(row&&Array.isArray(row.photos)) row.photos.forEach(p=>phDel(p)); state[arr]=state[arr].filter(r=>r.id!==id); tomb(id); save(); },'Delete');
 }
-function setField(arr,id,key,val,isNum){ const r=state[arr].find(x=>x.id===id); if(!r) return; r[key]=isNum?num(val):val; r._u=nowMs(); save(); }
+function setField(arr,id,key,val,isNum){ const r=state[RA(arr)].find(x=>x.id===id); if(!r) return; r[key]=isNum?num(val):val; r._u=nowMs(); save(); }
 function tomb(id){ state.deleted=state.deleted||{}; state.deleted[id]=nowMs(); }
 function touchMeta(k){ state.meta._u=state.meta._u||{}; state.meta._u[k]=nowMs(); }
 function touchMeeting(){ state.meeting._u=nowMs(); }
@@ -767,14 +832,15 @@ function cellInput(arr,row,c){
   const v=row[c.key]??''; const oc=`onchange="setField('${arr}','${row.id}','${c.key}',this.value,${c.type==='number'})"`;
   const sel=(opts)=>`<select class="c" ${oc}>${opts}</select>`;
   switch(c.type){
-    case 'select': return sel(c.options.map(o=>`<option ${o===v?'selected':''}>${esc(o)}</option>`).join(''));
+    case 'select': return sel((v&&!c.options.includes(v)?[v]:[]).concat(c.options).map(o=>`<option ${o===v?'selected':''}>${esc(o)}</option>`).join(''));
     case 'system': return sel(`<option value="">${c.blank||'—'}</option>`+(c.filter?state.systems.filter(c.filter):state.systems).map(s=>`<option value="${s.id}" ${s.id===v?'selected':''}>${esc(s.name)}</option>`).join(''));
     case 'area': return sel(`<option value="">${c.blank||'—'}</option>`+state.areas.map(a=>`<option value="${a.id}" ${a.id===v?'selected':''}>${esc(a.name)}</option>`).join(''));
     case 'itemsel': return sel(`<option value="">—</option>`+state.items.filter(i=>i.systemId===row.systemId).map(x=>`<option value="${x.id}" ${x.id===v?'selected':''}>${esc((x.code?x.code+' – ':'')+x.item)}</option>`).join(''));
-    case 'storeitem': return sel(`<option value="">—</option>`+state.storeItems.map(x=>`<option value="${x.id}" ${x.id===v?'selected':''}>${esc(x.item)} (${esc(x.unit)})</option>`).join(''));
+    case 'storeitem': return sel(`<option value="">—</option>`+(state.route==='store'?storeTabItems():state.storeItems).concat(state.route==='store'&&v&&!storeTabItems().some(x=>x.id===v)?state.storeItems.filter(x=>x.id===v):[]).map(x=>`<option value="${x.id}" ${x.id===v?'selected':''}>${esc(x.item)} (${esc(x.unit)})</option>`).join(''));
     case 'contractor': return sel(`<option value="">—</option>`+state.contractors.map(x=>`<option value="${x.id}" ${x.id===v?'selected':''}>${esc(x.name)}</option>`).join(''));
     case 'machine': return sel(`<option value="">—</option>`+state.machines.map(m=>`<option value="${m.id}" ${m.id===v?'selected':''}>${esc(m.name||'(no name)')}${m.model?' – '+esc(m.model):''}</option>`).join(''));
     case 'owneditem': return sel(`<option value="">—</option>`+state.owned.filter(o=>!row.systemId||o.systemId===row.systemId).map(o=>`<option value="${o.id}" ${o.id===v?'selected':''}>${esc(o.item||'(no name)')} (${esc(o.unit||'')})</option>`).join(''));
+    case 'rentitem': { const L=rentStoreItems(); const ex=v&&!L.some(x=>x.id===v)?state.items.filter(x=>x.id===v):[]; return sel(`<option value="">—</option>`+L.concat(ex).map(x=>`<option value="${x.id}" ${x.id===v?'selected':''}>${esc((x.code?x.code+' – ':'')+x.item)}</option>`).join('')); }
     case 'cons': return sel(`<option value="">—</option>`+state.consItems.map(x=>`<option value="${x.id}" ${x.id===v?'selected':''}>${esc(x.item)} (${esc(x.unit)})</option>`).join(''));
     case 'element': return `<input type="text" class="c" list="elist" value="${esc(v)}" placeholder="pick or type" ${oc}>`;
     case 'date': return `<input type="date" class="c" value="${esc(v)}" ${oc}>`;
@@ -792,6 +858,7 @@ function fval(r,c){ const v=r[c.key];
     case 'system': return v?sysName(v):''; case 'area': return v?areaName(v):'';
     case 'contractor': return (state.contractors.find(x=>x.id===v)||{}).name||'';
     case 'storeitem': return (state.storeItems.find(x=>x.id===v)||{}).item||'';
+    case 'rentitem': return (itemObj(v)||{}).item||'';
     case 'cons': return (consObj(v)||{}).item||'';
     case 'machine': { const m=state.machines.find(x=>x.id===v); return m?(m.name||'')+(m.model?' – '+m.model:''):''; }
     case 'owneditem': { const o=state.owned.find(x=>x.id===v); return o?(o.item||'')+' ('+(o.unit||'')+')':''; }
@@ -863,7 +930,7 @@ function openFlt(ev,arr,key){
   d.addEventListener('keydown',e=>{ if(e.key==='Escape') closeFlt(); if(e.key==='Enter'&&e.target.classList.contains('fps')) d.querySelector('#fpOk').click(); });
 }
 function tableSummary(cols,base,shown,active,extra,balCfg,unitOf,qbu){
-  const nc=cols.filter(c=>(c.type==='number'&&!c.calc&&SUMKEYS.has(c.key))||c.val).map(c=>qbu&&c.key==='sqm'?Object.assign({},c,{byUnit:1}):c).concat(extra||[]).filter(c=>!c.only||base.some(r=>num(c.val(r)))); if(!nc.length||!base.length) return '';
+  const nc=cols.filter(c=>(c.type==='number'&&!c.calc&&SUMKEYS.has(c.key))||c.val).map(c=>qbu&&(c.key==='sqm'||c.key==='qty')?Object.assign({},c,{byUnit:1}):c).concat(extra||[]).filter(c=>!c.only||base.some(r=>num(c.val(r)))); if(!nc.length||!base.length) return '';
   const tcol=cols.find(c=>c.key==='type'&&c.type==='select');
   const v=(r,c)=>c.val?num(c.val(r)):num(r[c.key]);
   const fx0=(x,c)=>c.money?money(x):fmtN(x,c.dec!=null?c.dec:(Math.abs(x-Math.round(x))>1e-9?2:0));
@@ -876,7 +943,7 @@ function tableSummary(cols,base,shown,active,extra,balCfg,unitOf,qbu){
       const sums={}; order.forEach(t=>{ const rr=rows.filter(r=>(r.type||'')===t); sums[t]=nc.map(c=>agg(rr,c)); out.push(`<tr><td>${esc(t||'—')}</td><td class="r">${rr.length}</td>${sums[t].map((x,i)=>`<td class="r">${nz(x)?fx(x,nc[i]):'—'}</td>`).join('')}</tr>`); });
       if(balCfg){ const inT=order.filter(t=>balCfg.in.test(t)), outT=order.filter(t=>balCfg.out.test(t)); if(inT.length) out.push(`<tr class="subt"><td><b>${balCfg.label}</b></td><td></td>${nc.map((c,i)=>{ if(c.noBal) return '<td class="r">—</td>'; let bal=0; inT.forEach(t=>{ bal=add(bal,sums[t][i],1); }); outT.forEach(t=>{ bal=add(bal,sums[t][i],-1); }); return `<td class="r"><b>${nz(bal)?fx(bal,c):'—'}</b></td>`; }).join('')}</tr>`); }
       const outK=balCfg?null:sums['Dispatched']?'Dispatched':sums['Issued']?'Issued':null;
-      if(sums['Received']&&outK) out.push(`<tr class="subt"><td><b>Balance on site (received − ${outK.toLowerCase()})</b></td><td></td>${nc.map((c,i)=>{ const a=sums['Received'][i], b=sums[outK][i]; return `<td class="r"><b>${a||b?fx(a-b,c):'—'}</b></td>`; }).join('')}</tr>`);
+      if(sums['Received']&&outK) out.push(`<tr class="subt"><td><b>Balance on site (received − ${outK.toLowerCase()})</b></td><td></td>${nc.map((c,i)=>{ const a=sums['Received'][i], b=sums[outK][i], d=add(a,b,-1); return `<td class="r"><b>${nz(a)||nz(b)?fx(d,c):'—'}</b></td>`; }).join('')}</tr>`);
     } else out.push(`<tr class="subt"><td><b>Total</b></td><td class="r">${rows.length}</td>${nc.map(c=>`<td class="r"><b>${fx(agg(rows,c),c)}</b></td>`).join('')}</tr>`);
     return `<tr class="sec ${cls}"><td colspan="${nc.length+2}">${label}</td></tr>`+out.join(''); };
   const body= active ? block(shown,`⏷ Filtered – ${shown.length} of ${base.length} rows`,'fl')+block(base,`Overall – all ${base.length} rows (before filter)`,'ov') : block(base,`Total – ${base.length} rows`,'ov');
@@ -884,7 +951,7 @@ function tableSummary(cols,base,shown,active,extra,balCfg,unitOf,qbu){
 }
 const FUNNEL='<svg viewBox="0 0 16 16" width="11" height="11" aria-hidden="true"><path d="M1.5 2h13l-5 6v5l-3 1.5V8z" fill="currentColor"/></svg>';
 function table(arr,cols,opt={}){
-  const base=opt.rows||state[arr]; PCOLS[arr]=cols; TBL[arr]={cols,base};
+  const base=opt.rows||state[RA(arr)]; PCOLS[arr]=cols; TBL[arr]={cols,base};
   const f=tflt(arr); const active=Object.keys(f).length>0; const so=tsort(arr);
   const showF=!opt.noFilter && (base.length>=1 || active) && cols.some(canFlt);
   let rows= active ? base.filter(r=>passFlt(r,cols,f)) : base;
@@ -1006,7 +1073,7 @@ function editName(key,el){
 }
 PAGES.dashboard=()=>{
   const m=state.ui.month||thisMonth(), todate=state.ui.period==='todate', pl=todate?'to date ('+monthLabel(m)+')':monthLabel(m);
-  const cg=costGrouped(), tot=cg.reduce((a,g)=>{['rent','lab','cons','own','sqm','cum','total'].forEach(f=>a[f]+=num(g[f])); return a;},{rent:0,lab:0,cons:0,own:0,sqm:0,cum:0,total:0});
+  const cg=costGrouped(), tot=cg.reduce((a,g)=>{['rent','xs','lab','cons','own','sqm','cum','total','base'].forEach(f=>a[f]=(a[f]||0)+num(g[f])); return a;},{rent:0,lab:0,cons:0,own:0,sqm:0,cum:0,total:0});
   const lg=labourGrouped(), lmd=lg.reduce((a,g)=>a+g.md,0), lsq=lg.filter(g=>g.md>0).reduce((a,g)=>a+g.sqm,0);
   const idle=idleList().filter(x=>sysFilter(x.s.id)), idleSqm=idle.reduce((a,x)=>a+x.idle,0), idleCost=idle.reduce((a,x)=>a+x.cost,0);
   const scopes=state.scope.filter(sc=>sysFilter(sc.systemId)).map(sc=>({sc,st:scopeStatus(sc)}));
@@ -1028,33 +1095,34 @@ PAGES.dashboard=()=>{
   </div>`;
 
   // 1. System cost
-  /* SYSTEM COST = rent (always) + labour / consumables / owned material (only when entered) ÷ executed qty.
-     Each system has its own unit: shuttering in sqm, scaffolding in cum (or sqm) – set on Systems & Areas. */
+  /* SYSTEM COST = rent for the REQUIRED sqm (+ labour / consumables / owned when entered) ÷ executed qty.
+     Rent for material above the required sqm (Rental Rates) is kept apart as EXCESS. */
   { const mSel=state.ui.month||thisMonth();
-    const Z={rent:0,lab:0,cons:0,own:0,sqm:0,total:0};
+    const Z={rent:0,xs:0,lab:0,cons:0,own:0,sqm:0,total:0,base:0};
     const sum=list=>list.reduce((a,g)=>{ Object.keys(Z).forEach(f=>a[f]+=num(g[f])); return a; },Object.assign({},Z));
     const TT=sum(withUI({period:'todate'},()=>costGrouped()));
-    const hasL=TT.lab>0, hasC=TT.cons>0, hasO=TT.own>0;
+    const hasL=TT.lab>0, hasC=TT.cons>0, hasO=TT.own>0, hasX=TT.xs>0;
     const add=[hasL&&'labour',hasC&&'consumables',hasO&&'owned material'].filter(Boolean);
     const units=[...new Set(cg.map(g=>sysUnit(g.s)))], oneU=units.length<=1?(units[0]||'sqm'):null;
     const cpu=(t,q,u)=>q?money(t/q)+` <small class="muted">/${u}</small>`:(t?PILL('bd','no output'):'—');
     const qty=(q,u)=>`${fmtN(q,1)} <small class="muted">${u}</small>`;
-    const byU=list=>{ const m=new Map(); list.forEach(g=>{ const u=sysUnit(g.s); const x=m.get(u)||{q:0,t:0}; x.q+=num(g.sqm); x.t+=num(g.total); m.set(u,x); }); return m; };
-    const cRows=cg.map(g=>{ const u=sysUnit(g.s); return `<tr><td class="v">${groupLabel(g)}</td><td class="calc r">${qty(g.sqm,u)}</td><td class="calc r">${money(g.rent)}</td>${add.length?`<td class="calc r">${cpu(g.rent,g.sqm,u)}</td>`:''}${hasL?`<td class="calc r">${money(g.lab)}</td>`:''}${hasC?`<td class="calc r">${money(g.cons)}</td>`:''}${hasO?`<td class="calc r">${money(g.own)}</td>`:''}${add.length?`<td class="calc r"><b>${money(g.total)}</b></td>`:''}<td class="calc r"><b>${cpu(g.total,g.sqm,u)}</b></td></tr>`; });
-    const BU=byU(cg);
-    const totQty=oneU? qty(tot.sqm,oneU) : [...BU.entries()].map(([u,x])=>qty(x.q,u)).join('<br>');
-    const totCpu=oneU? (tot.sqm?money(tot.total/tot.sqm)+` <small>/${oneU}</small>`:'—') : [...BU.entries()].map(([u,x])=>x.q?money(x.t/x.q)+` <small>/${u}</small>`:'—').join('<br>');
-    const heads=[['Group'],['Executed qty',1],['Rent / bill',1]].concat(add.length?[['Rent per unit',1]]:[]).concat(hasL?[['Labour',1]]:[]).concat(hasC?[['Consumables',1]]:[]).concat(hasO?[['Owned material',1]]:[]).concat(add.length?[['Total cost',1]]:[]).concat([['System cost per unit',1]]);
-    h+=panel('1. System cost – '+pl, simpleTable(heads,cRows,
-      `<tr><td>${(state.ui.sysSel||[]).length>1?'Combined (ticked systems)':'Total'}</td><td class="r">${totQty}</td><td class="r">${money(tot.rent)}</td>${add.length?`<td class="r">${oneU?(tot.sqm?money(tot.rent/tot.sqm)+` <small>/${oneU}</small>`:'—'):[...byU(cg.map(g=>Object.assign({},g,{total:g.rent}))).entries()].map(([u,x])=>x.q?money(x.t/x.q)+` <small>/${u}</small>`:'—').join('<br>')}</td>`:''}${hasL?`<td class="r">${money(tot.lab)}</td>`:''}${hasC?`<td class="r">${money(tot.cons)}</td>`:''}${hasO?`<td class="r">${money(tot.own)}</td>`:''}${add.length?`<td class="r">${money(tot.total)}</td>`:''}<td class="r">${totCpu}</td></tr>`)
-      +`<p class="note hint" style="margin-top:6px"><b>System cost = ${add.length?'(rent + '+add.join(' + ')+')':'rent'} ÷ executed qty.</b>${add.length?' <b>Rent per unit</b> is the base (rent ÷ executed); the last column shows it after adding '+add.join(' + ')+'.':''} Shuttering is counted in <b>sqm</b>, scaffolding in <b>cum</b> or sqm – set each system's unit in <a href="#" onclick="go('setup');return false">Systems & Areas</a> (“Executed in”). ${add.length?'':'Labour, consumables and owned material are optional – when you enter them they are added (cost goes up) and their columns appear. '}${oneU?'':'Totals are shown per unit because sqm and cum cannot be added. '}Rent = vendor bill when entered on Invoice Check, otherwise calculated rent. Use <b>Period</b> above for this month or project to date.</p>`);
+    const byU=(list,fn)=>{ const m=new Map(); list.forEach(g=>{ const u=sysUnit(g.s); const x=m.get(u)||{q:0,t:0}; x.q+=num(g.sqm); x.t+=fn(g); m.set(u,x); }); return m; };
+    const perU=(list,fn)=>[...byU(list,fn).entries()].map(([u,x])=>x.q?money(x.t/x.q)+` <small>/${u}</small>`:(x.t?'no output':'—')).join('<br>');
+    const cells=(g,u,foot)=>{ const td=foot?'<td class="r">':'<td class="calc r">'; const one=x=>foot&&!oneU?null:x;
+      const q= foot? (oneU?qty(g.sqm,oneU):[...byU(cg,x=>0).entries()].map(([uu,x])=>qty(x.q,uu)).join('<br>')) : qty(g.sqm,u);
+      const pu=fn=> foot? (oneU?cpu(fn(g),g.sqm,oneU):perU(cg,fn)) : cpu(fn(g),g.sqm,u);
+      return `${td}${q}</td>${td}${money(g.rent)}</td>${hasX?`${td}${g.xs?`<span class="neg">${money(g.xs)}</span>`:'—'}</td>`:''}${add.length?`${td}${pu(x=>num(x.rent))}</td>`:''}${hasL?`${td}${money(g.lab)}</td>`:''}${hasC?`${td}${money(g.cons)}</td>`:''}${hasO?`${td}${money(g.own)}</td>`:''}${add.length||hasX?`${td}<b>${money(g.total)}</b></td>`:''}${td}<b>${pu(x=>num(x.base))}</b></td>${hasX?`${td}${pu(x=>num(x.total))}</td>`:''}`; };
+    const cRows=cg.map(g=>`<tr><td class="v">${groupLabel(g)}</td>${cells(g,sysUnit(g.s))}</tr>`);
+    const heads=[['Group'],['Executed qty',1],[hasX?'Rent – as required':'Rent / bill',1]].concat(hasX?[['Excess rent',1]]:[]).concat(add.length?[['Rent per unit',1]]:[]).concat(hasL?[['Labour',1]]:[]).concat(hasC?[['Consumables',1]]:[]).concat(hasO?[['Owned material',1]]:[]).concat(add.length||hasX?[['Total cost',1]]:[]).concat([[hasX?'System cost per unit (as required)':'System cost per unit',1]]).concat(hasX?[['Incl. excess',1]]:[]);
+    h+=panel('1. System cost – '+pl, simpleTable(heads,cRows,`<tr><td>${(state.ui.sysSel||[]).length>1?'Combined (ticked systems)':'Total'}</td>${cells(tot,null,true)}</tr>`));
     /* month-wise */
-    const months=allMonthsUpTo(mSel); const C=new Map(); const mrows=[];
+    const months=allMonthsUpTo(mSel); const C={b:new Map(),t:new Map()}; const mrows=[];
+    const acc=(M,K)=>M.forEach((x,u)=>{ const c=K.get(u)||{q:0,t:0}; c.q+=x.q; c.t+=x.t; K.set(u,c); });
     const ut=m=>[...m.entries()].map(([u,x])=>qty(x.q,u)).join('<br>')||'—', uc=m=>[...m.entries()].map(([u,x])=>x.q?money(x.t/x.q)+` <small class="muted">/${u}</small>`:(x.t?PILL('bd','no output'):'—')).join('<br>')||'—';
-    months.forEach(m=>{ const gl=withUI({period:'month',month:m},()=>costGrouped()); const t=sum(gl); if(!t.rent&&!t.sqm&&!t.lab&&!t.cons&&!t.own) return;
-      const M=byU(gl); M.forEach((x,u)=>{ const c=C.get(u)||{q:0,t:0}; c.q+=x.q; c.t+=x.t; C.set(u,c); });
-      mrows.push(`<tr class="${m===mSel?'dnew':''}"><td class="v" style="white-space:nowrap"><b>${monthLabel(m)}</b></td><td class="calc r">${ut(M)}</td><td class="calc r">${money(t.rent)}</td><td class="calc r">${money(t.lab)}</td><td class="calc r">${money(t.cons)}</td>${hasO?`<td class="calc r">${money(t.own)}</td>`:''}<td class="calc r"><b>${money(t.total)}</b></td><td class="calc r"><b>${uc(M)}</b></td><td class="calc r tdc">${ut(new Map(C))}</td><td class="calc r"><b>${uc(new Map([...C].map(([u,x])=>[u,{q:x.q,t:x.t}])))}</b></td></tr>`); });
-    const mh=[['Month'],['Executed qty',1],['Rent / bill',1]].concat([['Labour',1],['Consumables',1]]).concat(hasO?[['Owned mat.',1]]:[]).concat([['Total cost',1],['Cost per unit (month)',1],['From start – qty',1],['From start – cost per unit',1]]);
+    months.forEach(m=>{ const gl=withUI({period:'month',month:m},()=>costGrouped()); const t=sum(gl); if(!t.rent&&!t.xs&&!t.sqm&&!t.lab&&!t.cons&&!t.own) return;
+      const Mb=byU(gl,g=>num(g.base)), Mt=byU(gl,g=>num(g.total)); acc(Mb,C.b); acc(Mt,C.t);
+      mrows.push(`<tr class="${m===mSel?'dnew':''}"><td class="v" style="white-space:nowrap"><b>${monthLabel(m)}</b></td><td class="calc r">${ut(Mb)}</td><td class="calc r">${money(t.rent)}</td>${hasX?`<td class="calc r">${t.xs?`<span class="neg">${money(t.xs)}</span>`:'—'}</td>`:''}<td class="calc r">${money(t.lab)}</td><td class="calc r">${money(t.cons)}</td>${hasO?`<td class="calc r">${money(t.own)}</td>`:''}<td class="calc r"><b>${money(t.total)}</b></td><td class="calc r"><b>${uc(Mb)}</b></td>${hasX?`<td class="calc r">${uc(Mt)}</td>`:''}<td class="calc r tdc">${ut(new Map(C.b))}</td><td class="calc r"><b>${uc(new Map([...C.b].map(([u,x])=>[u,{q:x.q,t:x.t}])))}</b></td>${hasX?`<td class="calc r">${uc(new Map([...C.t].map(([u,x])=>[u,{q:x.q,t:x.t}])))}</td>`:''}</tr>`); });
+    const mh=[['Month'],['Executed qty',1],[hasX?'Rent – as required':'Rent / bill',1]].concat(hasX?[['Excess rent',1]]:[]).concat([['Labour',1],['Consumables',1]]).concat(hasO?[['Owned mat.',1]]:[]).concat([['Total cost',1],[hasX?'Cost / unit (as required)':'Cost per unit (month)',1]]).concat(hasX?[['Incl. excess',1]]:[]).concat([['From start – qty',1],[hasX?'From start – cost / unit (as required)':'From start – cost per unit',1]]).concat(hasX?[['From start – incl. excess',1]]:[]);
     { const L=state.labour.filter(r=>num(r.carpenters)||num(r.helpers)), noWage=L.length&&!num(state.meta.carpenterWage)&&!num(state.meta.helperWage);
       const CT=state.consTx.filter(t=>t.type==='Issued'&&num(t.qty)), noRate=CT.filter(t=>!num((consObj(t.itemId)||{}).unitCost)).map(t=>(consObj(t.itemId)||{}).item).filter(Boolean);
       if(noWage||noRate.length) h+=`<div class="banner">${PILL('wn','CHECK')} <span>${noWage?`Labour is entered (${fmtN(mandays(L),1)} mandays) but <b>wages are ₹0</b> – set carpenter / helper wage on <a href="#" onclick="go('labour');return false">Labour</a> so labour cost is added. `:''}${noRate.length?`Consumables issued without a rate: <b>${esc([...new Set(noRate)].join(', '))}</b> – set the rate on <a href="#" onclick="go('consumables');return false">Consumables</a>.`:''}</span></div>`; }
@@ -1113,7 +1181,7 @@ function alertsHtml(){
 
 PAGES.setup=()=>{
   let h=`<p class="note hint">Each formwork system is <b>Rental</b> or <b>Owned</b>. Rental systems are charged either <b>per sqm per month</b> (rent from the sqm Received / Dispatch ledger and area rates) or <b>per piece per day</b> (rent from item movements and item rates, e.g. scaffolding). <b>Dispatch day</b> says whether the vendor still charges the day material goes back.</p>`;
-  h+=`<div class="grid2">`+panel('Formwork systems',table('systems',[{key:'name',label:'System'},{key:'ownership',label:'Rental / Owned',type:'select',options:OWNERSHIP},{key:'vendor',label:'Vendor'},{key:'rentBasis',label:'Rent basis',type:'select',options:['Sqm per month','Per piece per day']},{key:'dispatchDay',label:'Dispatch day',type:'select',options:['Charged','Not charged']},{key:'execUnit',label:'Executed in',type:'select',options:['Sqm','Cum']},{key:'stdSqmPerManday',label:'Std qty / manday',type:'number',r:1}]))+panel('Areas',table('areas',[{key:'name',label:'Area name'}]))+`</div>`;
+  h+=`<div class="grid2">`+panel('Formwork systems',table('systems',[{key:'name',label:'System'},{key:'ownership',label:'Rental / Owned',type:'select',options:OWNERSHIP},{key:'vendor',label:'Vendor'},{key:'rentBasis',label:'Rent basis',type:'select',options:['Sqm per month','Per piece per day']},{key:'dispatchDay',label:'Dispatch day',type:'select',options:['Charged','Not charged']},{key:'execUnit',label:'Executed in',type:'select',options:['Sqm','Cum']},{key:'rentMode',label:'Rent starts',type:'select',options:['From received date','Own date per challan','Fixed start date']},{key:'rentStart',label:'Rent start date',type:'date'},{key:'stdSqmPerManday',label:'Std qty / manday',type:'number',r:1}]))+panel('Areas',table('areas',[{key:'name',label:'Area name'}]))+`</div>`;
   h+=projectsPanel();
   h+=panel('Company & project',`<p class="note hint">These names show at the top of every page, on the Meeting Screen and in presentations. Change them any time.</p><div class="frm"><label>Company name<input value="${esc(state.meta.company||'')}" placeholder="e.g. ABC Infra Ltd" onchange="setMeta('company',this.value)"></label><label>Your name<input value="${esc(state.meta.user||'')}" placeholder="Shown on reports and presentations" onchange="setMeta('user',this.value)"></label><label>Project<input value="${esc(state.meta.project)}" onchange="setMeta('project',this.value)"></label><label>Client<input value="${esc(state.meta.client)}" onchange="setMeta('client',this.value)"></label><label>Location<input value="${esc(state.meta.location)}" onchange="setMeta('location',this.value)"></label></div>`);
   return h;
@@ -1199,21 +1267,31 @@ function usageRows(m){
   return out.sort((a,b)=>sysName(a.sId).localeCompare(sysName(b.sId))||a.it.item.localeCompare(b.it.item));
 }
 const perTxt=(rate,unit,u)=> rate? `1 ${esc(unit)} / ${fmtN(1/rate,1)} ${u}` : '—';
+/* one consumables list – shown on the Consumables page and in Store Stock › Consumables */
+function consStockPanel(){
+  return panel('Consumable items & stock',table('consItems',[
+    {key:'item',label:'Item',w:150},{key:'unit',label:'Unit',type:'select',options:['Nos','Sqm','Cum','Rmt','Kg','Ltr','Set','Box','Sheets']},
+    {key:'unitCost',label:`Rate (${cur()}/unit)`,type:'number',r:1},{key:'minStock',label:'Min stock',type:'number',r:1},
+    {label:'Received',r:1,calc:c=>fmtN(consQty(c.id,'Received'),2)},{label:'Issued',r:1,calc:c=>fmtN(consQty(c.id,'Issued'),2)},
+    ...(state.consTx.some(t=>t.type!=='Received'&&t.type!=='Issued')?[{label:'Damaged',r:1,calc:c=>fmtN(consQty(c.id,'Damaged'),2)},{label:'Returned to vendor',r:1,calc:c=>fmtN(consQty(c.id,'Returned to vendor'),2)},{label:'Damaged – not returned',r:1,calc:c=>{const d=consDmgLeft(c.id); return d?`<span class="neg">${fmtN(d,2)}</span>`:'0';}},{label:'Missing',r:1,calc:c=>fmtN(consQty(c.id,'Missing'),2)}]:[]),
+    {label:'In stock',r:1,calc:c=>{const s=consStock(c.id); return `<b class="${s<0?'neg':''}">${fmtN(s,2)}</b>`;}},
+    {label:'Stock value',r:1,calc:c=>money(Math.max(0,consStock(c.id))*num(c.unitCost))},
+    {label:'Open PO',r:1,calc:c=>fmtN(openPOQty(c.item))},
+    {label:'Status',calc:c=>{const s=consStock(c.id); return s<0?PILL('bd','Issued > received'):(num(c.minStock)&&s+openPOQty(c.item)<num(c.minStock)?PILL('bd','Raise PR'):(num(c.minStock)&&s<num(c.minStock)?PILL('wn','Low – PO pending'):PILL('ok','OK')));}}]));
+}
+function consMovePanel(all,togKey){
+  const m=state.ui.month||thisMonth();
+  const rows=state.consTx.filter(t=>all||monthOf(t.date)===m).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  const cU=t=>(consObj(t.itemId)||{}).unit||'', CV=[{label:'Value',val:consCostTx,money:1}];
+  return monthBar(`<span style="width:10px"></span><label class="ck"><input type="checkbox" ${all?'checked':''} onchange="setUI('${togKey}',this.checked)"> Show all months</label>`)+panel('Received / issued'+(all?' – all months':' – '+monthLabel(m)),table('consTx',[
+    {key:'date',label:'Date',type:'date'},{key:'itemId',label:'Item',type:'cons',w:150},{key:'type',label:'Type',type:'select',options:state.route==='store'?CONS_TYPES:['Received','Issued'],w:state.route==='store'?150:95},{key:'qty',label:'Qty',type:'number',r:1},
+    {key:'systemId',label:'Issued to system',type:'system',blank:'Shared'},{key:'areaId',label:'Area',type:'area',blank:'All'},{key:'contractorId',label:'Contractor',type:'contractor',w:140},
+    {label:'Value',r:1,calc:t=>money(consCostTx(t))},{key:'doc',label:'Challan / GRN / slip'},{key:'remarks',label:'Remarks'}],{rows,unitOf:cU,qtyByUnit:1,sums:CV,bal:{in:/^Received$/,out:/^(Issued|Damaged|Missing)$/,label:'In stock (received − issued − damaged − missing)'}}),rows.length+' entries');
+}
 PAGES.consumables=()=>{
   const m=state.ui.month||thisMonth();
   let h=`<p class="note hint">Set each consumable once with its rate. Record what is received into store and what is issued. Issued value is charged to the system/area you pick; leave System blank to share it across all systems by executed sqm.</p>`;
-  h+=panel('Consumable items & stock',table('consItems',[
-    {key:'item',label:'Item'},{key:'unit',label:'Unit',type:'select',options:['Nos','Ltr','Kg','Rmt','Sqm','Set','Box']},
-    {key:'unitCost',label:`Rate (${cur()}/unit)`,type:'number',r:1},{key:'minStock',label:'Min stock',type:'number',r:1},
-    {label:'Received',r:1,calc:c=>fmtN(consQty(c.id,'Received'),2)},{label:'Issued',r:1,calc:c=>fmtN(consQty(c.id,'Issued'),2)},
-    {label:'In stock',r:1,calc:c=>{const s=consStock(c.id); return `<span class="${s<0?'neg':''}">${fmtN(s,2)}</span>`;}},
-    {label:'Stock value',r:1,calc:c=>money(Math.max(0,consStock(c.id))*num(c.unitCost))},
-    {label:'Status',calc:c=>{const s=consStock(c.id); return s<0?PILL('bd','Issued > received'):(num(c.minStock)&&s<num(c.minStock)?PILL('wn','Reorder'):PILL('ok','OK'));}}]));
-  const rows=state.consTx.filter(t=>monthOf(t.date)===m).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
-  h+=monthBar()+panel('Received / issued – '+monthLabel(m),table('consTx',[
-    {key:'date',label:'Date',type:'date'},{key:'itemId',label:'Item',type:'cons'},{key:'type',label:'Type',type:'select',options:['Received','Issued']},{key:'qty',label:'Qty',type:'number',r:1},
-    {key:'systemId',label:'Issued to system',type:'system',blank:'Shared'},{key:'areaId',label:'Area',type:'area',blank:'All'},
-    {label:'Value',r:1,calc:t=>money(consCostTx(t))},{key:'remarks',label:'Remarks'}],{rows}),'entries dated in this month');
+  h+=consStockPanel()+consMovePanel(!!state.ui.consAll,'consAll');
   /* standard norms – optional */
   h+=panel('Standard norms (optional)',`<p class="note hint">Your standard consumption for each system and item, e.g. <b>Shuttering oil · Conventional ply · 1 Ltr per 30 sqm</b> (scaffolding systems: per cum). Where a norm is entered, the usage check compares with it; otherwise it compares with your own average. Leave this empty if you don't have standards.</p>`+
     table('consNorms',[{key:'systemId',label:'System',type:'system'},{key:'itemId',label:'Consumable item',type:'cons'},{key:'qty',label:'Qty',type:'number',r:1},{label:'Unit',calc:n=>esc((consObj(n.itemId)||{}).unit||'')},
@@ -1237,12 +1315,13 @@ PAGES.ledger=()=>{
   const f=state.ui.ledgerSys||'';
   const rows=state.ledger.filter(t=>!f||t.systemId===f).slice().sort((a,b)=>(a.date||'').localeCompare(b.date||''));
   let h=`<p class="note hint">Enter every challan: material <b>Received</b> on site and <b>Dispatched</b> back to the vendor, in sqm (nos optional). <b>Damage claim</b> records a vendor charge in ${cur()} and does not change the balance.</p>`;
-  { const used=rentalSystems().filter(x=>state.ledger.some(t=>t.systemId===x.id)||state.itemTx.some(t=>t.systemId===x.id)); h+=`<div class="chips systabs"><label>Material</label><button class="btn sm ${!f?'p':''}" onclick="setUI('ledgerSys','')">All</button>${used.map(x=>`<button class="btn sm ${x.id===f?'p':''}" onclick="setUI('ledgerSys','${x.id}')">${esc(x.name)}</button>`).join('')}</div>`; }
+  { const used=rentalSystems(); h+=`<div class="chips systabs"><label>Material</label><button class="btn sm ${!f?'p':''}" onclick="setUI('ledgerSys','')">All</button>${used.map(x=>`<button class="btn sm ${x.id===f?'p':''}" onclick="setUI('ledgerSys','${x.id}')">${esc(x.name)}</button>`).join('')}<button class="btn sm addmat" onclick="addMaterial()">+ Add material</button></div>`;
+    if(f){ const sy=sysObj(f); if(sy) h+=`<div class="chips"><label>Rent starts</label>${RENT_MODES.map(md=>`<button class="btn sm ${(sy.rentMode||RENT_MODES[0])===md?'p':''}" onclick="setSysField('${sy.id}','rentMode','${md}')">${md}</button>`).join('')}${(sy.rentMode===RENT_MODES[2])?`<input type="date" value="${esc(sy.rentStart||'')}" onchange="setSysField('${sy.id}','rentStart',this.value)">`:''}</div>`; } }
   if(f && !state.ledger.some(t=>t.systemId===f) && state.itemTx.some(t=>t.systemId===f)) h+=`<div class="banner">${PILL('na','NOTE')} <span><b>${esc(sysName(f))}</b> is counted item by item – enter its challans on <a href="#" onclick="state.ui.itemSys='${f}';go('items');return false">Item-wise Material</a>. They show here automatically, per area, in nos and MT.</span></div>`;
   h+=panel('Received / Dispatch ledger',table('ledger',[
     {key:'date',label:'Date',type:'date'},{key:'systemId',label:'System',type:'system',filter:s=>s.ownership==='Rental'},{key:'areaId',label:'Area',type:'area'},
     {key:'type',label:'Type',type:'select',options:LEDGER_TYPES},{key:'challan',label:'Challan no.'},{key:'item',label:'Item (optional)'},
-    {key:'sqm',label:'Sqm',type:'number',r:1},{key:'nos',label:'Nos',type:'number',r:1},{key:'mt',label:'MT (tons)',type:'number',r:1},{key:'amount',label:`Claim (${cur()})`,type:'number',r:1},{key:'remarks',label:'Remarks'}],{rows}));
+    {key:'sqm',label:'Sqm',type:'number',r:1},{key:'nos',label:'Nos',type:'number',r:1},{key:'mt',label:'MT (tons)',type:'number',r:1},...(state.systems.some(x=>x.rentMode==='Own date per challan')?[{key:'rentFrom',label:'Rent from',type:'date'}]:[]),{key:'amount',label:`Claim (${cur()})`,type:'number',r:1},{key:'remarks',label:'Remarks'}],{rows}));
   const c0=(x,d=0)=>x?fmtN(x,d):'—';
   const itKg=t=>{const it=itemObj(t.itemId); return it?num(t.nos)*num(it.kgPerNo):0;}, itSq=t=>{const it=itemObj(t.itemId); return it?num(t.nos)*num(it.sqmPerNo):0;};
   /* systems with no sqm challans but item-by-item entries (cuplock, scaffolding): their challans come from Item-wise Material */
@@ -1343,7 +1422,7 @@ PAGES.items=()=>{
   const months=[...new Set(state.itemTx.filter(t=>t.systemId===sId).map(t=>monthOf(t.date)))].filter(Boolean).sort();
   const rows=state.itemTx.filter(t=>t.systemId===sId && (!mf||monthOf(t.date)===mf)).sort((a,b)=>(a.date||'').localeCompare(b.date||'')||(a.doc||'').localeCompare(b.doc||''));
   h+=`<div class="chips"><label>Movements for</label><select onchange="setUI('itemTxMonth',this.value)"><option value="">All months</option>${months.map(m=>`<option value="${m}" ${m===mf?'selected':''}>${monthLabel(m)}</option>`).join('')}</select></div>`;
-  h+=panel('Item movements – enter each challan line',table('itemTx',[{key:'date',label:'Date',type:'date'},{key:'doc',label:'Challan / document',w:140},{key:'itemId',label:'Item',type:'itemsel',w:260},{key:'type',label:'Type',type:'select',options:['Received','Dispatched']},{key:'nos',label:'Nos',type:'number',r:1},{key:'areaId',label:'Area',type:'area'},
+  h+=panel('Item movements – enter each challan line',table('itemTx',[{key:'date',label:'Date',type:'date'},{key:'doc',label:'Challan / document',w:140},{key:'itemId',label:'Item',type:'itemsel',w:260},{key:'type',label:'Type',type:'select',options:['Received','Dispatched']},{key:'nos',label:'Nos',type:'number',r:1},{key:'areaId',label:'Area',type:'area'},...(state.systems.some(x=>x.rentMode==='Own date per challan')?[{key:'rentFrom',label:'Rent from',type:'date'}]:[]),
     {label:'Sqm',r:1,dec:2,val:t=>{const it=itemObj(t.itemId); return it?num(t.nos)*num(it.sqmPerNo):0;},calc:t=>{const it=itemObj(t.itemId); return it&&num(it.sqmPerNo)?fmtN(num(t.nos)*num(it.sqmPerNo),2):'—';}},{key:'remarks',label:'Remarks'}],{rows,totals:['nos'],sums:[{label:'Weight (MT)',val:t=>{const it=itemObj(t.itemId); return it?num(t.nos)*num(it.kgPerNo)/1000:0;},dec:3,only:1}]}),rows.length+' lines');
   if(!pcs && s && s.ownership==='Rental') h+=`<p class="note hint">For sqm-rated systems the rent still comes from the sqm Received / Dispatch ledger. This page tracks pieces item by item, so you can see exactly what is still to go back.</p>`;
   return h;
@@ -1502,14 +1581,14 @@ const manAuto=()=>state.meta.manMode!=='manual';
 function manAutoData(){
   const am=new Map(); state.scope.forEach(sc=>{ const st=scopeStatus(sc); const k=sc.areaId||''; const g=am.get(k)||{name:areaName(sc.areaId),scope:0,done:0}; g.scope+=num(st.scope); g.done+=Math.min(num(st.executed),num(st.scope)||num(st.executed)); am.set(k,g); });
   const gm=new Map(withUI({period:'month',groupBy:'system',sysSel:[]},()=>costGrouped()).map(g=>[g.s,g]));
-  const S=withUI({period:'todate',groupBy:'system',sysSel:[]},()=>costGrouped()).filter(g=>g.sqm||g.rent).map(g=>{ const m=gm.get(g.s)||{}; return {name:sysName(g.s),unit:sysUnit(g.s)==='cum'?'Cum':'Sqm',
-    qty:g.sqm,rent:g.rent,other:g.lab+g.cons+g.own, qtyM:num(m.sqm),rentM:num(m.rent),otherM:num(m.lab)+num(m.cons)+num(m.own)}; });
+  const S=withUI({period:'todate',groupBy:'system',sysSel:[]},()=>costGrouped()).filter(g=>g.sqm||g.rent||g.xs).map(g=>{ const m=gm.get(g.s)||{}; return {name:sysName(g.s),unit:sysUnit(g.s)==='cum'?'Cum':'Sqm',
+    qty:g.sqm,rent:g.rent,xs:num(g.xs),other:g.lab+g.cons+g.own, qtyM:num(m.sqm),rentM:num(m.rent),xsM:num(m.xs),otherM:num(m.lab)+num(m.cons)+num(m.own)}; });
   return {A:[...am.values()],S};
 }
 function manCopyAuto(){ const D=manAutoData(); askConfirm('Replace the manual figures with the current automatic figures? You can then change any number.',()=>{
   state.manAreas.forEach(r=>tomb(r.id)); state.manSystems.forEach(r=>tomb(r.id));
   state.manAreas=D.A.map(a=>({id:uid(),_u:nowMs(),name:a.name,scope:Math.round(a.scope),done:Math.round(a.done)}));
-  state.manSystems=D.S.map(x=>({id:uid(),_u:nowMs(),name:x.name,unit:x.unit,qtyM:Math.round(x.qtyM*100)/100,rentM:Math.round(x.rentM),otherM:Math.round(x.otherM),qty:Math.round(x.qty*100)/100,rent:Math.round(x.rent),other:Math.round(x.other)}));
+  state.manSystems=D.S.map(x=>({id:uid(),_u:nowMs(),name:x.name,unit:x.unit,qtyM:Math.round(x.qtyM*100)/100,rentM:Math.round(x.rentM),xsM:Math.round(x.xsM),otherM:Math.round(x.otherM),qty:Math.round(x.qty*100)/100,rent:Math.round(x.rent),xs:Math.round(x.xs),other:Math.round(x.other)}));
   state.meta.manMode='manual'; touchMeta('manMode'); state.ui.manEdit=true; save(); toast('Automatic figures copied – adjust any number below.'); },'Copy'); }
 function manData(){
   const src=manAuto()?manAutoData():{A:state.manAreas,S:state.manSystems};
@@ -1525,16 +1604,17 @@ function manDisplay(big){
   </div>`;
   /* rent & system cost – this month and till now */
   const mon=monthLabel(state.ui.month||thisMonth());
-  const tot={rM:0,r:0}, U={};
-  D.S.forEach(x=>{ const u=(x.unit||'Sqm').toLowerCase(); tot.rM+=num(x.rentM); tot.r+=num(x.rent); const g=U[u]||(U[u]={qM:0,q:0,tM:0,t:0}); g.qM+=num(x.qtyM); g.q+=num(x.qty); g.tM+=num(x.rentM)+num(x.otherM); g.t+=num(x.rent)+num(x.other); });
+  const tot={rM:0,r:0,xM:0,x:0}, U={};
+  D.S.forEach(x=>{ const u=(x.unit||'Sqm').toLowerCase(); tot.rM+=num(x.rentM); tot.r+=num(x.rent); tot.xM+=num(x.xsM); tot.x+=num(x.xs); const g=U[u]||(U[u]={qM:0,q:0,tM:0,t:0}); g.qM+=num(x.qtyM); g.q+=num(x.qty); g.tM+=num(x.rentM)+num(x.otherM); g.t+=num(x.rent)+num(x.other); });
   const cpu=(t,q,u)=>q?`${money(t/q)}<small> /${u}</small>`:(t?'<span class="muted">no output</span>':'—');
-  const units=Object.keys(U).sort((a,b)=>a==='sqm'?-1:b==='sqm'?1:0);
+  const units=Object.keys(U).sort((a,b)=>a==='sqm'?-1:b==='sqm'?1:0), X=tot.x>0||tot.xM>0, RQ=X?' (as required)':'';
+  const xc=v=>X?`<td class="calc r">${num(v)?`<span class="neg">${money(v)}</span>`:'—'}</td>`:'';
   h+=`<div class="mb-box mb-cost"><h4>Rent & system cost</h4>
-    <div class="mb-tiles"><div><span>Rent – ${mon}</span><b>${money(tot.rM)}</b><em>all systems</em></div><div><span>Rent – till now</span><b>${money(tot.r)}</b><em>all systems</em></div>
-    ${units.map(u=>`<div class="hl"><span>Overall system cost /${u} – ${mon}</span><b>${cpu(U[u].tM,U[u].qM,u)}</b><em>${fmtN(U[u].qM)} ${u} executed</em></div><div class="hl"><span>Overall system cost /${u} – till now</span><b>${cpu(U[u].t,U[u].q,u)}</b><em>${fmtN(U[u].q)} ${u} executed</em></div>`).join('')}</div>
-    ${D.S.length?`<div class="tw"><table class="sheet mb-tab"><thead><tr><th></th><th colspan="3" class="grp">${mon}</th><th colspan="3" class="grp tdc">Till now</th></tr><tr><th>System</th><th class="r">Executed</th><th class="r">Rent</th><th class="r">System cost</th><th class="r tdc">Executed</th><th class="r">Rent</th><th class="r">System cost</th></tr></thead><tbody>
-    ${D.S.map(x=>{ const u=(x.unit||'Sqm').toLowerCase(); return `<tr><td class="v"><b>${esc(x.name||'—')}</b></td><td class="calc r">${fmtN(x.qtyM)} ${u}</td><td class="calc r">${money(x.rentM)}</td><td class="calc r"><b>${cpu(num(x.rentM)+num(x.otherM),num(x.qtyM),u)}</b></td><td class="calc r tdc">${fmtN(x.qty)} ${u}</td><td class="calc r">${money(x.rent)}</td><td class="calc r"><b>${cpu(num(x.rent)+num(x.other),num(x.qty),u)}</b></td></tr>`; }).join('')}</tbody>
-    <tfoot>${units.map(u=>`<tr><td>All systems (${u})</td><td class="r">${fmtN(U[u].qM)} ${u}</td><td class="r">${money(D.S.filter(x=>(x.unit||'Sqm').toLowerCase()===u).reduce((a,x)=>a+num(x.rentM),0))}</td><td class="r">${cpu(U[u].tM,U[u].qM,u)}</td><td class="r tdc">${fmtN(U[u].q)} ${u}</td><td class="r">${money(D.S.filter(x=>(x.unit||'Sqm').toLowerCase()===u).reduce((a,x)=>a+num(x.rent),0))}</td><td class="r">${cpu(U[u].t,U[u].q,u)}</td></tr>`).join('')}</tfoot></table></div>`:`<p class="note">${manAuto()?'No executed qty or rent yet.':'Add systems below.'}</p>`}</div>`;
+    <div class="mb-tiles"><div><span>Rent${RQ} – ${mon}</span><b>${money(tot.rM)}</b><em>all systems</em></div><div><span>Rent${RQ} – till now</span><b>${money(tot.r)}</b><em>all systems</em></div>${X?`<div class="xs"><span>Excess rent – ${mon}</span><b>${money(tot.xM)}</b><em>material above requirement</em></div><div class="xs"><span>Excess rent – till now</span><b>${money(tot.x)}</b><em>material above requirement</em></div>`:''}
+    ${units.map(u=>`<div class="hl"><span>Overall system cost /${u}${RQ} – ${mon}</span><b>${cpu(U[u].tM,U[u].qM,u)}</b><em>${fmtN(U[u].qM)} ${u} executed</em></div><div class="hl"><span>Overall system cost /${u}${RQ} – till now</span><b>${cpu(U[u].t,U[u].q,u)}</b><em>${fmtN(U[u].q)} ${u} executed</em></div>`).join('')}</div>
+    ${D.S.length?`<div class="tw"><table class="sheet mb-tab"><thead><tr><th></th><th colspan="${X?4:3}" class="grp">${mon}</th><th colspan="${X?4:3}" class="grp tdc">Till now</th></tr><tr><th>System</th><th class="r">Executed</th><th class="r">Rent${RQ}</th>${X?'<th class="r">Excess rent</th>':''}<th class="r">System cost${RQ}</th><th class="r tdc">Executed</th><th class="r">Rent${RQ}</th>${X?'<th class="r">Excess rent</th>':''}<th class="r">System cost${RQ}</th></tr></thead><tbody>
+    ${D.S.map(x=>{ const u=(x.unit||'Sqm').toLowerCase(); return `<tr><td class="v"><b>${esc(x.name||'—')}</b></td><td class="calc r">${fmtN(x.qtyM)} ${u}</td><td class="calc r">${money(x.rentM)}</td>${xc(x.xsM)}<td class="calc r"><b>${cpu(num(x.rentM)+num(x.otherM),num(x.qtyM),u)}</b></td><td class="calc r tdc">${fmtN(x.qty)} ${u}</td><td class="calc r">${money(x.rent)}</td>${xc(x.xs)}<td class="calc r"><b>${cpu(num(x.rent)+num(x.other),num(x.qty),u)}</b></td></tr>`; }).join('')}</tbody>
+    <tfoot>${units.map(u=>`<tr><td>All systems (${u})</td><td class="r">${fmtN(U[u].qM)} ${u}</td><td class="r">${money(D.S.filter(x=>(x.unit||'Sqm').toLowerCase()===u).reduce((a,x)=>a+num(x.rentM),0))}</td>${X?`<td class="r">${money(D.S.filter(x=>(x.unit||'Sqm').toLowerCase()===u).reduce((a,x)=>a+num(x.xsM),0))}</td>`:''}<td class="r">${cpu(U[u].tM,U[u].qM,u)}</td><td class="r tdc">${fmtN(U[u].q)} ${u}</td><td class="r">${money(D.S.filter(x=>(x.unit||'Sqm').toLowerCase()===u).reduce((a,x)=>a+num(x.rent),0))}</td>${X?`<td class="r">${money(D.S.filter(x=>(x.unit||'Sqm').toLowerCase()===u).reduce((a,x)=>a+num(x.xs),0))}</td>`:''}<td class="r">${cpu(U[u].t,U[u].q,u)}</td></tr>`).join('')}</tfoot></table></div>`:`<p class="note">${manAuto()?'No executed qty or rent yet.':'Add systems below.'}</p>`}</div>`;
   return h;
 }
 function presentManual(){
@@ -1553,8 +1633,8 @@ PAGES.manual=()=>{
   h+=`<div class="mb-wrap">${manDisplay(false)}</div>`;
   if(ed) h+=panel('Areas – scope and completed (sqm)',table('manAreas',[{key:'name',label:'Area',w:150},{key:'scope',label:'Scope sqm',type:'number',r:1},{key:'done',label:'Completed sqm',type:'number',r:1},{label:'%',r:1,calc:a=>num(a.scope)?Math.round(Math.min(num(a.done),num(a.scope))/num(a.scope)*100)+'%':'—'}],{noFilter:1,noSum:1}))+
     panel('Systems – this month and till now',table('manSystems',[{key:'name',label:'System',w:130},{key:'unit',label:'Unit',type:'select',options:['Sqm','Cum']},
-      {key:'qtyM',label:'Executed – month',type:'number',r:1},{key:'rentM',label:`Rent – month (${cur()})`,type:'number',r:1},{key:'otherM',label:`Other – month (${cur()})`,type:'number',r:1},{label:'Cost / unit – month',r:1,calc:x=>num(x.qtyM)?money((num(x.rentM)+num(x.otherM))/num(x.qtyM)):'—'},
-      {key:'qty',label:'Executed – till now',type:'number',r:1},{key:'rent',label:`Rent – till now (${cur()})`,type:'number',r:1},{key:'other',label:`Other – till now (${cur()})`,type:'number',r:1},{label:'Cost / unit – till now',r:1,calc:x=>num(x.qty)?money((num(x.rent)+num(x.other))/num(x.qty)):'—'}],{noFilter:1,noSum:1}));
+      {key:'qtyM',label:'Executed – month',type:'number',r:1},{key:'rentM',label:`Rent – month (${cur()})`,type:'number',r:1},{key:'xsM',label:`Excess rent – month (${cur()})`,type:'number',r:1},{key:'otherM',label:`Other – month (${cur()})`,type:'number',r:1},{label:'Cost / unit – month',r:1,calc:x=>num(x.qtyM)?money((num(x.rentM)+num(x.otherM))/num(x.qtyM)):'—'},
+      {key:'qty',label:'Executed – till now',type:'number',r:1},{key:'rent',label:`Rent – till now (${cur()})`,type:'number',r:1},{key:'xs',label:`Excess rent – till now (${cur()})`,type:'number',r:1},{key:'other',label:`Other – till now (${cur()})`,type:'number',r:1},{label:'Cost / unit – till now',r:1,calc:x=>num(x.qty)?money((num(x.rent)+num(x.other))/num(x.qty)):'—'}],{noFilter:1,noSum:1}));
   return h;
 };
 
@@ -1690,6 +1770,9 @@ PAGES.help=()=>{
 /* ---------- STORE STOCK ---------- */
 const STORE_TYPES=['Received (purchase)','Issued to contractor','Returned good','Returned damaged','Missing','Repaired','Scrapped'];
 const storeObj = id => state.storeItems.find(i=>i.id===id);
+const isConsItem = i => (i&&i.kind)==='Consumable';
+const storeCons = () => state.route==='store' && state.ui.storeTab==='cons';
+const storeTabItems = () => state.storeItems.filter(i=>!isConsItem(i));
 const conName = id => (state.contractors.find(c=>c.id===id)||{}).name || '—';
 // flow of one item: store, with contractors, damaged, missing, scrapped
 function storeBal(itemId, conId){
@@ -1714,31 +1797,114 @@ function storeStatus(it,b){
   return ['ok','OK'];
 }
 PAGES.store=()=>{
-  const its=state.storeItems, B=new Map(its.map(i=>[i.id,storeBal(i.id)]));
-  const val=f=>its.reduce((a,i)=>a+Math.max(0,B.get(i.id)[f])*num(i.rate),0);
+  const cons=state.ui.storeTab==='cons', all=state.storeItems, its=storeTabItems(), B=new Map(all.map(i=>[i.id,storeBal(i.id)]));
+  const val=(list,f)=>list.reduce((a,i)=>a+Math.max(0,B.get(i.id)[f])*num(i.rate),0);
+  const nM=all.filter(i=>!isConsItem(i)).length, nC=state.consItems.length;
   const reorder=its.filter(i=>storeStatus(i,B.get(i.id))[1].startsWith('Raise PR'));
-  let h=`<p class="note hint">Your own formwork material (plywood, runners, props…) and store consumables. <b>Reusable</b> items are tracked out to contractors and back. <b>Consumable</b> items (nails, oil, binding wire) are used up when issued.</p>`;
-  h+=`<div class="kpis">${kpi('In store',money(val('inStore')),its.length+' items')}${kpi('With contractors',money(val('withCon')),'reusable material out')}${kpi('Damaged (not repaired)',money(val('damaged')),'',val('damaged')?'warn':'')}${kpi('Missing',money(its.reduce((a,i)=>a+B.get(i.id).missing*num(i.rate),0)),'estimated value',its.some(i=>B.get(i.id).missing)?'bad':'good')}${kpi('Items to order',reorder.length,reorder.length?'raise PR':'all above minimum',reorder.length?'bad':'good')}</div>`;
-  h+=panel('Stock by item',table('storeItems',[
-    {key:'item',label:'Item',w:170},{key:'kind',label:'Type',type:'select',options:['Reusable','Consumable'],w:110},{key:'unit',label:'Unit',type:'select',options:['Sheets','Sqm','Rmt','Nos','Kg','Ltr','Set','Box'],w:90},
-    {key:'rate',label:`Rate (${cur()}/unit)`,type:'number',r:1},{key:'minStock',label:'Min. in store',type:'number',r:1},
-    {label:'In store',r:1,calc:i=>`<b>${fmtN(B.get(i.id).inStore)}</b>`},
-    {label:'With contractors',r:1,calc:i=>i.kind==='Consumable'?'—':fmtN(B.get(i.id).withCon)},
-    {label:'Used',r:1,calc:i=>i.kind==='Consumable'?fmtN(B.get(i.id).used):'—'},
-    {label:'Damaged',r:1,calc:i=>fmtN(B.get(i.id).damaged)},{label:'Missing',r:1,calc:i=>fmtN(B.get(i.id).missing)},{label:'Scrapped',r:1,calc:i=>fmtN(B.get(i.id).scrapped)},
-    {label:'Open PO',r:1,calc:i=>fmtN(openPOQty(i.item))},
-    {label:'Status',calc:i=>{const [c,t]=storeStatus(i,B.get(i.id)); return PILL(c,t);}}]));
-  const m=state.ui.month||thisMonth();
-  const rows=state.storeTx.filter(t=>!state.ui.storeAll? monthOf(t.date)===m : true).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  let h=`<div class="chips systabs"><label>Store</label><button class="btn sm ${cons||state.ui.storeTab==='rent'||state.ui.storeTab==='cost'?'':'p'}" onclick="setUI('storeTab','mat')">Material <small>(${nM})</small></button><button class="btn sm ${cons?'p':''}" onclick="setUI('storeTab','cons')">Consumables <small>(${nC})</small></button><button class="btn sm ${state.ui.storeTab==='rent'?'p':''}" onclick="setUI('storeTab','rent')">Rental material <small>(${state.items.filter(i=>i.inStore).length})</small></button><button class="btn sm ${state.ui.storeTab==='cost'?'p':''}" onclick="setUI('storeTab','cost')">₹ Cost summary</button></div>`;
+  if(state.ui.storeTab==='rent') return h+rentStoreView()+costPanel('rent',rentStoreSys());
+  if(state.ui.storeTab==='cost') return h+costSummaryView();
+  const reo=kpi('Items to order',reorder.length,reorder.length?'raise PR':'all above minimum',reorder.length?'bad':'good');
+  if(!cons){
+    h+=`<div class="kpis">${kpi('In store',money(val(its,'inStore')),its.length+' items')}${kpi('With contractors',money(val(its,'withCon')),'material out')}${kpi('Damaged (not repaired)',money(val(its,'damaged')),'',val(its,'damaged')?'warn':'')}${kpi('Missing',money(its.reduce((a,i)=>a+B.get(i.id).missing*num(i.rate),0)),'estimated value',its.some(i=>B.get(i.id).missing)?'bad':'good')}${reo}</div>`;
+    h+=panel('Material stock',table('storeItems',[
+      {key:'item',label:'Item',w:170},{key:'unit',label:'Unit',type:'select',options:['Nos','Sqm','Cum','Rmt','Kg','Ltr','Set','Box','Sheets'],w:90},
+      {key:'rate',label:`Rate (${cur()}/unit)`,type:'number',r:1},{key:'minStock',label:'Min. in store',type:'number',r:1},
+      {label:'In store',r:1,calc:i=>`<b>${fmtN(B.get(i.id).inStore)}</b>`},{label:'With contractors',r:1,calc:i=>fmtN(B.get(i.id).withCon)},
+      {label:'Damaged',r:1,calc:i=>fmtN(B.get(i.id).damaged)},{label:'Missing',r:1,calc:i=>fmtN(B.get(i.id).missing)},{label:'Scrapped',r:1,calc:i=>fmtN(B.get(i.id).scrapped)},
+      {label:'Open PO',r:1,calc:i=>fmtN(openPOQty(i.item))},
+      {label:'Status',calc:i=>{const [c,t]=storeStatus(i,B.get(i.id)); return PILL(c,t);}}],{rows:its}))+costPanel('mat');
+  } else {
+    const ci=state.consItems, low=ci.filter(c=>num(c.minStock)&&consStock(c.id)+openPOQty(c.item)<num(c.minStock));
+    h+=`<div class="kpis">${kpi('Consumables in stock',money(ci.reduce((a,c)=>a+Math.max(0,consStock(c.id))*num(c.unitCost),0)),ci.length+' items')}${kpi('Issued (used) – till now',money(state.consTx.filter(t=>t.type==='Issued').reduce((a,t)=>a+consCostTx(t),0)))}${kpi('Items to order',low.length,low.length?'raise PR':'all above minimum',low.length?'bad':'good')}</div>`;
+    return h+consStockPanel()+costPanel('cons')+consMovePanel(!!state.ui.consAll,'consAll');
+  }
+  const m=state.ui.month||thisMonth(), ids=new Set(its.map(i=>i.id));
+  const rows=state.storeTx.filter(t=>(ids.has(t.itemId)||(!t.itemId&&!cons)||(t.itemId&&!storeObj(t.itemId)&&!itemObj(t.itemId)&&!cons)) && (state.ui.storeAll || monthOf(t.date)===m)).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
   h+=monthBar(`<span style="width:10px"></span><label class="ck"><input type="checkbox" ${state.ui.storeAll?'checked':''} onchange="setUI('storeAll',this.checked)"> Show all months</label>`);
-  h+=panel('Store movements'+(state.ui.storeAll?'':' – '+monthLabel(m)),table('storeTx',[
-    {key:'date',label:'Date',type:'date'},{key:'type',label:'Movement',type:'select',options:STORE_TYPES,w:160},{key:'itemId',label:'Item',type:'storeitem',w:170},
+  const types=STORE_TYPES;
+  h+=panel('Material movements'+(state.ui.storeAll?'':' – '+monthLabel(m)),table('storeTx',[
+    {key:'date',label:'Date',type:'date'},{key:'type',label:'Movement',type:'select',options:types,w:160},{key:'itemId',label:'Item',type:'storeitem',w:170},
     {key:'qty',label:'Qty',type:'number',r:1},{key:'contractorId',label:'Contractor',type:'contractor',w:150},{key:'areaId',label:'Area',type:'area'},
     {key:'doc',label:'Challan / GRN / slip'},{key:'remarks',label:'Remarks'}],{rows,totals:['qty']}),rows.length+' entries');
-  h+=`<div class="grid2">`+panel('Contractors',table('contractors',[{key:'name',label:'Contractor name',w:180},{key:'phone',label:'Phone'}]))+
-     panel('How movements work',`<ul class="hlist"><li><b>Received (purchase)</b> – into the store.</li><li><b>Issued to contractor</b> – out of the store to a contractor (for consumables this means used).</li><li><b>Returned good</b> – back into the store.</li><li><b>Returned damaged</b> – back, but goes to the damaged pile.</li><li><b>Missing</b> – the contractor cannot return it.</li><li><b>Repaired</b> – damaged item fixed, back into the store.</li><li><b>Scrapped</b> – damaged item written off.</li></ul>`)+`</div>`;
+  h+=panel('Contractors',table('contractors',[{key:'name',label:'Contractor name',w:180},{key:'phone',label:'Phone'}]));
   return h;
 };
+
+/* ---------- RENTAL MATERIAL IN STORE (vendor components you choose to keep track of) ---------- */
+const RENT_STORE_TYPES=['Issued to contractor','Returned good','Returned damaged','Missing','Repaired','Damaged sent back to vendor','Missing settled with vendor'];
+const rentStoreSys = () => { const L=state.systems.filter(x=>state.items.some(i=>i.systemId===x.id)); const v=state.ui.rsSys; return L.some(x=>x.id===v)?v:(L[0]||{}).id||''; };
+const rentStoreItems = () => state.items.filter(i=>i.inStore&&(state.route!=='store'||i.systemId===rentStoreSys()));
+/* vendor return challans (Item-wise Material) reduce "on site", so they reduce store stock automatically.
+   Damaged pieces sent back on such a challan are marked "Damaged sent back to vendor" so they leave the damaged pile, not the good stock. */
+function rentStoreBal(i){ const t=itemTotals(i.id), b=storeBal(i.id), Q=ty=>state.storeTx.filter(x=>x.itemId===i.id&&x.type===ty).reduce((a,x)=>a+num(x.qty),0);
+  const dmg=Math.max(0,b.retDam-b.repaired-Q('Damaged sent back to vendor')), mis=Math.max(0,b.missing-Q('Missing settled with vendor')), wc=b.issued-b.retGood-b.retDam-b.missing;
+  return {onSite:t.bal,r:t.r,d:t.d,issued:b.issued,withCon:wc,damaged:dmg,missing:mis,inStore:t.bal-wc-dmg-mis}; }
+function setInStore(ids,on){ ids.forEach(id=>{ const it=itemObj(id); if(it){ it.inStore=on?1:0; it._u=nowMs(); } }); save(); }
+function rentStoreView(){
+  const sId=rentStoreSys(), L=state.systems.filter(x=>state.items.some(i=>i.systemId===x.id)), its=state.items.filter(i=>i.systemId===sId), sel=its.filter(i=>i.inStore);
+  let h=`<div class="chips"><label>Material</label>${L.map(x=>`<button class="btn sm ${x.id===sId?'p':''}" onclick="setUI('rsSys','${x.id}')">${esc(x.name)} <small>(${state.items.filter(i=>i.systemId===x.id&&i.inStore).length}/${state.items.filter(i=>i.systemId===x.id).length})</small></button>`).join('')}</div>`;
+  if(!L.length) return h+`<p class="note">No rental items yet – add the vendor's components on <a href="#" onclick="go('items');return false">Item-wise Material</a>.</p>`;
+  const B=new Map(sel.map(i=>[i.id,rentStoreBal(i)])), S=f=>sel.reduce((a,i)=>a+B.get(i.id)[f],0), sq=f=>sel.reduce((a,i)=>a+Math.max(0,B.get(i.id)[f])*num(i.sqmPerNo),0);
+  h+=`<div class="kpis">${kpi('Components in store',sel.length+' / '+its.length,'ticked below')}${kpi('On site (from vendor)',fmtN(S('onSite'))+' nos',sq('onSite')?fmtN(sq('onSite'),1)+' sqm':'')}${kpi('In store',fmtN(S('inStore'))+' nos',sq('inStore')?fmtN(sq('inStore'),1)+' sqm':'')}${kpi('With contractors',fmtN(S('withCon'))+' nos',sq('withCon')?fmtN(sq('withCon'),1)+' sqm':'')}${kpi('Damaged / missing',fmtN(S('damaged')+S('missing'))+' nos','vendor will charge',S('damaged')+S('missing')?'bad':'good')}</div>`;
+  const ids=its.map(i=>`'${i.id}'`).join(',');
+  const pick=its.map(i=>`<label class="ck rsck ${i.inStore?'on':''}"><input type="checkbox" ${i.inStore?'checked':''} onchange="setInStore(['${i.id}'],this.checked)"> ${esc((i.code?i.code+' – ':'')+i.item)}</label>`).join('');
+  h+=panel('Which components to keep in store stock',`<div class="acts" style="margin-bottom:8px"><button class="btn sm" onclick="setInStore([${ids}],true)">Tick all</button><button class="btn sm" onclick="setInStore([${ids}],false)">Untick all</button></div><div class="rspick">${pick}</div>`,sel.length+' of '+its.length+' ticked');
+  if(sel.length) h+=panel('Store stock – '+esc(sysName(sId)),table('rsItems',[{key:'code',label:'Code',w:80},{key:'item',label:'Component',w:220},{key:'storeRate',label:`Rate (${cur()})`,type:'number',r:1},{key:'storeRateUnit',label:'per',type:'select',options:['Nos','Sqm','Kg'],w:70},
+    {label:'Received from vendor',r:1,val:i=>B.get(i.id).r,calc:i=>fmtN(B.get(i.id).r)},{label:'Returned to vendor',r:1,val:i=>B.get(i.id).d,calc:i=>fmtN(B.get(i.id).d)},
+    {label:'On site',r:1,val:i=>B.get(i.id).onSite,calc:i=>fmtN(B.get(i.id).onSite)},
+    {label:'With contractors',r:1,val:i=>B.get(i.id).withCon,calc:i=>fmtN(B.get(i.id).withCon)},
+    {label:'Damaged',r:1,val:i=>B.get(i.id).damaged,calc:i=>{const d=B.get(i.id).damaged; return d?`<span class="neg">${fmtN(d)}</span>`:'0';}},
+    {label:'Missing',r:1,val:i=>B.get(i.id).missing,calc:i=>{const d=B.get(i.id).missing; return d?`<span class="neg">${fmtN(d)}</span>`:'0';}},
+    {label:'In store',r:1,val:i=>B.get(i.id).inStore,calc:i=>{const x=B.get(i.id).inStore; return `<b class="${x<0?'neg':''}">${fmtN(x)}</b>`;}},
+    {label:'Sqm in store',r:1,dec:1,val:i=>Math.max(0,B.get(i.id).inStore)*num(i.sqmPerNo),calc:i=>num(i.sqmPerNo)?fmtN(Math.max(0,B.get(i.id).inStore)*num(i.sqmPerNo),1):'—'},
+    {label:'Status',calc:i=>{const b=B.get(i.id); return b.inStore<0?PILL('bd','Check entries'):(b.damaged||b.missing?PILL('wn','Damage / missing'):PILL('ok','OK'));}}],{rows:sel,noAdd:1,noSum:0}),'received / returned come from Item-wise Material');
+  const m=state.ui.month||thisMonth(), sid=new Set(its.map(i=>i.id));
+  const rows=state.storeTx.filter(t=>sid.has(t.itemId)&&(state.ui.storeAll||monthOf(t.date)===m)).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  h+=monthBar(`<span style="width:10px"></span><label class="ck"><input type="checkbox" ${state.ui.storeAll?'checked':''} onchange="setUI('storeAll',this.checked)"> Show all months</label>`);
+  h+=panel('Store movements – '+esc(sysName(sId))+(state.ui.storeAll?'':' – '+monthLabel(m)),table('rentStore',[
+    {key:'date',label:'Date',type:'date'},{key:'type',label:'Movement',type:'select',options:RENT_STORE_TYPES,w:160},{key:'itemId',label:'Component',type:'rentitem',w:220},
+    {key:'qty',label:'Nos',type:'number',r:1},{key:'contractorId',label:'Contractor',type:'contractor',w:150},{key:'areaId',label:'Area',type:'area'},
+    {key:'doc',label:'Slip / challan'},{key:'remarks',label:'Remarks'}],{rows,totals:['qty']}),rows.length+' entries');
+  return h;
+}
+
+/* ---------- STORE COST (rate × qty for every movement) ---------- */
+const rentFac = i => { const u=i.storeRateUnit||'Nos'; return u==='Sqm'?num(i.sqmPerNo):u==='Kg'?num(i.kgPerNo):1; };
+const COSTCOLS={
+  mat:{t:'Material',h:['Received (purchase)','Issued to contractors','Returned from contractors','Damaged','Missing','Scrapped','In store']},
+  cons:{t:'Consumables',h:['Received','Issued (used)','Returned to vendor','Damaged','Missing','—','In stock']},
+  rent:{t:'Rental material (ticked components)',h:['Received from vendor','Issued to contractors','Returned to vendor','Damaged','Missing','—','In store']}};
+function costRows(g){
+  if(g==='mat') return state.storeItems.filter(i=>!isConsItem(i)).map(i=>{ const b=storeBal(i.id); return {name:i.item,unit:i.unit||'',rate:num(i.rate),per:i.unit||'',f:1,q:[b.received,b.issued,b.retGood+b.retDam,b.retDam,b.missing,b.scrapped,b.inStore]}; });
+  if(g==='cons') return state.consItems.map(c=>({name:c.item,unit:c.unit||'',rate:num(c.unitCost),per:c.unit||'',f:1,q:[consQty(c.id,'Received'),consQty(c.id,'Issued'),consQty(c.id,'Returned to vendor'),consQty(c.id,'Damaged'),consQty(c.id,'Missing'),0,consStock(c.id)]}));
+  return state.items.filter(i=>i.inStore).map(i=>{ const b=rentStoreBal(i), sb=storeBal(i.id); return {name:(i.code?i.code+' – ':'')+i.item,sid:i.systemId,sys:sysName(i.systemId),unit:'Nos',rate:num(i.storeRate),per:i.storeRateUnit||'Nos',f:rentFac(i),q:[b.r,sb.issued,b.d,sb.retDam,sb.missing,0,b.inStore]}; });
+}
+function costTotals(g,sid){ const T=[0,0,0,0,0,0,0]; costRows(g).filter(r=>!sid||r.sid===sid).forEach(r=>r.q.forEach((q,k)=>T[k]+=Math.max(0,q)*r.f*r.rate)); return T; }
+function costPanel(g,sid){
+  const C=COSTCOLS[g], R=costRows(g).filter(r=>!sid||r.sid===sid); if(!R.length) return '';
+  const idx=C.h.map((x,k)=>x==='—'?-1:k).filter(k=>k>=0), T=[0,0,0,0,0,0,0], noRate=R.filter(r=>!r.rate).length;
+  const red=(k,v)=>(k===3||k===4)&&v?'neg':'';
+  const line=r=>`<tr><td class="v"><b>${esc(r.name)}</b></td><td class="calc r">${r.rate?money(r.rate)+` <small class="muted">/${esc(r.per)}</small>`:'<span class="muted">no rate</span>'}</td>${idx.map(k=>{ const q=r.q[k], v=Math.max(0,q)*r.f*r.rate; T[k]+=v; return `<td class="calc r">${q?`<b class="${red(k,v)}">${r.rate?money(v):'—'}</b><br><small class="muted">${fmtN(q,Math.abs(q-Math.round(q))>1e-9?2:0)} ${esc(r.unit)}</small>`:'—'}</td>`; }).join('')}</tr>`;
+  let rows;
+  if(g==='rent'){ rows=[]; [...new Set(R.map(r=>r.sid))].forEach(id=>{ const rr=R.filter(r=>r.sid===id), before=T.slice();
+      rows.push(`<tr class="grp"><td class="v" colspan="${idx.length+2}"><b>${esc(sysName(id))}</b> <small class="muted">${rr.length} component${rr.length>1?'s':''}</small></td></tr>`); rr.forEach(r=>rows.push(line(r)));
+      rows.push(`<tr class="subt"><td class="v"><b>${esc(sysName(id))} – total</b></td><td></td>${idx.map(k=>`<td class="calc r"><b class="${red(k,T[k]-before[k])}">${money(T[k]-before[k])}</b></td>`).join('')}</tr>`); }); }
+  else rows=R.map(line);
+  return panel(`₹ Cost – ${sid?esc(sysName(sid)):C.t}, item wise`,(noRate?`<div class="banner">${PILL('wn','RATE')} <span>${noRate} item${noRate>1?'s have':' has'} no rate – enter the rate in the table above to see its cost.</span></div>`:'')+
+    simpleTable([['Item'],['Rate',1]].concat(idx.map(k=>[C.h[k],1])),rows,`<tr><td>${g==='rent'&&!sid?'All rental material':'Total'}</td><td></td>${idx.map(k=>`<td class="r"><b class="${red(k,T[k])}">${money(T[k])}</b></td>`).join('')}</tr>`),'value = qty × rate');
+}
+function costSummaryView(){
+  const G=['mat','cons','rent'], T=Object.fromEntries(G.map(g=>[g,costTotals(g)])), A=[0,0,0,0,0,0,0]; G.forEach(g=>T[g].forEach((v,k)=>A[k]+=v));
+  let h=`<div class="kpis">${kpi('Received – all material',money(A[0]))}${kpi('Issued to contractors / used',money(A[1]))}${kpi('Damaged',money(A[3]),'all material',A[3]?'bad':'good')}${kpi('Missing',money(A[4]),'all material',A[4]?'bad':'good')}${kpi('In store now',money(A[6]),'value of stock')}</div>`;
+  const cell=(v,k)=>`<td class="calc r"><b class="${(k===3||k===4)&&v?'neg':''}">${v?money(v):'—'}</b></td>`;
+  h+=panel('Overall cost – every material',simpleTable([['Material'],['Received',1],['Issued / used',1],['Returned',1],['Damaged',1],['Missing',1],['Scrapped',1],['In store',1]],
+    G.flatMap(g=>{ const r=[`<tr class="${g==='rent'?'subt':''}"><td class="v"><b>${g==='rent'?'Rental material – all systems':COSTCOLS[g].t}</b><br><small class="muted">returned = ${g==='mat'?'from contractors':'to vendor'}</small></td>${T[g].map(cell).join('')}</tr>`];
+      if(g==='rent') [...new Set(costRows('rent').map(x=>x.sid))].forEach(id=>r.push(`<tr><td class="v" style="padding-left:22px">↳ ${esc(sysName(id))}</td>${costTotals('rent',id).map(cell).join('')}</tr>`));
+      return r; }),
+    `<tr><td>All material</td>${A.map((v,k)=>`<td class="r"><b class="${(k===3||k===4)&&v?'neg':''}">${money(v)}</b></td>`).join('')}</tr>`),'qty × rate');
+  return h+G.map(g=>costPanel(g)).join('');
+}
 
 /* ---------- PR & PO ---------- */
 function prStatus(p){
@@ -1769,7 +1935,7 @@ function raisePR(item,qty,unit,rate,cat){ state.prpo.push(Object.assign({id:uid(
 
 /* ---------- CONTRACTOR SHEET (private) ---------- */
 PAGES.contractors=()=>{
-  const reus=state.storeItems.filter(i=>i.kind!=='Consumable');
+  const reus=state.storeItems.filter(i=>i.kind!=='Consumable').concat(state.items.filter(i=>state.storeTx.some(t=>t.itemId===i.id)).map(i=>({id:i.id,item:i.item+' ('+sysName(i.systemId)+')',rate:0})));
   let h=`<div class="banner">${PILL('na','PRIVATE')} <span>For your record only. This page is never shown on the Meeting Screen. Estimated cost = (damaged + missing) × item rate. Nothing is charged automatically.</span></div>`;
   const rowsAll=[]; let grand=0;
   state.contractors.forEach(c=>{
@@ -1923,6 +2089,7 @@ function parseCell(c,raw,row){
     case 'machine': return byName(state.machines,'name',raw);
     case 'owneditem': return byName(state.owned.filter(o=>!row.systemId||o.systemId===row.systemId),'item',raw);
     case 'storeitem': return byName(state.storeItems,'item',raw);
+    case 'rentitem': return byName(rentStoreItems(),'item',raw);
     case 'contractor': return byName(state.contractors,'name',raw);
     case 'itemsel': { const its=state.items.filter(i=>i.systemId===row.systemId); const r=norm(raw); const x=its.find(i=>norm(i.code)===r)||its.find(i=>norm(i.item)===r)||its.find(i=>norm((i.code?i.code+' – ':'')+i.item)===r); return x?x.id:undefined; }
     default: return String(raw);
@@ -1948,7 +2115,7 @@ function doPaste(arr){
     cols.forEach((c,i)=>{ if(bad) return; const raw=(cells[i]??'').trim(); if(raw==='') return; const v=parseCell(c,raw,row); if(v===undefined) bad=`Line ${li+1}: "${esc(raw)}" not recognised as ${esc(stripTags(c.label))}`; else row[c.key]=v; });
     if(bad) errs.push(bad); else { newRows.push(row); added++; }
   });
-  newRows.forEach(r=>r._u=nowMs()); state[arr].push(...newRows);
+  newRows.forEach(r=>r._u=nowMs()); state[RA(arr)].push(...newRows);
   state.ui.pasteMsg=state.ui.pasteMsg||{};
   state.ui.pasteMsg[arr]=`<b>${added} row${added===1?'':'s'} added.</b>${errs.length?` ${errs.length} skipped:<br>`+errs.slice(0,8).join('<br>')+(errs.length>8?'<br>…':'')+'<br>Fix those lines in Excel and paste them again.':''}`;
   save(); toast(`${added} row${added===1?'':'s'} added${errs.length?', '+errs.length+' skipped':''}.`);
@@ -2332,7 +2499,7 @@ function CSV_SPEC(){ return {
     labour:[['Date','System','Area','Element','Carpenters','Helpers','Hours','Mandays','Cost','Remarks'],r=>[r.date,sysName(r.systemId),areaName(r.areaId),r.element,r.carpenters,r.helpers,r.hours,mandays([r]).toFixed(2),labourCost([r]).toFixed(0),r.remarks]],
     itemTx:[['Date','System','Document','Code','Item','Type','Nos','Area','Sqm','Remarks'],t=>{const it=itemObj(t.itemId)||{}; return [t.date,sysName(t.systemId),t.doc,it.code,it.item,t.type,t.nos,t.areaId?areaName(t.areaId):'',(num(t.nos)*num(it.sqmPerNo)).toFixed(3),t.remarks];}],
     items:[['System','Code','Item','Sqm/no','Kg/no','BOQ','Rate/pc/day','Received','Returned','On site','Sqm on site','Last received','Last returned','Status'],i=>{const t=itemTotals(i.id); return [sysName(i.systemId),i.code,i.item,i.sqmPerNo,i.kgPerNo,i.boq,i.ratePcDay,t.r,t.d,t.bal,(Math.max(0,t.bal)*num(i.sqmPerNo)).toFixed(3),t.lastR,t.lastD,itemStatus(i,t)[1]];}],
-    consTx:[['Date','Item','Unit','Type','Qty','System','Area','Value','Remarks'],t=>{const c=consObj(t.itemId)||{}; return [t.date,c.item,c.unit,t.type,t.qty,t.systemId?sysName(t.systemId):'Shared',t.areaId?areaName(t.areaId):'All',consCostTx(t).toFixed(0),t.remarks];}],
+    consTx:[['Date','Item','Unit','Type','Qty','System','Area','Contractor','Value','Challan / GRN','Remarks'],t=>{const c=consObj(t.itemId)||{}; return [t.date,c.item,c.unit,t.type,t.qty,t.systemId?sysName(t.systemId):'Shared',t.areaId?areaName(t.areaId):'All',t.contractorId?conName(t.contractorId):'',consCostTx(t).toFixed(0),t.doc||'',t.remarks];}],
     storeItems:[['Item','Type','Unit','Rate','Min in store','In store','With contractors','Used','Damaged','Missing','Scrapped','Open PO','Status'],i=>{const b=storeBal(i.id); return [i.item,i.kind,i.unit,i.rate,i.minStock,b.inStore,b.withCon,b.used,b.damaged,b.missing,b.scrapped,openPOQty(i.item),stripTags(storeStatus(i,b)[1])];}],
     storeTx:[['Date','Movement','Item','Unit','Qty','Contractor','Area','Challan / GRN','Remarks'],t=>{const it=storeObj(t.itemId)||{}; return [t.date,t.type,it.item,it.unit,t.qty,t.contractorId?conName(t.contractorId):'',t.areaId?areaName(t.areaId):'',t.doc,t.remarks];}],
     prpo:[['Category','Item','Qty','Unit','Value','Vendor','PR no','PR date','PO no','PO date','Required by','Received on','Status','Remarks'],p=>[p.category,p.item,p.qty,p.unit,p.value,p.vendor,p.prNo,p.prDate,p.poNo,p.poDate,p.requiredBy,p.receivedDate,prStatus(p)[1],p.remarks]],
@@ -2348,9 +2515,9 @@ function exportRentCSV(){
   download(`rent-summary-${todayStr()}.csv`,csv(rows),'text/csv');
 }
 function exportCostCSV(){
-  const gb=state.ui.groupBy, rows=[['Period','System','Area','Element','Executed sqm','Rent/bill','Labour','Consumables','Owned material','Total','Cost per sqm']];
+  const gb=state.ui.groupBy, rows=[['Period','System','Area','Element','Executed qty','Unit','Rent (as required)','Excess rent','Labour','Consumables','Owned material','Total','Cost per unit (as required)','Cost per unit incl. excess']];
   const pl=state.ui.period==='todate'?'To date '+(state.ui.month):state.ui.month;
-  costGrouped().forEach(g=>rows.push([pl,sysName(g.s),gb==='area'?areaName(g.a):'',gb==='element'?g.el:'',g.sqm.toFixed(2),g.rent.toFixed(0),g.lab.toFixed(0),g.cons.toFixed(0),g.own.toFixed(0),g.total.toFixed(0),g.sqm?(g.total/g.sqm).toFixed(2):'']));
+  costGrouped().forEach(g=>rows.push([pl,sysName(g.s),gb==='area'?areaName(g.a):'',gb==='element'?g.el:'',g.sqm.toFixed(2),sysUnit(g.s),g.rent.toFixed(0),g.xs.toFixed(0),g.lab.toFixed(0),g.cons.toFixed(0),g.own.toFixed(0),g.total.toFixed(0),g.sqm?(g.base/g.sqm).toFixed(2):'',g.sqm?(g.total/g.sqm).toFixed(2):'']));
   download(`system-cost-${todayStr()}.csv`,csv(rows),'text/csv');
 }
 
