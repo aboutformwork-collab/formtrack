@@ -311,7 +311,7 @@ input.nameedit.big{font:700 32px/1.1 "Barlow Condensed","Arial Narrow",sans-seri
 <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="if(this.files[0])restoreBackup(this.files[0]);this.value=''">
 <input type="file" id="fsPick" style="display:none" onchange="fsOpenFile(this.files[0]);this.value=''">
 
-<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.10.27-1332"; window.__FORMTRACK_VERNAME="27 Oct 13:32";</script>
+<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.10.27-2244"; window.__FORMTRACK_VERNAME="27 Oct 22:44";</script>
 <script>
 /* FormTrack */
 const STORE_KEY = 'formtrack_data_v2';
@@ -601,10 +601,14 @@ const labourCost = rows => rows.reduce((a,r)=>a+(num(r.carpenters)*num(state.met
 
 /* ---------- consumables ---------- */
 const consQty = (id,type,m) => state.consTx.filter(t=>t.itemId===id && t.type===type && (!m||monthOf(t.date)===m)).reduce((a,t)=>a+num(t.qty),0);
-const CONS_TYPES=['Received','Issued','Damaged','Returned to vendor','Missing'];
+const CONS_TYPES=['Received','Issued','Transfer in (other site)','Transfer out (other site)','Damaged','Returned to vendor','Missing'];
 const consDmgLeft = id => Math.max(0,consQty(id,'Damaged')-consQty(id,'Returned to vendor'));
 /* good stock = received − issued − damaged − missing; "returned to vendor" first clears the damaged pile */
-const consStock = id => consQty(id,'Received')-consQty(id,'Issued')-consQty(id,'Damaged')-consQty(id,'Missing')-Math.max(0,consQty(id,'Returned to vendor')-consQty(id,'Damaged'));
+const consRecX = (id,f) => state.consTx.filter(t=>t.itemId===id&&t.type==='Received').reduce((a,t)=>a+num(t[f]),0);
+const consStock = id => consStockRaw(id)+physAdj('cons',id).adj;
+const consStockRaw = (id,upto) => { const Q=(ty)=>state.consTx.filter(t=>t.itemId===id&&t.type===ty&&(!upto||t.date<=upto)).reduce((a,t)=>a+num(t.qty),0), X=f=>state.consTx.filter(t=>t.itemId===id&&t.type==='Received'&&(!upto||t.date<=upto)).reduce((a,t)=>a+num(t[f]),0);
+  return Q('Available on takeover')+Q('Received')-X('dmgQty')-X('shortQty')+Q('Transfer in (other site)')-Q('Transfer out (other site)')-Q('Issued')-Q('Damaged')-Q('Missing')-Math.max(0,Q('Returned to vendor')-Q('Damaged')); };
+const consStockOld = id => consQty(id,'Available on takeover')+consQty(id,'Received')-consRecX(id,'dmgQty')-consRecX(id,'shortQty')+consQty(id,'Transfer in (other site)')-consQty(id,'Transfer out (other site)')-consQty(id,'Issued')-consQty(id,'Damaged')-consQty(id,'Missing')-Math.max(0,consQty(id,'Returned to vendor')-consQty(id,'Damaged'));
 const consCostTx = t => num(t.qty)*num((consObj(t.itemId)||{}).unitCost);
 
 /* ---------- owned ---------- */
@@ -643,9 +647,9 @@ function monthBuckets(m){
     alloc('rent',damageClaims(s.id,m),s.id,null);
   });
   // labour
-  state.labour.filter(r=>monthOf(r.date)===m).forEach(r=>alloc('lab',labourCost([r]),r.systemId||null,r.areaId,r.element));
+  if(state.meta.costLab) state.labour.filter(r=>monthOf(r.date)===m).forEach(r=>alloc('lab',labourCost([r]),r.systemId||null,r.areaId,r.element));
   // consumables issued
-  state.consTx.filter(t=>t.type==='Issued' && monthOf(t.date)===m).forEach(t=>alloc('cons',consCostTx(t),t.systemId||null,t.areaId));
+  if(state.meta.costStore) state.consTx.filter(t=>t.type==='Issued' && monthOf(t.date)===m).forEach(t=>alloc('cons',consCostTx(t),t.systemId||null,t.areaId));
   // owned material: cost per use spread on sqm poured
   ownedSystems().forEach(s=>{ const cps=ownedCostPerSqm(s.id); if(cps) outBuckets().filter(b=>b.s===s.id).forEach(b=>b.own+=b.sqm*cps); });
   const res=[...B.values()]; C.buckets.set(m,res); return res;
@@ -665,7 +669,8 @@ function costGrouped(){
     if(!G.has(k)) G.set(k,{s:b.s,a:b.a,el:b.el,ek:b.ek,rent:0,xs:0,lab:0,cons:0,own:0,sqm:0,cum:0});
     const g=G.get(k); ['rent','xs','lab','cons','own','sqm','cum'].forEach(f=>g[f]+=num(b[f]));
   }));
-  return [...G.values()].map(g=>Object.assign(g,{total:g.rent+g.xs+g.lab+g.cons+g.own,base:g.rent+g.lab+g.cons+g.own})).sort((x,y)=>sysName(x.s).localeCompare(sysName(y.s))||areaName(x.a).localeCompare(areaName(y.a))||x.el.localeCompare(y.el));
+  const mg=state.route==='dashboard'; /* dashboard: one Rent column (actual rent); excess shown in its own table */
+  return [...G.values()].map(g=>{ if(mg){ g.rent+=g.xs; g.xsInfo=g.xs; g.xs=0; } return Object.assign(g,{total:g.rent+g.xs+g.lab+g.cons+g.own,base:g.rent+g.lab+g.cons+g.own}); }).sort((x,y)=>sysName(x.s).localeCompare(sysName(y.s))||areaName(x.a).localeCompare(areaName(y.a))||x.el.localeCompare(y.el));
 }
 function groupLabel(g){
   const gb=state.ui.groupBy;
@@ -847,6 +852,7 @@ function cellInput(arr,row,c){
     case 'machine': return sel(`<option value="">—</option>`+state.machines.map(m=>`<option value="${m.id}" ${m.id===v?'selected':''}>${esc(m.name||'(no name)')}${m.model?' – '+esc(m.model):''}</option>`).join(''));
     case 'owneditem': return sel(`<option value="">—</option>`+state.owned.filter(o=>!row.systemId||o.systemId===row.systemId).map(o=>`<option value="${o.id}" ${o.id===v?'selected':''}>${esc(o.item||'(no name)')} (${esc(o.unit||'')})</option>`).join(''));
     case 'rentitem': { const L=rentStoreItems(); const ex=v&&!L.some(x=>x.id===v)?state.items.filter(x=>x.id===v):[]; return sel(`<option value="">—</option>`+L.concat(ex).map(x=>`<option value="${x.id}" ${x.id===v?'selected':''}>${esc((x.code?x.code+' – ':'')+x.item)}</option>`).join('')); }
+    case 'po': { const L=state.prpo.filter(p=>p.poNo); return sel(`<option value="">— no PO —</option>`+L.map(p=>`<option value="${esc(p.poNo)}" ${p.poNo===v?'selected':''}>${esc(p.poNo)} · ${esc(p.item||'')} (${fmtN(p.qty)} ${esc(p.unit||'')})</option>`).join('')+(v&&!L.some(p=>p.poNo===v)?`<option selected>${esc(v)}</option>`:'')); }
     case 'cons': return sel(`<option value="">—</option>`+state.consItems.map(x=>`<option value="${x.id}" ${x.id===v?'selected':''}>${esc(x.item)} (${esc(x.unit)})</option>`).join(''));
     case 'element': return `<input type="text" class="c" list="elist" value="${esc(v)}" placeholder="pick or type" ${oc}>`;
     case 'date': return `<input type="date" class="c" value="${esc(v)}" ${oc}>`;
@@ -994,7 +1000,7 @@ const NAV=[
   {g:'Daily entry',items:[['execution','Execution & Targets'],['labour','Labour'],['consumables','Consumables'],['ledger','Received / Dispatch']]},
   {g:'Rental',items:[['items','Item-wise Material'],['rent','Rent Calculation'],['invoices','Invoice Check']]},
   {g:'Owned',items:[['owned','Owned Material']]},
-  {g:'Store',items:[['store','Store Stock'],['machines','Machines & Tools'],['prpo','PR & PO'],['contractors','Contractor Sheet']]},
+  {g:'Store',items:[['store','Store Stock'],['storeRec','Received'],['storeVal','Valuation'],['prpo','PR & PO'],['storeMove','Transfer & Returns'],['rentStore','Rental Store'],['machines','Machines & Tools'],['contractors','Contractor Sheet']]},
   {g:'Analysis',items:[['planning','Formwork Planning'],['rentbuy','Rent vs Buy']]},
   {g:'Site',items:[['practice','Site Observation'],['notes','Notes & Calculations']]},
   {g:'File',items:[['data','Backup & Settings']]},
@@ -1046,6 +1052,10 @@ const ICONS={
  prpo:'<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l3 12h11l2-8H6.2"/>',
  contractors:'<path d="M4 17h16M5.5 17a6.5 6.5 0 0 1 13 0M10 10.6V6.5h4v4.1M3 20h18"/>',
  planning:'<path d="M4 5h16v15H4zM4 9h16M9 5v15"/><path d="M12 13h5M12 16h3"/>',
+ storeRec:'<path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 17v3h16v-3"/>',
+ storeVal:'<path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+ rentStore:'<path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/>',
+ storeMove:'<path d="M4 8h13l-3-3M20 16H7l3 3"/>',
  rentbuy:'<path d="M12 3v18M7 21h10M5 7h14M5 7l-3 6a3 3 0 0 0 6 0zM19 7l-3 6a3 3 0 0 0 6 0z"/>',
  data:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>'
 };
@@ -1088,7 +1098,7 @@ PAGES.dashboard=()=>{
   const late=scopes.filter(x=>x.st.status==='bd'||x.st.status==='wn');
   const tShort=state.targets.filter(t=>(!t.systemId||sysFilter(t.systemId))).map(t=>({t,st:targetStatus(t)})).filter(x=>x.st.status==='bd'||x.st.status==='wn');
 
-  let h=scopeHero()+monthBar(`<span style="width:12px"></span><label>Period</label>${seg('period',[['month','This month'],['todate','Project to date']])}<span style="width:12px"></span><label>Break-up</label>${seg('groupBy',[['system','System'],['area','System + Area'],['element','System + Element']])}`);
+  let h=scopeHero()+monthBar(`<span style="width:12px"></span><label>Period</label>${seg('period',[['month','This month'],['todate','Project to date']])}<span style="width:12px"></span><label>Break-up</label>${seg('groupBy',[['system','System'],['area','System + Area'],['element','System + Element']])}<span style="width:12px"></span><label>Add to system cost</label><label class="ck" title="Labour cost from the Labour page (mandays × wage)"><input type="checkbox" ${state.meta.costLab?'checked':''} onchange="state.meta.costLab=this.checked;touchMeta('costLab');save()"> Labour</label><label class="ck" title="Consumables issued (Store / Consumables page)"><input type="checkbox" ${state.meta.costStore?'checked':''} onchange="state.meta.costStore=this.checked;touchMeta('costStore');save()"> Consumables</label>`);
   h+=`<div class="chips"><label>Systems</label>${state.systems.map(s=>`<label class="ck"><input type="checkbox" ${(state.ui.sysSel||[]).includes(s.id)?'checked':''} onchange="toggleSys('${s.id}')"> ${esc(s.name)}</label>`).join('')}<span class="muted" style="font-size:11px">${(state.ui.sysSel||[]).length?'Combined total of ticked systems':'None ticked = all systems'}</span></div>`;
 
 
@@ -1122,7 +1132,7 @@ PAGES.dashboard=()=>{
       return `${td}${q}</td>${td}${money(g.rent)}</td>${hasX?`${td}${g.xs?`<span class="neg">${money(g.xs)}</span>`:'—'}</td>`:''}${add.length?`${td}${pu(x=>num(x.rent))}</td>`:''}${hasL?`${td}${money(g.lab)}</td>`:''}${hasC?`${td}${money(g.cons)}</td>`:''}${hasO?`${td}${money(g.own)}</td>`:''}${add.length||hasX?`${td}<b>${money(g.total)}</b></td>`:''}${td}<b>${pu(x=>num(x.base))}</b></td>${hasX?`${td}${pu(x=>num(x.total))}</td>`:''}`; };
     const GS=grpSel(), gk=g=>groupKey(g), ticked=cg.filter(g=>GS.includes(gk(g)));
     const cRows=cg.map(g=>{ const k=gk(g), on=GS.includes(k); return `<tr class="${on?'tkrow':''}"><td class="v"><label class="gck"><input type="checkbox" ${on?'checked':''} onchange="toggleGrp('${esc(k).replace(/'/g,"\\'")}')"> ${groupLabel(g)}</label></td>${cells(g,sysUnit(g.s))}</tr>`; });
-    const heads=[['Group'],['Executed qty',1],[hasX?'Rent – as required':'Rent / bill',1]].concat(hasX?[['Excess rent',1]]:[]).concat(add.length?[['Rent per unit',1]]:[]).concat(hasL?[['Labour',1]]:[]).concat(hasC?[['Consumables',1]]:[]).concat(hasO?[['Owned material',1]]:[]).concat(add.length||hasX?[['Total cost',1]]:[]).concat([[hasX?'System cost per unit (as required)':'System cost per unit',1]]).concat(hasX?[['Incl. excess',1]]:[]);
+    const heads=[['Group'],['Executed qty',1],[hasX?'Rent – as required':'Rent',1]].concat(hasX?[['Excess rent',1]]:[]).concat(add.length?[['Rent per unit',1]]:[]).concat(hasL?[['Labour',1]]:[]).concat(hasC?[['Consumables',1]]:[]).concat(hasO?[['Owned material',1]]:[]).concat(add.length||hasX?[['Total cost',1]]:[]).concat([[hasX?'System cost per unit (as required)':'System cost per unit',1]]).concat(hasX?[['Incl. excess',1]]:[]);
     const tk=ticked.length?'ticked rows':((state.ui.sysSel||[]).length?'ticked systems':'');
     const TK=sum(ticked); TK.total=TK.rent+TK.xs+TK.lab+TK.cons+TK.own; TK.base=TK.rent+TK.lab+TK.cons+TK.own;
     const foot=(ticked.length?`<tr class="subt"><td><b>Combined – ${ticked.length} ticked row${ticked.length>1?'s':''}</b> <button class="btn sm" onclick="clearGrp()">Clear ticks</button></td>${cells(TK,null,true,ticked)}</tr>`:'')+`<tr><td>${(state.ui.sysSel||[]).length>1?'Total (ticked systems)':'Total – all rows'}</td>${cells(tot,null,true)}</tr>`;
@@ -1133,12 +1143,18 @@ PAGES.dashboard=()=>{
     const ut=m=>[...m.entries()].map(([u,x])=>qty(x.q,u)).join('<br>')||'—', uc=m=>[...m.entries()].map(([u,x])=>x.q?money(x.t/x.q)+` <small class="muted">/${u}</small>`:(x.t?PILL('bd','no output'):'—')).join('<br>')||'—';
     months.forEach(m=>{ const gl=withUI({period:'month',month:m},()=>costGrouped()).filter(g=>!GS.length||GS.includes(gk(g))); const t=sum(gl); if(!t.rent&&!t.xs&&!t.sqm&&!t.lab&&!t.cons&&!t.own) return;
       const Mb=byU(gl,g=>num(g.base)), Mt=byU(gl,g=>num(g.total)); acc(Mb,C.b); acc(Mt,C.t);
-      mrows.push(`<tr class="${m===mSel?'dnew':''}"><td class="v" style="white-space:nowrap"><b>${monthLabel(m)}</b></td><td class="calc r">${ut(Mb)}</td><td class="calc r">${money(t.rent)}</td>${hasX?`<td class="calc r">${t.xs?`<span class="neg">${money(t.xs)}</span>`:'—'}</td>`:''}<td class="calc r">${money(t.lab)}</td><td class="calc r">${money(t.cons)}</td>${hasO?`<td class="calc r">${money(t.own)}</td>`:''}<td class="calc r"><b>${money(t.total)}</b></td><td class="calc r"><b>${uc(Mb)}</b></td>${hasX?`<td class="calc r">${uc(Mt)}</td>`:''}<td class="calc r tdc">${ut(new Map(C.b))}</td><td class="calc r"><b>${uc(new Map([...C.b].map(([u,x])=>[u,{q:x.q,t:x.t}])))}</b></td>${hasX?`<td class="calc r">${uc(new Map([...C.t].map(([u,x])=>[u,{q:x.q,t:x.t}])))}</td>`:''}</tr>`); });
-    const mh=[['Month'],['Executed qty',1],[hasX?'Rent – as required':'Rent / bill',1]].concat(hasX?[['Excess rent',1]]:[]).concat([['Labour',1],['Consumables',1]]).concat(hasO?[['Owned mat.',1]]:[]).concat([['Total cost',1],[hasX?'Cost / unit (as required)':'Cost per unit (month)',1]]).concat(hasX?[['Incl. excess',1]]:[]).concat([['From start – qty',1],[hasX?'From start – cost / unit (as required)':'From start – cost per unit',1]]).concat(hasX?[['From start – incl. excess',1]]:[]);
+      mrows.push(`<tr class="${m===mSel?'dnew':''}"><td class="v" style="white-space:nowrap"><b>${monthLabel(m)}</b></td><td class="calc r">${ut(Mb)}</td><td class="calc r">${money(t.rent)}</td>${hasX?`<td class="calc r">${t.xs?`<span class="neg">${money(t.xs)}</span>`:'—'}</td>`:''}${state.meta.costLab?`<td class="calc r">${money(t.lab)}</td>`:''}${state.meta.costStore?`<td class="calc r">${money(t.cons)}</td>`:''}${hasO?`<td class="calc r">${money(t.own)}</td>`:''}<td class="calc r"><b>${money(t.total)}</b></td><td class="calc r"><b>${uc(Mb)}</b></td>${hasX?`<td class="calc r">${uc(Mt)}</td>`:''}<td class="calc r tdc">${ut(new Map(C.b))}</td><td class="calc r"><b>${uc(new Map([...C.b].map(([u,x])=>[u,{q:x.q,t:x.t}])))}</b></td>${hasX?`<td class="calc r">${uc(new Map([...C.t].map(([u,x])=>[u,{q:x.q,t:x.t}])))}</td>`:''}</tr>`); });
+    const mh=[['Month'],['Executed qty',1],[hasX?'Rent – as required':'Rent',1]].concat(hasX?[['Excess rent',1]]:[]).concat(state.meta.costLab?[['Labour',1]]:[]).concat(state.meta.costStore?[['Consumables',1]]:[]).concat(hasO?[['Owned mat.',1]]:[]).concat([['Total cost',1],[hasX?'Cost / unit (as required)':'Cost per unit (month)',1]]).concat(hasX?[['Incl. excess',1]]:[]).concat([['From start – qty',1],[hasX?'From start – cost / unit (as required)':'From start – cost per unit',1]]).concat(hasX?[['From start – incl. excess',1]]:[]);
     { const L=state.labour.filter(r=>num(r.carpenters)||num(r.helpers)), noWage=L.length&&!num(state.meta.carpenterWage)&&!num(state.meta.helperWage);
       const CT=state.consTx.filter(t=>t.type==='Issued'&&num(t.qty)), noRate=CT.filter(t=>!num((consObj(t.itemId)||{}).unitCost)).map(t=>(consObj(t.itemId)||{}).item).filter(Boolean);
-      if(noWage||noRate.length) h+=`<div class="banner">${PILL('wn','CHECK')} <span>${noWage?`Labour is entered (${fmtN(mandays(L),1)} mandays) but <b>wages are ₹0</b> – set carpenter / helper wage on <a href="#" onclick="go('labour');return false">Labour</a> so labour cost is added. `:''}${noRate.length?`Consumables issued without a rate: <b>${esc([...new Set(noRate)].join(', '))}</b> – set the rate on <a href="#" onclick="go('consumables');return false">Consumables</a>.`:''}</span></div>`; }
+      if((noWage&&state.meta.costLab)||(noRate.length&&state.meta.costStore)) h+=`<div class="banner">${PILL('wn','CHECK')} <span>${noWage?`Labour is entered (${fmtN(mandays(L),1)} mandays) but <b>wages are ₹0</b> – set carpenter / helper wage on <a href="#" onclick="go('labour');return false">Labour</a> so labour cost is added. `:''}${noRate.length?`Consumables issued without a rate: <b>${esc([...new Set(noRate)].join(', '))}</b> – set the rate on <a href="#" onclick="go('consumables');return false">Consumables</a>.`:''}</span></div>`; }
     h+=panel('1b. System cost – month by month'+(tk?' ('+tk+')':' (all systems)'),simpleTable(mh,mrows),'running total from start');
+    /* 1c. excess rent – separate */
+    { const mS=state.ui.month||thisMonth(), ms=allMonthsUpTo(mS), rows=[]; let tM=0,tT=0;
+      rentalSystems().filter(x=>sysFilter(x.id)).forEach(sy=>ledgerAreas(sy.id).forEach(a=>{ const rr=rateRow(sy.id,a), req=rr?num(rr.requiredSqm):0; if(!req) return;
+        const site=Math.max(0,balanceOn(sy.id,a,todayStr())), xM=monthRent(sy.id,a,mS).excess, xT=ms.reduce((t,m)=>t+monthRent(sy.id,a,m).excess,0); if(!xT&&site<=req) return; tM+=xM; tT+=xT;
+        rows.push(`<tr><td class="v"><b>${esc(sysName(sy.id))}</b> <span class="muted">›</span> ${esc(areaName(a))}</td><td class="calc r">${fmtN(req)} sqm</td><td class="calc r">${fmtN(site)} sqm</td><td class="calc r">${site>req?`<b class="neg">${fmtN(site-req)} sqm</b>`:'0'}</td><td class="calc r">${xM?`<span class="neg">${money(xM)}</span>`:'—'}</td><td class="calc r"><b class="${xT?'neg':''}">${money(xT)}</b></td></tr>`); }));
+      if(rows.length) h+=panel('1c. Excess rent – vendor sent more than required',simpleTable([['System › Area'],['Required',1],['On site today',1],['Excess today',1],['Excess rent – '+monthLabel(mS),1],['Excess rent – till now',1]],rows,`<tr><td>Total</td><td></td><td></td><td></td><td class="r">${money(tM)}</td><td class="r"><b>${money(tT)}</b></td></tr>`),'already included in Rent above · required sqm from Rental Rates'); }
   }
 
   // 2. Scope
@@ -1281,15 +1297,28 @@ function usageRows(m){
 const perTxt=(rate,unit,u)=> rate? `1 ${esc(unit)} / ${fmtN(1/rate,1)} ${u}` : '—';
 /* one consumables list – shown on the Consumables page and in Store Stock › Consumables */
 function consStockPanel(){
-  return panel('Consumable items & stock',table('consItems',[
+  const CI=state.consItems, q=(c,t)=>consQty(c.id,t), anyT=t=>state.consTx.some(x=>x.type===t), anyX=f=>state.consTx.some(x=>x.type==='Received'&&num(x[f]));
+  const old=state.consTx.some(t=>['Damaged','Returned to vendor','Missing'].includes(t.type));
+  const st=c=>{ const s=consStock(c.id), po=openPOQty(c.item), mn=num(c.minStock);
+    if(s<0) return PILL('bd','Issued > stock');
+    if(mn&&s+po<mn) return `${PILL('bd','Raise PR')} <button class="btn sm p" onclick="raisePR('${esc(c.item).replace(/'/g,"\\'")}',${mn*2-s-po},'${esc(c.unit)}',${num(c.unitCost)},'Consumable')">Raise PR</button>`;
+    return mn&&s<mn?PILL('wn','Low – PO pending'):PILL('ok','OK'); };
+  return panel('Consumables stock',table('consItems',[
     {key:'item',label:'Item',w:150},{key:'unit',label:'Unit',type:'select',options:['Nos','Sqm','Cum','Rmt','Kg','Ltr','Set','Box','Sheets']},
     {key:'unitCost',label:`Rate (${cur()}/unit)`,type:'number',r:1},{key:'minStock',label:'Min stock',type:'number',r:1},
-    {label:'Received',r:1,calc:c=>fmtN(consQty(c.id,'Received'),2)},{label:'Issued',r:1,calc:c=>fmtN(consQty(c.id,'Issued'),2)},
-    ...(state.consTx.some(t=>t.type!=='Received'&&t.type!=='Issued')?[{label:'Damaged',r:1,calc:c=>fmtN(consQty(c.id,'Damaged'),2)},{label:'Returned to vendor',r:1,calc:c=>fmtN(consQty(c.id,'Returned to vendor'),2)},{label:'Damaged – not returned',r:1,calc:c=>{const d=consDmgLeft(c.id); return d?`<span class="neg">${fmtN(d,2)}</span>`:'0';}},{label:'Missing',r:1,calc:c=>fmtN(consQty(c.id,'Missing'),2)}]:[]),
+
+    ...(anyT('Physical count')?[{label:'Starting stock',r:1,calc:c=>fmtN(physAdj('cons',c.id).start,2)}]:[]),
+    {label:'Received (good)',r:1,calc:c=>fmtN(q(c,'Received')-consRecX(c.id,'dmgQty')-consRecX(c.id,'shortQty'),2)},
+    ...(anyX('dmgQty')?[{label:'Damaged on receipt',r:1,calc:c=>{const x=consRecX(c.id,'dmgQty'); return x?`<span class="neg">${fmtN(x,2)}</span>`:'0';}}]:[]),
+    ...(anyX('shortQty')?[{label:'Short',r:1,calc:c=>{const x=consRecX(c.id,'shortQty'); return x?`<span class="neg">${fmtN(x,2)}</span>`:'0';}}]:[]),
+    ...(anyT('Transfer in (other site)')?[{label:'Transfer in',r:1,calc:c=>fmtN(q(c,'Transfer in (other site)'),2)}]:[]),
+    ...(anyT('Transfer out (other site)')?[{label:'Transfer out',r:1,calc:c=>fmtN(q(c,'Transfer out (other site)'),2)}]:[]),
+    {label:'Issued',r:1,calc:c=>fmtN(q(c,'Issued'),2)},
+    ...(old?[{label:'Older: damaged / missing',r:1,calc:c=>fmtN(q(c,'Damaged')+q(c,'Missing'),2)}]:[]),
+    ...(anyT('Physical count')?[{label:'Stock check +/−',r:1,calc:c=>{ const a=physAdj('cons',c.id); return a.n>(a.start?1:0)?`<b class="${a.diff<0?'neg':''}">${a.diff>0?'+':''}${fmtN(a.diff,2)}</b><br><small class="muted">last ${fmtD(a.last)}</small>`:'—'; }}]:[]),
     {label:'In stock',r:1,calc:c=>{const s=consStock(c.id); return `<b class="${s<0?'neg':''}">${fmtN(s,2)}</b>`;}},
     {label:'Stock value',r:1,calc:c=>money(Math.max(0,consStock(c.id))*num(c.unitCost))},
-    {label:'Open PO',r:1,calc:c=>fmtN(openPOQty(c.item))},
-    {label:'Status',calc:c=>{const s=consStock(c.id); return s<0?PILL('bd','Issued > received'):(num(c.minStock)&&s+openPOQty(c.item)<num(c.minStock)?PILL('bd','Raise PR'):(num(c.minStock)&&s<num(c.minStock)?PILL('wn','Low – PO pending'):PILL('ok','OK')));}}]));
+    {label:'Open PO',r:1,calc:c=>fmtN(openPOQty(c.item))},{label:'Status',calc:st}]));
 }
 function consMovePanel(all,togKey){
   const m=state.ui.month||thisMonth();
@@ -1298,12 +1327,12 @@ function consMovePanel(all,togKey){
   return monthBar(`<span style="width:10px"></span><label class="ck"><input type="checkbox" ${all?'checked':''} onchange="setUI('${togKey}',this.checked)"> Show all months</label>`)+panel('Received / issued'+(all?' – all months':' – '+monthLabel(m)),table('consTx',[
     {key:'date',label:'Date',type:'date'},{key:'itemId',label:'Item',type:'cons',w:150},{key:'type',label:'Type',type:'select',options:state.route==='store'?CONS_TYPES:['Received','Issued'],w:state.route==='store'?150:95},{key:'qty',label:'Qty',type:'number',r:1},
     {key:'systemId',label:'Issued to system',type:'system',blank:'Shared'},{key:'areaId',label:'Area',type:'area',blank:'All'},{key:'contractorId',label:'Contractor',type:'contractor',w:140},
-    {label:'Value',r:1,calc:t=>money(consCostTx(t))},{key:'doc',label:'Challan / GRN / slip'},{key:'remarks',label:'Remarks'}],{rows,unitOf:cU,qtyByUnit:1,sums:CV,bal:{in:/^Received$/,out:/^(Issued|Damaged|Missing)$/,label:'In stock (received − issued − damaged − missing)'}}),rows.length+' entries');
+    {label:'Value',r:1,calc:t=>money(consCostTx(t))},{key:'doc',label:'Challan / GRN / slip'},{key:'remarks',label:'Remarks'}],{rows,unitOf:cU,qtyByUnit:1,sums:CV,bal:{in:/^(Available on takeover|Received)$/,out:/^(Issued|Damaged|Missing)$/,label:'In stock (available on takeover + received − issued − damaged − missing)'}}),rows.length+' entries');
 }
 PAGES.consumables=()=>{
   const m=state.ui.month||thisMonth();
   let h=`<p class="note hint">Set each consumable once with its rate. Record what is received into store and what is issued. Issued value is charged to the system/area you pick; leave System blank to share it across all systems by executed sqm.</p>`;
-  h+=consStockPanel()+consMovePanel(!!state.ui.consAll,'consAll');
+  h+=skStockTable('cons')+skMonthBar()+skIssueTable('cons');
   /* standard norms – optional */
   h+=panel('Standard norms (optional)',`<p class="note hint">Your standard consumption for each system and item, e.g. <b>Shuttering oil · Conventional ply · 1 Ltr per 30 sqm</b> (scaffolding systems: per cum). Where a norm is entered, the usage check compares with it; otherwise it compares with your own average. Leave this empty if you don't have standards.</p>`+
     table('consNorms',[{key:'systemId',label:'System',type:'system'},{key:'itemId',label:'Consumable item',type:'cons'},{key:'qty',label:'Qty',type:'number',r:1},{label:'Unit',calc:n=>esc((consObj(n.itemId)||{}).unit||'')},
@@ -1413,6 +1442,7 @@ PAGES.items=()=>{
   const T=new Map(its.map(i=>[i.id,itemTotals(i.id)]));
   const tot=its.reduce((a,i)=>{ const t=T.get(i.id); a.r+=t.r; a.d+=t.d; a.sq+=Math.max(0,t.bal)*num(i.sqmPerNo); a.kg+=Math.max(0,t.bal)*num(i.kgPerNo); a.rs+=t.r*num(i.sqmPerNo); a.ds+=t.d*num(i.sqmPerNo); if(t.r>0&&t.d>=t.r) a.full++; return a; },{r:0,d:0,sq:0,kg:0,rs:0,ds:0,full:0});
   let h=`<div class="chips"><label>System</label>${state.systems.filter(x=>x.ownership==='Rental'||state.items.some(i=>i.systemId===x.id)).map(x=>`<button class="btn sm ${x.id===sId?'p':''}" onclick="setUI('itemSys','${x.id}')">${esc(x.name)}</button>`).join('')}</div>`;
+  h+=`<div class="chips"><span class="muted" style="font-size:12px">🔒 Tick “In store” to keep a component in Rental Store – unticking asks first.</span><button class="btn sm p" onclick="state.ui.rsSys='${sId}';go('rentStore')">↗ Open Rental Store – ${esc(s?s.name:'')}</button></div>`;
   h+=`<div class="kpis">${kpi('Received',fmtN(tot.r)+' nos',tot.rs?fmtN(tot.rs,2)+' sqm':'')}${kpi('Returned',fmtN(tot.d)+' nos',tot.ds?fmtN(tot.ds,2)+' sqm':'')}${kpi('Still on site',fmtN(tot.r-tot.d)+' nos',tot.sq?fmtN(tot.sq,2)+' sqm':(tot.kg?fmtN(tot.kg/1000,2)+' MT':''),tot.r-tot.d>0?'warn':'good')}${kpi('Items fully returned',tot.full+' / '+its.length)}${pcs?kpi('Rent per day now',money(its.reduce((a,i)=>a+Math.max(0,itemBalOn(i.id,null,todayStr()))*num(i.ratePcDay),0)),'at today\'s balance'):''}</div>`;
   const filt=i=>{ const st=itemStatus(i,T.get(i.id))[1]; return f==='all' || (f==='site'&&T.get(i.id).bal>0) || (f==='pending'&&/Pending|Not received/.test(st)) || (f==='returned'&&st==='Fully returned') || (f==='check'&&itemStatus(i,T.get(i.id))[0]==='bd'); };
   h+=`<div class="chips"><label>Show</label>${[['all','All items'],['site','Still on site'],['pending','Pending receipt'],['returned','Fully returned'],['check','Errors']].map(([k,l])=>`<button class="btn sm ${f===k?'p':''}" onclick="setUI('itemFilter','${k}')">${l}</button>`).join('')}</div>`;
@@ -1535,24 +1565,24 @@ PAGES.owned=()=>{
 const MACH_TX=['Received (purchase)','Received (transfer in)','Issued to vendor','Returned from vendor','Sent for repair','Back from repair','Damaged','Transferred out'];
 const machObj=id=>state.machines.find(m=>m.id===id)||{};
 function machBal(id){
-  const b={buy:0,tin:0,iss:0,ret:0,rep:0,back:0,dmg:0,dmgV:0,out:0,repCost:0,buyVal:0};
+  const b={open:0,openV:0,buy:0,tin:0,iss:0,ret:0,rep:0,back:0,dmg:0,dmgV:0,out:0,repCost:0,buyVal:0};
   state.machineTx.forEach(t=>{ if(t.machineId!==id) return; const q=num(t.qty);
-    switch(t.type){ case 'Received (purchase)': b.buy+=q; b.buyVal+=q*num(t.rate); break; case 'Received (transfer in)': b.tin+=q; break;
+    switch(t.type){ case 'Available on takeover': b.open+=q; break; case 'Available on takeover – with vendor': b.openV+=q; b.iss+=q; break; case 'Received (purchase)': b.buy+=q-num(t.dmgQty)-num(t.shortQty); b.buyVal+=q*num(t.rate); break; case 'Returned to supplier': b.out+=q; break; case 'Received (transfer in)': b.tin+=q; break;
       case 'Issued to vendor': b.iss+=q; break; case 'Returned from vendor': b.ret+=q; break;
       case 'Sent for repair': b.rep+=q; b.repCost+=num(t.repairCost); break; case 'Back from repair': b.back+=q; b.repCost+=num(t.repairCost); break;
       case 'Damaged': if(t.contractorId) b.dmgV+=q; else b.dmg+=q; break; case 'Transferred out': b.out+=q; break; } });
   b.rec=b.buy+b.tin; b.withV=b.iss-b.ret-b.dmgV; b.inRep=b.rep-b.back; b.damaged=b.dmg+b.dmgV;
-  b.store=b.rec-b.iss+b.ret-b.dmg-b.inRep-b.out; b.total=b.store+b.withV+b.inRep;
+  b.store=b.open+b.rec-(b.iss-b.openV)+b.ret-b.dmg-b.inRep-b.out; b.total=b.store+b.withV+b.inRep;
   const v=num(machObj(id).unitValue); b.valStore=b.store*v; b.valTotal=b.total*v; b.valDmg=b.damaged*v; return b;
 }
 PAGES.machines=()=>{
   let h=`<p class="note hint">Machines and tools – drill machines, cutting machines, grinders, saws… Add each machine type once in the <b>register</b>, then record every movement: purchase or transfer in, issue to a vendor, return, repair, damage. Write the <b>reason</b> for damage in Remarks.</p>`;
   const B=new Map(state.machines.map(m=>[m.id,machBal(m.id)]));
-  const T=[...B.values()].reduce((a,b)=>{ ['rec','store','withV','inRep','damaged','out','total','valStore','valTotal','valDmg','repCost','buyVal'].forEach(k=>a[k]+=b[k]); return a; },{rec:0,store:0,withV:0,inRep:0,damaged:0,out:0,total:0,valStore:0,valTotal:0,valDmg:0,repCost:0,buyVal:0});
+  const T=[...B.values()].reduce((a,b)=>{ ['rec','open','openV','store','withV','inRep','damaged','out','total','valStore','valTotal','valDmg','repCost','buyVal'].forEach(k=>a[k]=(a[k]||0)+num(b[k])); return a; },{rec:0,store:0,withV:0,inRep:0,damaged:0,out:0,total:0,valStore:0,valTotal:0,valDmg:0,repCost:0,buyVal:0});
   { const V=k=>state.machines.reduce((a,m)=>a+B.get(m.id)[k]*num(m.unitValue),0);
     const vS=V('store'), vV=V('withV'), vR=V('inRep'), vD=V('damaged'), vO=V('out'), tot=vS+vV+vR;
     const seg=(v,cls)=>tot&&v?`<i class="${cls}" style="width:${(v/tot*100).toFixed(1)}%"></i>`:'';
-    h+=`<div class="valhero"><div class="vh-main"><span>Stock valuation – machines & tools</span><b>${money(tot)}</b><small>${fmtN(T.total)} nos on site (store + vendors + repair) · ${fmtN(T.rec)} received in total · at value per no in the register</small><div class="vbar">${seg(vS,'s')}${seg(vV,'v')}${seg(vR,'r')}</div></div>
+    h+=`<div class="valhero"><div class="vh-main"><span>Stock valuation – machines & tools</span><b>${money(tot)}</b><small>${fmtN(T.total)} nos on site (store + vendors + repair) · ${fmtN(T.rec+(T.open||0)+(T.openV||0))} opening + received in total · at value per no in the register</small><div class="vbar">${seg(vS,'s')}${seg(vV,'v')}${seg(vR,'r')}</div></div>
       <div class="vh-parts"><div><span><i class="dot s"></i>In store</span><b>${money(vS)}</b><small>${fmtN(T.store)} nos</small></div><div><span><i class="dot v"></i>With vendors</span><b>${money(vV)}</b><small>${fmtN(T.withV)} nos</small></div><div><span><i class="dot r"></i>In repair</span><b>${money(vR)}</b><small>${fmtN(T.inRep)} nos</small></div>
       <div><span><i class="dot d"></i>Damaged (loss)</span><b class="neg">${money(vD)}</b><small>${fmtN(T.damaged)} nos</small></div><div><span>Purchased so far</span><b>${money(T.buyVal)}</b><small>from invoices</small></div><div><span>Repair spend</span><b>${money(T.repCost)}</b><small>${vO?'transferred out '+money(vO):'&nbsp;'}</small></div></div></div>`; }
 
@@ -1560,7 +1590,7 @@ PAGES.machines=()=>{
   if(low.length) h+=`<div class="banner">${PILL('bd','LOW')} <span>Below minimum in store (counting open POs): ${low.map(m=>{ const qn=Math.max(1,num(m.minStore)-B.get(m.id).store-openPOQty(m.name)); return `<b>${esc(m.name)}</b> (${fmtN(B.get(m.id).store)} of ${fmtN(m.minStore)}) <button class="btn sm p" onclick="raisePR('${esc(m.name).replace(/'/g,"\\'")}',${qn},'Nos',${num(m.unitValue)},'Machinery')">Raise PR for ${fmtN(qn)}</button>`; }).join(' · ')}</span></div>`;
   h+=panel('Machine & tool register',table('machines',[
     {key:'name',label:'Machine / tool',w:150},{key:'model',label:'Make / model',w:120},{key:'unitValue',label:`Value per no (${cur()})`,type:'number',r:1},{key:'minStore',label:'Min. in store',type:'number',r:1},
-    {label:'Purchased',r:1,calc:m=>fmtN(B.get(m.id).buy)},{label:'Transfer in',r:1,calc:m=>fmtN(B.get(m.id).tin)},
+    ...(state.machineTx.some(t=>/^Available on takeover/.test(t.type))?[{label:'Available on takeover',r:1,calc:m=>fmtN(B.get(m.id).open+B.get(m.id).openV)}]:[]),{label:'Purchased',r:1,calc:m=>fmtN(B.get(m.id).buy)},{label:'Transfer in',r:1,calc:m=>fmtN(B.get(m.id).tin)},
     {label:'With vendors',r:1,calc:m=>{const x=B.get(m.id).withV; return x?`<b>${fmtN(x)}</b>`:'—';}},{label:'In repair',r:1,calc:m=>{const x=B.get(m.id).inRep; return x?fmtN(x):'—';}},
     {label:'Damaged',r:1,calc:m=>{const x=B.get(m.id).damaged; return x?`<span class="neg">${fmtN(x)}</span>`:'—';}},{label:'Transferred out',r:1,calc:m=>{const x=B.get(m.id).out; return x?fmtN(x):'—';}},
     {label:'In store',r:1,calc:m=>{const x=B.get(m.id).store; return `<b class="${x<0?'neg':''}">${fmtN(x)}</b>`;}},{label:'On order (open PO)',r:1,calc:m=>{const x=openPOQty(m.name); return x?`<a href="#" onclick="state.ui.prFilter='Open';go('prpo');return false">${fmtN(x)}</a>`:'—';}},{label:'Total on site',r:1,calc:m=>fmtN(B.get(m.id).total)},
@@ -1572,7 +1602,7 @@ PAGES.machines=()=>{
     'Issue / return / damage: pick the vendor. Damage: write the reason in Remarks.');
   /* vendor-wise holding */
   const VW=new Map(); state.machineTx.filter(t=>t.contractorId).forEach(t=>{ const k=t.contractorId+'|'+t.machineId; if(!VW.has(k)) VW.set(k,{c:t.contractorId,m:t.machineId,iss:0,ret:0,dmg:0,last:''}); const g=VW.get(k), q=num(t.qty);
-    if(t.type==='Issued to vendor'){ g.iss+=q; g.last=t.date>g.last?t.date:g.last; } else if(t.type==='Returned from vendor') g.ret+=q; else if(t.type==='Damaged') g.dmg+=q; });
+    if(t.type==='Issued to vendor'||t.type==='Available on takeover – with vendor'){ g.iss+=q; g.last=t.date>g.last?t.date:g.last; } else if(t.type==='Returned from vendor') g.ret+=q; else if(t.type==='Damaged') g.dmg+=q; });
   const vrows=[...VW.values()].sort((a,b)=>conName(a.c).localeCompare(conName(b.c))||(machObj(a.m).name||'').localeCompare(machObj(b.m).name||'')).map(g=>{ const hold=g.iss-g.ret-g.dmg, v=num(machObj(g.m).unitValue);
     return `<tr><td class="v"><b>${esc(conName(g.c)||'—')}</b></td><td class="v">${esc(machObj(g.m).name||'—')}</td><td class="calc r">${fmtN(g.iss)}</td><td class="calc r">${g.ret?fmtN(g.ret):'—'}</td><td class="calc r">${g.dmg?`<span class="neg">${fmtN(g.dmg)}</span>`:'—'}</td><td class="calc r"><b>${fmtN(hold)}</b></td><td class="calc r">${hold?money(hold*v):'—'}</td><td class="calc">${esc(fmtD(g.last)||'—')}</td></tr>`; });
   h+=panel('Who has what – vendor-wise',simpleTable([['Vendor / contractor'],['Machine / tool'],['Issued',1],['Returned',1],['Damaged',1],['Holding now',1],['Value held',1],['Last issued']],vrows),VW.size?'':'no issues yet');
@@ -1898,27 +1928,39 @@ PAGES.help=()=>{
    ===================================================================== */
 
 /* ---------- STORE STOCK ---------- */
-const STORE_TYPES=['Received (purchase)','Issued to contractor','Returned good','Returned damaged','Missing','Repaired','Scrapped'];
+const STORE_TYPES=['Received (purchase)','Transfer in (other site)','Transfer out (other site)','Issued to contractor','Returned good','Returned damaged','Missing','Repaired','Scrapped'];
 const storeObj = id => state.storeItems.find(i=>i.id===id);
 const isConsItem = i => (i&&i.kind)==='Consumable';
 const storeCons = () => state.route==='store' && state.ui.storeTab==='cons';
 const storeTabItems = () => state.storeItems.filter(i=>!isConsItem(i));
 const conName = id => (state.contractors.find(c=>c.id===id)||{}).name || '—';
 // flow of one item: store, with contractors, damaged, missing, scrapped
-function storeBal(itemId, conId){
-  const b={received:0,issued:0,retGood:0,retDam:0,missing:0,repaired:0,scrapped:0};
-  state.storeTx.forEach(t=>{ if(t.itemId!==itemId || (conId && t.contractorId!==conId)) return; const q=num(t.qty);
-    switch(t.type){ case 'Received (purchase)': b.received+=q; break; case 'Issued to contractor': b.issued+=q; break; case 'Returned good': b.retGood+=q; break;
+function storeBalRaw(itemId, conId, upto){
+  const b={open:0,openCon:0,received:0,recDmg:0,recShort:0,tin:0,tout:0,issued:0,retGood:0,retDam:0,missing:0,repaired:0,scrapped:0};
+  state.storeTx.forEach(t=>{ if(t.itemId!==itemId || (conId && t.contractorId!==conId) || (upto && t.date>upto)) return; const q=num(t.qty);
+    switch(t.type){ case 'Available on takeover': b.open+=q; break; case 'Available on takeover – with contractor': b.openCon+=q; b.issued+=q; break; case 'Received (purchase)': b.received+=q; b.recDmg+=num(t.dmgQty); b.recShort+=num(t.shortQty); break; case 'Transfer in (other site)': b.tin+=q; break; case 'Transfer out (other site)': b.tout+=q; break; case 'Returned to supplier': b.retSup=(b.retSup||0)+q; break; case 'Issued to contractor': b.issued+=q; break; case 'Returned good': b.retGood+=q; break;
       case 'Returned damaged': b.retDam+=q; break; case 'Missing': b.missing+=q; break; case 'Repaired': b.repaired+=q; break; case 'Scrapped': b.scrapped+=q; break; } });
   const it=storeObj(itemId)||{}, cons=it.kind==='Consumable';
   b.withCon = cons? 0 : b.issued-b.retGood-b.retDam-b.missing;
   b.used = cons? b.issued-b.retGood : 0;
-  b.inStore = b.received-b.issued+b.retGood+b.repaired;
+  b.recGood = b.received-b.recDmg-b.recShort;
+  b.inStore = b.open+b.recGood+b.tin-b.tout-(b.retSup||0)-(b.issued-b.openCon)+b.retGood+b.repaired;
   b.damaged = b.retDam-b.repaired-b.scrapped;
   b.total = b.inStore+b.withCon+b.damaged;
   return b;
 }
-const openPOQty = item => state.prpo.filter(p=>!p.receivedDate && norm(p.item)===norm(item)).reduce((a,p)=>a+num(p.qty),0);
+/* PHYSICAL STOCK CHECK – a count on a date replaces the book stock from that date on.
+   difference = counted − book stock on that date (end of day). The first count works as the starting stock. */
+function physList(kind,id,upto){ const arr=kind==='cons'?state.consTx:state.storeTx;
+  const L=arr.filter(t=>t.type==='Physical count'&&t.itemId===id&&t.date&&(!upto||t.date<=upto)).sort((a,b)=>a.date.localeCompare(b.date)||String(a.id).localeCompare(String(b.id)));
+  const arr2=kind==='cons'?state.consTx:state.storeTx;
+  let adj=0; return L.map((t,i)=>{ const raw=kind==='cons'?consStockRaw(id,t.date):storeBalRaw(id,null,t.date).inStore, book=raw+adj, d=num(t.qty)-book; adj+=d;
+    const start=i===0&&!arr2.some(x=>x.itemId===id&&x.type!=='Physical count'&&x.date&&x.date<t.date); return {t,book,d,start}; }); }
+function physAdj(kind,id,upto){ const L=physList(kind,id,upto); const st=L.filter(x=>x.start).reduce((a,x)=>a+x.d,0), df=L.filter(x=>!x.start).reduce((a,x)=>a+x.d,0);
+  return {adj:st+df,start:st,diff:df,last:L.length?L[L.length-1].t.date:'',n:L.length}; }
+function storeBal(itemId,conId,upto){ const b=storeBalRaw(itemId,conId,upto); b.adj=0; b.lastChk='';
+  if(!conId){ const a=physAdj('store',itemId,upto); b.adj=a.adj; b.start=a.start; b.chkDiff=a.diff; b.lastChk=a.n>(a.start?1:0)?a.last:''; b.inStore+=a.adj; b.total=b.inStore+b.withCon+b.damaged; } return b; }
+const openPOQty = item => state.prpo.filter(p=>!p.receivedDate && norm(p.item)===norm(item)).reduce((a,p)=>a+Math.max(0,num(p.qty)-(p.poNo&&typeof poGood==='function'?poGood(p.poNo):0)),0);
 function storeStatus(it,b){
   if(b.inStore<-1e-9||b.withCon<-1e-9||b.damaged<-1e-9) return ['bd','Check entries'];
   const min=num(it.minStock), po=openPOQty(it.item);
@@ -1926,7 +1968,152 @@ function storeStatus(it,b){
   if(min>0 && b.inStore<min) return ['wn','Low – PO pending'];
   return ['ok','OK'];
 }
+/* ================= STORE SHEETS – separate simple sheets for each kind of entry ================= */
+const poObj = no => state.prpo.find(p=>p.poNo&&p.poNo===no);
+const goodQ = t => num(t.qty)-num(t.dmgQty)-num(t.shortQty);
+function poRecs(no){ if(!no) return []; return state.storeTx.filter(t=>t.type==='Received (purchase)'&&t.poNo===no).concat(state.consTx.filter(t=>t.type==='Received'&&t.poNo===no),state.machineTx.filter(t=>t.type==='Received (purchase)'&&t.poNo===no)); }
+function poGood(no){ return poRecs(no).reduce((a,t)=>a+goodQ(t),0); }
+const SHEETS={
+  mat:{arr:'storeTx',item:'storeitem',tabs:[['stock','Stock'],['chk','Physical stock check',['Physical count']],['rec','Received (PO)',['Received (purchase)']],['iss','Issued',['Issued to contractor']],['ret','Returns & damage',['Returned good','Returned damaged','Missing','Repaired','Scrapped']],['tin','Transfer in',['Transfer in (other site)']],['tout','Transfer out',['Transfer out (other site)']]]},
+  cons:{arr:'consTx',item:'cons',tabs:[['stock','Stock'],['chk','Physical stock check',['Physical count']],['rec','Received (PO)',['Received']],['iss','Issued',['Issued']],['tin','Transfer in',['Transfer in (other site)']],['tout','Transfer out',['Transfer out (other site)']],['old','Older entries',['Damaged','Returned to vendor','Missing']]]}};
+Object.entries(SHEETS).forEach(([k,S])=>S.tabs.forEach(([t,,types])=>{ if(!types) return; const v='sh_'+k+'_'+t; VARR[v]=S.arr;
+  DEFAULTS[v]=()=>Object.assign(k==='mat'?{date:defDate(),type:types[0],itemId:(storeTabItems()[0]||{}).id||'',qty:0,contractorId:'',areaId:'',doc:'',remarks:''}:{date:defDate(),type:types[0],itemId:state.consItems[0]?.id||'',qty:0,systemId:'',areaId:'',contractorId:'',doc:'',remarks:''},
+    t==='rec'?{poNo:'',dmgQty:0,shortQty:0,supplier:''}:{}, t==='chk'?{date:todayStr()}:{}, t==='tin'||t==='tout'?{site:''}:{}); }));
+function storeSheet(k){
+  const S=SHEETS[k], cons=k==='cons', show=S.tabs.filter(([t,,ty])=>t!=='old'||state[S.arr].some(r=>ty.includes(r.type)&&(!cons||consObj(r.itemId))));
+  const key=k==='mat'?'shMat':'shCons', cur=show.some(x=>x[0]===state.ui[key])?state.ui[key]:'stock';
+  let h=`<div class="chips sheettabs">${show.map(([t,l,ty])=>{ const n=ty?state[S.arr].filter(r=>ty.includes(r.type)&&(cons?consObj(r.itemId):storeObj(r.itemId)&&!isConsItem(storeObj(r.itemId)))).length:0; return `<button class="btn sm ${t===cur?'p':''}" onclick="setUI('${key}','${t}')">${l}${ty?` <small>(${n})</small>`:''}</button>`; }).join('')}</div>`;
+  if(cur==='stock') return h+(cons?consStockPanel():matStockPanel())+costPanel(k);
+  const [,label,types]=S.tabs.find(x=>x[0]===cur), v='sh_'+k+'_'+cur, m=state.ui.month||thisMonth(), all=!!state.ui.storeAll;
+  const rows=state[S.arr].filter(r=>types.includes(r.type)&&(cons?(!r.itemId||consObj(r.itemId)):(!r.itemId||(storeObj(r.itemId)&&!isConsItem(storeObj(r.itemId)))))&&(all||monthOf(r.date)===m)).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  const IT={key:'itemId',label:'Item',type:S.item,w:180}, D={key:'date',label:'Date',type:'date'}, RM={key:'remarks',label:'Remarks'};
+  const U=r=>esc(((cons?consObj(r.itemId):storeObj(r.itemId))||{}).unit||'');
+  let cols;
+  if(cur==='chk'){ const PL=new Map(); rows.forEach(r=>{ if(!PL.has(r.itemId)) physList(k,r.itemId).forEach(x=>PL.set(x.t.id,x)); }); const P=r=>PL.get(r.id)||(physList(k,r.itemId).find(x=>x.t.id===r.id))||{book:0,d:0};
+    const rt=r=>num(((cons?consObj(r.itemId):storeObj(r.itemId))||{})[cons?'unitCost':'rate']);
+    cols=[D,IT,{key:'qty',label:'Counted qty (in store)',type:'number',r:1},{label:'Unit',calc:U},{label:'Book stock (app)',r:1,calc:r=>fmtN(P(r).book,2)},
+      {label:'Difference',r:1,calc:r=>{ const x=P(r), d=x.d; if(x.start) return PILL('na','Starting stock'); return Math.abs(d)<1e-9?PILL('ok','Matches'):`<b class="${d<0?'neg':''}" style="${d>0?'color:var(--good)':''}">${d>0?'+':''}${fmtN(d,2)}</b> <small class="muted">${d<0?'short':'excess'}</small>`; }},
+      {label:'Value of difference',r:1,calc:r=>{ const d=P(r).d; return P(r).start||Math.abs(d)<1e-9?'—':`<span class="${d<0?'neg':''}">${d<0?'−':'+'}${money(Math.abs(d)*rt(r))}</span>`; }},{key:'doc',label:'Checked by'},RM]; }
+  else if(cur==='open') cols=[D,IT,...(types.length>1?[{key:'type',label:'Where',type:'select',options:types,w:170}]:[]),{key:'qty',label:'Qty',type:'number',r:1},{label:'Unit',calc:U},...(cons?[]:[{key:'contractorId',label:'Contractor (if with contractor)',type:'contractor',w:160}]),RM];
+  else if(cur==='rec') cols=[D,IT,{key:'poNo',label:'PO no.',type:'po',w:190},{label:'PO qty',r:1,calc:r=>{ const p=poObj(r.poNo); return p?fmtN(p.qty)+' '+esc(p.unit||''):'—'; }},
+    {key:'qty',label:'Qty received (challan)',type:'number',r:1},{key:'dmgQty',label:'Damaged',type:'number',r:1},{key:'shortQty',label:'Short / missing',type:'number',r:1},
+    {label:'Good qty (to stock)',r:1,calc:r=>`<b>${fmtN(goodQ(r))}</b> <small class="muted">${U(r)}</small>`},{label:'PO pending',r:1,calc:r=>{ const p=poObj(r.poNo); if(!p||!num(p.qty)) return '—'; const b=num(p.qty)-poGood(r.poNo); return b>1e-9?`<b class="neg">${fmtN(b)}</b>`:PILL('ok','Complete'); }},
+    {key:'supplier',label:'Supplier'},{key:'doc',label:'Challan / GRN'},RM];
+  else if(cur==='iss') cols=[D,IT,{key:'qty',label:'Qty issued',type:'number',r:1},{label:'Unit',calc:U},{key:'contractorId',label:'Issued to (contractor)',type:'contractor',w:160},{key:'areaId',label:'Area',type:'area',...(cons?{blank:'All'}:{})},...(cons?[{key:'systemId',label:'System',type:'system',blank:'—'}]:[]),{key:'doc',label:'Issue slip'},RM];
+  else if(cur==='ret') cols=[D,{key:'type',label:'Movement',type:'select',options:types,w:150},IT,{key:'qty',label:'Qty',type:'number',r:1},{label:'Unit',calc:U},{key:'contractorId',label:'Contractor',type:'contractor',w:160},{key:'doc',label:'Slip'},{key:'remarks',label:'Reason / remarks'}];
+  else if(cur==='tin'||cur==='tout') cols=[D,IT,{key:'qty',label:'Qty',type:'number',r:1},{label:'Unit',calc:U},{key:'site',label:cur==='tin'?'From site':'To site',w:170},{key:'doc',label:'Transfer challan'},RM];
+  else cols=[D,{key:'type',label:'Type',type:'select',options:types},IT,{key:'qty',label:'Qty',type:'number',r:1},RM];
+  h+=monthBar(`<span style="width:10px"></span><label class="ck"><input type="checkbox" ${all?'checked':''} onchange="setUI('storeAll',this.checked)"> Show all months</label>`);
+  const unitOf=r=>((cons?consObj(r.itemId):storeObj(r.itemId))||{}).unit||'';
+  h+=panel(label+(all?' – all months':' – '+monthLabel(m)),table(v,cols,{rows,unitOf,qtyByUnit:1,sums:cur==='rec'?[{label:'Good qty',val:goodQ,byUnit:1}]:undefined}),rows.length+' entries');
+  return h;
+}
+function matStockPanel(){ const its=storeTabItems(), B=new Map(its.map(i=>[i.id,storeBal(i.id)])), any=f=>its.some(i=>B.get(i.id)[f]);
+  const reo=i=>{ const b=B.get(i.id), st=storeStatus(i,b); return st[1].startsWith('Raise PR')?`${PILL(st[0],st[1])} <button class="btn sm p" onclick="raisePR('${esc(i.item).replace(/'/g,"\\'")}',${num(i.minStock)*2-b.inStore-openPOQty(i.item)},'${esc(i.unit)}',${num(i.rate)},'Material')">Raise PR</button>`:PILL(st[0],st[1]); };
+  return panel('Material stock',table('storeItems',[
+      {key:'item',label:'Item',w:170},{key:'unit',label:'Unit',type:'select',options:['Nos','Sqm','Cum','Rmt','Kg','Ltr','Set','Box','Sheets'],w:90},
+      {key:'rate',label:`Rate (${cur()}/unit)`,type:'number',r:1},{key:'minStock',label:'Min. in store',type:'number',r:1},
+      ...(any('open')||any('openCon')?[{label:'Opening (old)',r:1,calc:i=>fmtN(B.get(i.id).open+B.get(i.id).openCon)}]:[]),
+      ...(any('start')?[{label:'Starting stock',r:1,calc:i=>fmtN(B.get(i.id).start)}]:[]),{label:'Received (good)',r:1,calc:i=>fmtN(B.get(i.id).recGood)},...(any('recDmg')?[{label:'Damaged on receipt',r:1,calc:i=>{const x=B.get(i.id).recDmg; return x?`<span class="neg">${fmtN(x)}</span>`:'0';}}]:[]),...(any('recShort')?[{label:'Short',r:1,calc:i=>{const x=B.get(i.id).recShort; return x?`<span class="neg">${fmtN(x)}</span>`:'0';}}]:[]),
+      ...(any('tin')?[{label:'Transfer in',r:1,calc:i=>fmtN(B.get(i.id).tin)}]:[]),...(any('tout')?[{label:'Transfer out',r:1,calc:i=>fmtN(B.get(i.id).tout)}]:[]),
+      {label:'With contractors',r:1,calc:i=>fmtN(B.get(i.id).withCon)},{label:'Damaged',r:1,calc:i=>fmtN(B.get(i.id).damaged)},{label:'Missing',r:1,calc:i=>fmtN(B.get(i.id).missing)},
+      ...(any('lastChk')?[{label:'Stock check +/−',r:1,calc:i=>{ const b=B.get(i.id); return b.lastChk?`<b class="${b.chkDiff<0?'neg':''}">${b.chkDiff>0?'+':''}${fmtN(b.chkDiff)}</b><br><small class="muted">last ${fmtD(b.lastChk)}</small>`:'—'; }}]:[]),{label:'In store',r:1,calc:i=>`<b>${fmtN(B.get(i.id).inStore)}</b>`},{label:'Open PO',r:1,calc:i=>fmtN(openPOQty(i.item))},{label:'Status',calc:reo}],{rows:its})); }
+/* ================= STORE – one set of pages for Material, Consumables and Machinery ================= */
+const SK={
+  mat:{label:'Material',arr:'storeTx',key:'itemId',ityp:'storeitem',master:'storeItems',items:()=>storeTabItems(),name:i=>i.item,unit:i=>i.unit||'',rateK:'rate',minK:'minStock',
+    rec:'Received (purchase)',iss:'Issued to contractor',moves:['Transfer in (other site)','Transfer out (other site)','Returned good','Returned damaged','Missing','Repaired','Scrapped','Returned to supplier'],
+    bal:i=>{ const b=storeBal(i.id); return {st:b.inStore,out:b.withCon,dmg:b.damaged,mis:b.missing,rep:0}; }},
+  cons:{label:'Consumables',arr:'consTx',key:'itemId',ityp:'cons',master:'consItems',items:()=>state.consItems,name:c=>c.item,unit:c=>c.unit||'',rateK:'unitCost',minK:'minStock',
+    rec:'Received',iss:'Issued',moves:['Transfer in (other site)','Transfer out (other site)','Returned to vendor'],
+    bal:c=>({st:consStock(c.id),out:0,dmg:0,mis:0,rep:0})},
+  mach:{label:'Machinery',arr:'machineTx',key:'machineId',ityp:'machine',master:'machines',items:()=>state.machines,name:m=>m.name,unit:()=>'Nos',rateK:'unitValue',minK:'minStore',
+    rec:'Received (purchase)',iss:'Issued to vendor',moves:['Received (transfer in)','Transferred out','Returned from vendor','Sent for repair','Back from repair','Damaged','Returned to supplier'],
+    bal:m=>{ const b=machBal(m.id); return {st:b.store,out:b.withV,dmg:b.damaged,mis:0,rep:b.inRep}; }}};
+const skCur=()=>SK[state.ui.stKind]?state.ui.stKind:'mat';
+const skObj=(k,id)=>SK[k].items().find(x=>x.id===id)||state[SK[k].master].find(x=>x.id===id);
+const skRate=(k,t)=>num(t.rate)||num((skObj(k,t[SK[k].key])||{})[SK[k].rateK]);
+const skChips=(extra)=>`<div class="chips systabs"><label>Store</label>${Object.entries(SK).map(([k,S])=>` <button class="btn sm ${k===skCur()?'p':''}" onclick="state.ui.storeTab='';setUI('stKind','${k}')">${S.label} <small>(${S.items().length})</small></button>`).join('')}${extra||''}</div>`;
+['iss','rec','mov','chk'].forEach(p=>Object.keys(SK).forEach(k=>{ const v='sk_'+p+'_'+k, S=SK[k]; VARR[v]=S.arr;
+  DEFAULTS[v]=()=>{ const it=S.items()[0]||{}; const base={date:defDate(),[S.key]:it.id||'',qty:k==='mach'?1:0,contractorId:'',areaId:'',doc:'',remarks:''};
+    if(p==='iss') return Object.assign(base,{type:S.iss,systemId:''});
+    if(p==='rec') return Object.assign(base,{type:S.rec,poNo:'',dmgQty:0,shortQty:0,rate:0,supplier:''});
+    if(p==='chk') return Object.assign(base,{type:'Physical count',date:todayStr()});
+    return Object.assign(base,{type:S.moves[0],site:''}); }; }));
+function skRows(k,types){ const S=SK[k], m=state.ui.month||thisMonth(), all=!!state.ui.storeAll;
+  return state[S.arr].filter(t=>types.includes(t.type)&&(!t[S.key]||skObj(k,t[S.key]))&&(k!=='mat'||!t[S.key]||!isConsItem(storeObj(t[S.key])))&&(all||monthOf(t.date)===m)).sort((a,b)=>(a.date||'').localeCompare(b.date||'')); }
+const skMonthBar=()=>monthBar(`<span style="width:10px"></span><label class="ck"><input type="checkbox" ${state.ui.storeAll?'checked':''} onchange="setUI('storeAll',this.checked)"> Show all months</label>`);
+const skLbl=()=>state.ui.storeAll?' – all months':' – '+monthLabel(state.ui.month||thisMonth());
+
+/* 1. STORE STOCK – quantities only, and what was issued to whom */
+function skStockTable(k){ const S=SK[k], its=S.items(), B=new Map(its.map(i=>[i.id,S.bal(i)]));
+  const st=i=>{ const b=B.get(i.id), mn=num(i[S.minK]), po=openPOQty(S.name(i)); if(b.st<-1e-9) return PILL('bd','Check entries');
+    if(mn&&b.st+po<mn) return `${PILL('bd','Raise PR')} <button class="btn sm p" onclick="raisePR('${esc(S.name(i)).replace(/'/g,"\\'")}',${mn*2-b.st-po},'${esc(S.unit(i))}',${num(i[S.rateK])},'${k==='mach'?'Machinery':k==='cons'?'Consumable':'Material'}')">Raise PR</button>`;
+    return mn&&b.st<mn?PILL('wn','Low – PO pending'):PILL('ok','OK'); };
+  const cols=[{key:k==='mach'?'name':'item',label:k==='mach'?'Machine / tool':'Item',w:170},...(k==='mach'?[{key:'model',label:'Make / model'}]:[{key:'unit',label:'Unit',type:'select',options:['Nos','Sqm','Cum','Rmt','Kg','Ltr','Set','Box','Sheets'],w:90}]),
+    {key:S.minK,label:'Min. in store',type:'number',r:1},{label:'In store',r:1,calc:i=>{const x=B.get(i.id).st; return `<b class="${x<0?'neg':''}">${fmtN(x,Math.abs(x-Math.round(x))>1e-9?2:0)}</b>`;}},
+    ...(k!=='cons'?[{label:k==='mach'?'With vendors':'With contractors',r:1,calc:i=>fmtN(B.get(i.id).out)}]:[]),...(k==='mach'?[{label:'In repair',r:1,calc:i=>fmtN(B.get(i.id).rep)}]:[]),
+    ...(k!=='cons'?[{label:'Damaged',r:1,calc:i=>{const x=B.get(i.id).dmg; return x?`<span class="neg">${fmtN(x)}</span>`:'0';}}]:[]),...(k==='mat'?[{label:'Missing',r:1,calc:i=>{const x=B.get(i.id).mis; return x?`<span class="neg">${fmtN(x)}</span>`:'0';}}]:[]),
+    {label:'Open PO',r:1,calc:i=>fmtN(openPOQty(S.name(i)))},{label:'Status',calc:st}];
+  return panel(S.label+' – stock in store',table(S.master,cols,{rows:its,noSum:1}),'quantities only – prices on Valuation'); }
+function skIssueTable(k){ const S=SK[k], rows=skRows(k,[S.iss]), U=t=>esc(SK[k].unit(skObj(k,t[S.key])||{}));
+  return panel('Issued'+skLbl(),table('sk_iss_'+k,[{key:'date',label:'Date',type:'date'},{key:S.key,label:k==='mach'?'Machine / tool':'Item',type:S.ityp,w:180},{key:'qty',label:'Qty issued',type:'number',r:1},{label:'Unit',calc:U},
+    {key:'contractorId',label:k==='mach'?'Issued to (vendor)':'Issued to (contractor)',type:'contractor',w:160},{key:'areaId',label:'Area',type:'area',blank:'—'},{key:'systemId',label:'System used',type:'system',blank:'—'},{key:'doc',label:'Issue slip'},{key:'remarks',label:'Remarks'}],
+    {rows,unitOf:t=>SK[k].unit(skObj(k,t[S.key])||{}),qtyByUnit:1}),rows.length+' entries'); }
 PAGES.store=()=>{
+  const k=skCur();
+  return skChips()+skStockTable(k)+skMonthBar()+skIssueTable(k)+panel('Contractors / vendors',table('contractors',[{key:'name',label:'Name',w:200},{key:'phone',label:'Phone'}]));
+};
+PAGES.storeOld=()=>{
+  const cons=state.ui.storeTab==='cons', all=state.storeItems, its=storeTabItems(), B=new Map(all.map(i=>[i.id,storeBal(i.id)]));
+  return '';
+};
+
+/* 2. RECEIVED – what came, against which PO, damaged / short, price if you want */
+PAGES.storeRec=()=>{ const k=skCur(), S=SK[k], rows=skRows(k,[S.rec]), U=t=>esc(S.unit(skObj(k,t[S.key])||{}));
+  const tq=rows.reduce((a,t)=>a+goodQ(t),0), tv=rows.reduce((a,t)=>a+goodQ(t)*skRate(k,t),0), dm=rows.reduce((a,t)=>a+num(t.dmgQty),0), sh=rows.reduce((a,t)=>a+num(t.shortQty),0);
+  let h=skChips()+skMonthBar();
+  h+=`<div class="kpis">${kpi('Entries',rows.length,S.label.toLowerCase()+skLbl())}${kpi('Damaged on receipt',fmtN(dm),'not taken into stock',dm?'bad':'good')}${kpi('Short / missing',fmtN(sh),'claim from supplier',sh?'bad':'good')}${kpi('Value received (good)',tv?money(tv):'—','only where a price is known')}</div>`;
+  h+=panel('Received'+skLbl(),table('sk_rec_'+k,[{key:'date',label:'Date',type:'date'},{key:S.key,label:k==='mach'?'Machine / tool':'Item',type:S.ityp,w:180},{key:'poNo',label:'PO no.',type:'po',w:180},
+    {label:'PO qty',r:1,calc:t=>{ const p=poObj(t.poNo); return p?fmtN(p.qty)+' '+esc(p.unit||''):'—'; }},
+    {key:'qty',label:'Qty received (challan)',type:'number',r:1},{key:'dmgQty',label:'Damaged',type:'number',r:1},{key:'shortQty',label:'Short / missing',type:'number',r:1},
+    {label:'Good qty (to stock)',r:1,calc:t=>`<b>${fmtN(goodQ(t),2)}</b> <small class="muted">${U(t)}</small>`},
+    {label:'PO left',r:1,calc:t=>{ const p=poObj(t.poNo); if(!p||!num(p.qty)) return '—'; const b=num(p.qty)-poGood(t.poNo); return b>1e-9?`<b class="neg">${fmtN(b)}</b>`:PILL('ok','Complete'); }},
+    {key:'rate',label:`Price (${cur()}/unit) – optional`,type:'number',r:1},{label:'Value (good)',r:1,calc:t=>{ const r=skRate(k,t); return r?money(goodQ(t)*r):'—'; }},
+    {key:'supplier',label:'Supplier'},{key:'doc',label:'Challan / GRN'},{key:'remarks',label:'Remarks'}],{rows,unitOf:t=>S.unit(skObj(k,t[S.key])||{}),qtyByUnit:1,sums:[{label:'Good qty',val:goodQ,byUnit:1}]}),rows.length+' entries');
+  return h; };
+
+/* 3. VALUATION – rate per unit × qty */
+function skVal(k){ const S=SK[k]; return S.items().map(i=>{ const r=num(i[S.rateK]), b=S.bal(i), tx=state[S.arr].filter(t=>t[S.key]===i.id);
+  const recQ=tx.filter(t=>t.type===S.rec).reduce((a,t)=>a+goodQ(t),0), recV=tx.filter(t=>t.type===S.rec).reduce((a,t)=>a+goodQ(t)*(num(t.rate)||r),0), issQ=tx.filter(t=>t.type===S.iss).reduce((a,t)=>a+num(t.qty),0);
+  return {i,r,st:b.st,stV:Math.max(0,b.st)*r,out:b.out,outV:Math.max(0,b.out)*r,loss:(b.dmg+b.mis)*r,recQ,recV,issQ,issV:issQ*r}; }); }
+PAGES.storeVal=()=>{ const T={}; Object.keys(SK).forEach(k=>{ T[k]=skVal(k).reduce((a,x)=>{ ['stV','outV','loss','recV','issV'].forEach(f=>a[f]+=x[f]); return a; },{stV:0,outV:0,loss:0,recV:0,issV:0}); });
+  const A=Object.values(T).reduce((a,x)=>{ Object.keys(a).forEach(f=>a[f]+=x[f]); return a; },{stV:0,outV:0,loss:0,recV:0,issV:0});
+  let h=`<div class="kpis">${kpi('Stock in store',money(A.stV),'all store items')}${kpi('With contractors / vendors',money(A.outV))}${kpi('Received (good) – till now',money(A.recV))}${kpi('Issued – till now',money(A.issV))}${kpi('Damaged / missing',money(A.loss),'',A.loss?'bad':'good')}</div>`;
+  h+=panel('Valuation – all store',simpleTable([['Store'],['In store',1],['With contractors / vendors',1],['Received (good) – till now',1],['Issued – till now',1],['Damaged / missing',1]],
+    Object.entries(SK).map(([k,S])=>`<tr><td class="v"><b>${S.label}</b></td><td class="calc r"><b>${money(T[k].stV)}</b></td><td class="calc r">${money(T[k].outV)}</td><td class="calc r">${money(T[k].recV)}</td><td class="calc r">${money(T[k].issV)}</td><td class="calc r">${T[k].loss?`<span class="neg">${money(T[k].loss)}</span>`:'—'}</td></tr>`),
+    `<tr><td>All store</td><td class="r"><b>${money(A.stV)}</b></td><td class="r">${money(A.outV)}</td><td class="r">${money(A.recV)}</td><td class="r">${money(A.issV)}</td><td class="r">${money(A.loss)}</td></tr>`));
+  const k=skCur(), S=SK[k], V=new Map(skVal(k).map(x=>[x.i.id,x])), noRate=S.items().filter(i=>!num(i[S.rateK])).length;
+  h+=skChips()+panel(S.label+' – item-wise value',(noRate?`<div class="banner">${PILL('wn','RATE')} <span>${noRate} item${noRate>1?'s have':' has'} no rate – type it in the Rate column.</span></div>`:'')+table(S.master,[{key:k==='mach'?'name':'item',label:'Item',w:170},{label:'Unit',calc:i=>esc(S.unit(i))},
+    {key:S.rateK,label:`Rate (${cur()}/unit)`,type:'number',r:1},{label:'In store (qty)',r:1,calc:i=>fmtN(V.get(i.id).st,2)},{label:'Stock value',r:1,val:i=>V.get(i.id).stV,money:1,calc:i=>`<b>${money(V.get(i.id).stV)}</b>`},
+    ...(k!=='cons'?[{label:'With contractors / vendors',r:1,val:i=>V.get(i.id).outV,money:1,calc:i=>money(V.get(i.id).outV)}]:[]),
+    {label:'Received (good) qty',r:1,calc:i=>fmtN(V.get(i.id).recQ,2)},{label:'Received value',r:1,val:i=>V.get(i.id).recV,money:1,calc:i=>money(V.get(i.id).recV)},
+    {label:'Issued qty',r:1,calc:i=>fmtN(V.get(i.id).issQ,2)},{label:'Issued value',r:1,val:i=>V.get(i.id).issV,money:1,calc:i=>money(V.get(i.id).issV)},
+    ...(k!=='cons'?[{label:'Damaged / missing',r:1,val:i=>V.get(i.id).loss,money:1,calc:i=>V.get(i.id).loss?`<span class="neg">${money(V.get(i.id).loss)}</span>`:'—'}]:[])],{rows:S.items(),noAdd:1,noFilter:1}),'value = qty × rate');
+  return h; };
+
+/* 5. TRANSFER & RETURNS – other site, supplier, contractor returns, damage, repair, stock check */
+PAGES.storeMove=()=>{ const k=skCur(), S=SK[k], rows=skRows(k,S.moves), U=t=>esc(S.unit(skObj(k,t[S.key])||{}));
+  let h=skChips()+skMonthBar();
+  h+=panel('Transfer, returns & damage'+skLbl(),table('sk_mov_'+k,[{key:'date',label:'Date',type:'date'},{key:'type',label:'Movement',type:'select',options:S.moves,w:190},{key:S.key,label:k==='mach'?'Machine / tool':'Item',type:S.ityp,w:180},
+    {key:'qty',label:'Qty',type:'number',r:1},{label:'Unit',calc:U},{key:'contractorId',label:'Contractor / vendor',type:'contractor',w:150},{key:'site',label:'Other site / supplier',w:150},{key:'doc',label:'Challan / slip'},{key:'remarks',label:'Reason / remarks',w:170}],
+    {rows,unitOf:t=>S.unit(skObj(k,t[S.key])||{}),qtyByUnit:1}),rows.length+' entries');
+  if(k!=='mach'){ const cr=skRows(k,['Physical count']), P=new Map(); cr.forEach(r=>{ if(!P.has(r.id)) physList(k==='cons'?'cons':'store',r[S.key]).forEach(x=>P.set(x.t.id,x)); });
+    h+=panel('Physical stock check'+skLbl(),table('sk_chk_'+k,[{key:'date',label:'Date',type:'date'},{key:S.key,label:'Item',type:S.ityp,w:180},{key:'qty',label:'Counted qty (in store)',type:'number',r:1},{label:'Unit',calc:U},
+      {label:'Book stock (app)',r:1,calc:r=>fmtN((P.get(r.id)||{}).book||0,2)},{label:'Difference',r:1,calc:r=>{ const x=P.get(r.id)||{d:0}; if(x.start) return PILL('na','Starting stock'); return Math.abs(x.d)<1e-9?PILL('ok','Matches'):`<b class="${x.d<0?'neg':''}">${x.d>0?'+':''}${fmtN(x.d,2)}</b> <small class="muted">${x.d<0?'short':'excess'}</small>`; }},
+      {key:'doc',label:'Checked by'},{key:'remarks',label:'Remarks'}],{rows:cr,noSum:1}),'first count = starting stock'); }
+  return h; };
+
+PAGES.storeLegacy=()=>{
   const cons=state.ui.storeTab==='cons', all=state.storeItems, its=storeTabItems(), B=new Map(all.map(i=>[i.id,storeBal(i.id)]));
   const val=(list,f)=>list.reduce((a,i)=>a+Math.max(0,B.get(i.id)[f])*num(i.rate),0);
   const nM=all.filter(i=>!isConsItem(i)).length, nC=state.consItems.length;
@@ -1937,17 +2124,18 @@ PAGES.store=()=>{
   const reo=kpi('Items to order',reorder.length,reorder.length?'raise PR':'all above minimum',reorder.length?'bad':'good');
   if(!cons){
     h+=`<div class="kpis">${kpi('In store',money(val(its,'inStore')),its.length+' items')}${kpi('With contractors',money(val(its,'withCon')),'material out')}${kpi('Damaged (not repaired)',money(val(its,'damaged')),'',val(its,'damaged')?'warn':'')}${kpi('Missing',money(its.reduce((a,i)=>a+B.get(i.id).missing*num(i.rate),0)),'estimated value',its.some(i=>B.get(i.id).missing)?'bad':'good')}${reo}</div>`;
+    return h+storeSheet('mat')+panel('Contractors',table('contractors',[{key:'name',label:'Contractor name',w:180},{key:'phone',label:'Phone'}]));
     h+=panel('Material stock',table('storeItems',[
       {key:'item',label:'Item',w:170},{key:'unit',label:'Unit',type:'select',options:['Nos','Sqm','Cum','Rmt','Kg','Ltr','Set','Box','Sheets'],w:90},
       {key:'rate',label:`Rate (${cur()}/unit)`,type:'number',r:1},{key:'minStock',label:'Min. in store',type:'number',r:1},
-      {label:'In store',r:1,calc:i=>`<b>${fmtN(B.get(i.id).inStore)}</b>`},{label:'With contractors',r:1,calc:i=>fmtN(B.get(i.id).withCon)},
+      ...(state.storeTx.some(t=>/^Available on takeover/.test(t.type)&&storeObj(t.itemId))?[{label:'Available on takeover',r:1,calc:i=>fmtN(B.get(i.id).open+B.get(i.id).openCon)}]:[]),{label:'In store',r:1,calc:i=>`<b>${fmtN(B.get(i.id).inStore)}</b>`},{label:'With contractors',r:1,calc:i=>fmtN(B.get(i.id).withCon)},
       {label:'Damaged',r:1,calc:i=>fmtN(B.get(i.id).damaged)},{label:'Missing',r:1,calc:i=>fmtN(B.get(i.id).missing)},{label:'Scrapped',r:1,calc:i=>fmtN(B.get(i.id).scrapped)},
       {label:'Open PO',r:1,calc:i=>fmtN(openPOQty(i.item))},
       {label:'Status',calc:i=>{const [c,t]=storeStatus(i,B.get(i.id)); return PILL(c,t);}}],{rows:its}))+costPanel('mat');
   } else {
     const ci=state.consItems, low=ci.filter(c=>num(c.minStock)&&consStock(c.id)+openPOQty(c.item)<num(c.minStock));
     h+=`<div class="kpis">${kpi('Consumables in stock',money(ci.reduce((a,c)=>a+Math.max(0,consStock(c.id))*num(c.unitCost),0)),ci.length+' items')}${kpi('Issued (used) – till now',money(state.consTx.filter(t=>t.type==='Issued').reduce((a,t)=>a+consCostTx(t),0)))}${kpi('Items to order',low.length,low.length?'raise PR':'all above minimum',low.length?'bad':'good')}</div>`;
-    return h+consStockPanel()+costPanel('cons')+consMovePanel(!!state.ui.consAll,'consAll');
+    return h+storeSheet('cons');
   }
   const m=state.ui.month||thisMonth(), ids=new Set(its.map(i=>i.id));
   const rows=state.storeTx.filter(t=>(ids.has(t.itemId)||(!t.itemId&&!cons)||(t.itemId&&!storeObj(t.itemId)&&!itemObj(t.itemId)&&!cons)) && (state.ui.storeAll || monthOf(t.date)===m)).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
@@ -1984,13 +2172,13 @@ function rentStoreView(){
   let h=`<div class="chips"><label>Material</label>${L.map(x=>`<button class="btn sm ${x.id===sId?'p':''}" onclick="setUI('rsSys','${x.id}')">${esc(x.name)} <small>(${state.items.filter(i=>i.systemId===x.id&&i.inStore).length}/${state.items.filter(i=>i.systemId===x.id).length})</small></button>`).join('')}</div>`;
   if(!L.length) return h+`<p class="note">No rental items yet – add the vendor's components on <a href="#" onclick="go('items');return false">Item-wise Material</a>.</p>`;
   const B=new Map(sel.map(i=>[i.id,rentStoreBal(i)])), S=f=>sel.reduce((a,i)=>a+B.get(i.id)[f],0), sq=f=>sel.reduce((a,i)=>a+Math.max(0,B.get(i.id)[f])*num(i.sqmPerNo),0);
-  h+=`<div class="kpis">${kpi('Components in store',sel.length+' / '+its.length,'ticked below')}${kpi('On site (from vendor)',fmtN(S('onSite'))+' nos',sq('onSite')?fmtN(sq('onSite'),1)+' sqm':'')}${kpi('In store',fmtN(S('inStore'))+' nos',sq('inStore')?fmtN(sq('inStore'),1)+' sqm':'')}${kpi('With contractors',fmtN(S('withCon'))+' nos',sq('withCon')?fmtN(sq('withCon'),1)+' sqm':'')}${kpi('Damaged / missing',fmtN(S('damaged')+S('missing'))+' nos','vendor will charge',S('damaged')+S('missing')?'bad':'good')}</div>`;
+  h+=`<div class="kpis">${kpi('Components in store',sel.length+' / '+its.length,'ticked below')}${kpi('Left – to return',fmtN(S('onSite'))+' nos',sq('onSite')?fmtN(sq('onSite'),1)+' sqm':'')}${kpi('In store',fmtN(S('inStore'))+' nos',sq('inStore')?fmtN(sq('inStore'),1)+' sqm':'')}${kpi('With contractors',fmtN(S('withCon'))+' nos',sq('withCon')?fmtN(sq('withCon'),1)+' sqm':'')}${kpi('Damaged / missing',fmtN(S('damaged')+S('missing'))+' nos','vendor will charge',S('damaged')+S('missing')?'bad':'good')}</div>`;
   const ids=its.map(i=>`'${i.id}'`).join(',');
   const pick=its.map(i=>`<label class="ck rsck ${i.inStore?'on':''}"><input type="checkbox" ${i.inStore?'checked':''} onchange="tickInStore('${i.id}',this)"> ${esc((i.code?i.code+' – ':'')+i.item)}${i.inStore?' <span class="lk">🔒</span>':''}</label>`).join('');
-  h+=panel('Which components to keep in store stock',`<div class="acts" style="margin-bottom:8px"><button class="btn sm" onclick="setInStore([${ids}],true)">Tick all</button><button class="btn sm" onclick="untickAll([${ids}])">Untick all</button></div><div class="rspick">${pick}</div>`,sel.length+' of '+its.length+' ticked');
+  h+=panel('Which components to keep in store stock',`<div class="acts" style="margin-bottom:8px"><button class="btn sm p" onclick="state.ui.itemSys='${sId}';go('items')">↗ Open Item-wise Material – ${esc(sysName(sId))}</button><button class="btn sm" onclick="setInStore([${ids}],true)">Tick all</button><button class="btn sm" onclick="untickAll([${ids}])">Untick all</button></div><div class="rspick">${pick}</div>`,sel.length+' of '+its.length+' ticked');
   if(sel.length) h+=panel('Store stock – '+esc(sysName(sId)),table('rsItems',[{key:'code',label:'Code',w:80},{key:'item',label:'Component',w:220},{key:'storeRate',label:`Rate (${cur()})`,type:'number',r:1},{key:'storeRateUnit',label:'per',type:'select',options:['Nos','Sqm','Kg'],w:70},
     {label:'Received from vendor',r:1,val:i=>B.get(i.id).r,calc:i=>fmtN(B.get(i.id).r)},{label:'Returned to vendor',r:1,val:i=>B.get(i.id).d,calc:i=>fmtN(B.get(i.id).d)},
-    {label:'On site',r:1,val:i=>B.get(i.id).onSite,calc:i=>fmtN(B.get(i.id).onSite)},
+    {label:'Left – to return',r:1,val:i=>B.get(i.id).onSite,calc:i=>`<b>${fmtN(B.get(i.id).onSite)}</b>`},
     {label:'With contractors',r:1,val:i=>B.get(i.id).withCon,calc:i=>fmtN(B.get(i.id).withCon)},
     {label:'Damaged',r:1,val:i=>B.get(i.id).damaged,calc:i=>{const d=B.get(i.id).damaged; return d?`<span class="neg">${fmtN(d)}</span>`:'0';}},
     {label:'Missing',r:1,val:i=>B.get(i.id).missing,calc:i=>{const d=B.get(i.id).missing; return d?`<span class="neg">${fmtN(d)}</span>`:'0';}},
@@ -2010,20 +2198,21 @@ function rentStoreView(){
 /* ---------- STORE COST (rate × qty for every movement) ---------- */
 const rentFac = i => { const u=i.storeRateUnit||'Nos'; return u==='Sqm'?num(i.sqmPerNo):u==='Kg'?num(i.kgPerNo):1; };
 const COSTCOLS={
-  mat:{t:'Material',h:['Received (purchase)','Issued to contractors','Returned from contractors','Damaged','Missing','Scrapped','In store']},
-  cons:{t:'Consumables',h:['Received','Issued (used)','Returned to vendor','Damaged','Missing','—','In stock']},
-  rent:{t:'Rental material (ticked components)',h:['Received from vendor','Issued to contractors','Returned to vendor','Damaged','Missing','—','In store']}};
+  mat:{t:'Material',h:['Received (purchase)','Issued to contractors','Returned from contractors','Damaged','Missing','Scrapped','In store','Stock check +/−','Starting stock']},
+  cons:{t:'Consumables',h:['Received','Issued (used)','Returned to vendor','Damaged','Missing','—','In stock','Stock check +/−','Starting stock']},
+  rent:{t:'Rental material (ticked components)',h:['Received from vendor','Issued to contractors','Returned to vendor','Damaged','Missing','—','In store','—','—']}};
+const CORD=[8,0,1,2,3,4,5,7,6];
 function costRows(g){
-  if(g==='mat') return state.storeItems.filter(i=>!isConsItem(i)).map(i=>{ const b=storeBal(i.id); return {name:i.item,unit:i.unit||'',rate:num(i.rate),per:i.unit||'',f:1,q:[b.received,b.issued,b.retGood+b.retDam,b.retDam,b.missing,b.scrapped,b.inStore]}; });
-  if(g==='cons') return state.consItems.map(c=>({name:c.item,unit:c.unit||'',rate:num(c.unitCost),per:c.unit||'',f:1,q:[consQty(c.id,'Received'),consQty(c.id,'Issued'),consQty(c.id,'Returned to vendor'),consQty(c.id,'Damaged'),consQty(c.id,'Missing'),0,consStock(c.id)]}));
-  return state.items.filter(i=>i.inStore).map(i=>{ const b=rentStoreBal(i), sb=storeBal(i.id); return {name:(i.code?i.code+' – ':'')+i.item,sid:i.systemId,sys:sysName(i.systemId),unit:'Nos',rate:num(i.storeRate),per:i.storeRateUnit||'Nos',f:rentFac(i),q:[b.r,sb.issued,b.d,sb.retDam,sb.missing,0,b.inStore]}; });
+  if(g==='mat') return state.storeItems.filter(i=>!isConsItem(i)).map(i=>{ const b=storeBal(i.id); return {name:i.item,unit:i.unit||'',rate:num(i.rate),per:i.unit||'',f:1,q:[b.recGood+b.open+b.openCon,b.issued-b.openCon,b.retGood+b.retDam,b.retDam+b.recDmg,b.missing+b.recShort,b.scrapped,b.inStore,b.chkDiff||0,b.start||0]}; });
+  if(g==='cons') return state.consItems.map(c=>({name:c.item,unit:c.unit||'',rate:num(c.unitCost),per:c.unit||'',f:1,q:[consQty(c.id,'Received')-consRecX(c.id,'dmgQty')-consRecX(c.id,'shortQty'),consQty(c.id,'Issued'),consQty(c.id,'Returned to vendor'),consQty(c.id,'Damaged')+consRecX(c.id,'dmgQty'),consQty(c.id,'Missing')+consRecX(c.id,'shortQty'),0,consStock(c.id),physAdj('cons',c.id).diff,physAdj('cons',c.id).start]}));
+  return state.items.filter(i=>i.inStore).map(i=>{ const b=rentStoreBal(i), sb=storeBal(i.id); return {name:(i.code?i.code+' – ':'')+i.item,sid:i.systemId,sys:sysName(i.systemId),unit:'Nos',rate:num(i.storeRate),per:i.storeRateUnit||'Nos',f:rentFac(i),q:[b.r,sb.issued,b.d,sb.retDam,sb.missing,0,b.inStore,0,0]}; });
 }
-function costTotals(g,sid){ const T=[0,0,0,0,0,0,0]; costRows(g).filter(r=>!sid||r.sid===sid).forEach(r=>r.q.forEach((q,k)=>T[k]+=Math.max(0,q)*r.f*r.rate)); return T; }
+function costTotals(g,sid){ const T=[0,0,0,0,0,0,0,0,0]; costRows(g).filter(r=>!sid||r.sid===sid).forEach(r=>r.q.forEach((q,k)=>T[k]+=(k===7?q:Math.max(0,q))*r.f*r.rate)); return T; }
 function costPanel(g,sid){
   const C=COSTCOLS[g], R=costRows(g).filter(r=>!sid||r.sid===sid); if(!R.length) return '';
-  const idx=C.h.map((x,k)=>x==='—'?-1:k).filter(k=>k>=0), T=[0,0,0,0,0,0,0], noRate=R.filter(r=>!r.rate).length;
-  const red=(k,v)=>(k===3||k===4)&&v?'neg':'';
-  const line=r=>`<tr><td class="v"><b>${esc(r.name)}</b></td><td class="calc r">${r.rate?money(r.rate)+` <small class="muted">/${esc(r.per)}</small>`:'<span class="muted">no rate</span>'}</td>${idx.map(k=>{ const q=r.q[k], v=Math.max(0,q)*r.f*r.rate; T[k]+=v; return `<td class="calc r">${q?`<b class="${red(k,v)}">${r.rate?money(v):'—'}</b><br><small class="muted">${fmtN(q,Math.abs(q-Math.round(q))>1e-9?2:0)} ${esc(r.unit)}</small>`:'—'}</td>`; }).join('')}</tr>`;
+  const R0=costRows(g), idx=CORD.filter(k=>C.h[k]!=='—'&&((k!==7&&k!==8)||R0.some(r=>r.q[k]))), T=[0,0,0,0,0,0,0,0,0], noRate=R.filter(r=>!r.rate).length;
+  const red=(k,v)=>((k===3||k===4)&&v)||(k===7&&v<0)?'neg':'';
+  const line=r=>`<tr><td class="v"><b>${esc(r.name)}</b></td><td class="calc r">${r.rate?money(r.rate)+` <small class="muted">/${esc(r.per)}</small>`:'<span class="muted">no rate</span>'}</td>${idx.map(k=>{ const q=r.q[k], v=(k===7?q:Math.max(0,q))*r.f*r.rate; T[k]+=v; return `<td class="calc r">${q?`<b class="${red(k,v)}">${r.rate?money(v):'—'}</b><br><small class="muted">${fmtN(q,Math.abs(q-Math.round(q))>1e-9?2:0)} ${esc(r.unit)}</small>`:'—'}</td>`; }).join('')}</tr>`;
   let rows;
   if(g==='rent'){ rows=[]; [...new Set(R.map(r=>r.sid))].forEach(id=>{ const rr=R.filter(r=>r.sid===id), before=T.slice();
       rows.push(`<tr class="grp"><td class="v" colspan="${idx.length+2}"><b>${esc(sysName(id))}</b> <small class="muted">${rr.length} component${rr.length>1?'s':''}</small></td></tr>`); rr.forEach(r=>rows.push(line(r)));
@@ -2033,16 +2222,30 @@ function costPanel(g,sid){
     simpleTable([['Item'],['Rate',1]].concat(idx.map(k=>[C.h[k],1])),rows,`<tr><td>${g==='rent'&&!sid?'All rental material':'Total'}</td><td></td>${idx.map(k=>`<td class="r"><b class="${red(k,T[k])}">${money(T[k])}</b></td>`).join('')}</tr>`),'value = qty × rate');
 }
 function costSummaryView(){
-  const G=['mat','cons','rent'], T=Object.fromEntries(G.map(g=>[g,costTotals(g)])), A=[0,0,0,0,0,0,0]; G.forEach(g=>T[g].forEach((v,k)=>A[k]+=v));
-  let h=`<div class="kpis">${kpi('Received – all material',money(A[0]))}${kpi('Issued to contractors / used',money(A[1]))}${kpi('Damaged',money(A[3]),'all material',A[3]?'bad':'good')}${kpi('Missing',money(A[4]),'all material',A[4]?'bad':'good')}${kpi('In store now',money(A[6]),'value of stock')}</div>`;
-  const cell=(v,k)=>`<td class="calc r"><b class="${(k===3||k===4)&&v?'neg':''}">${v?money(v):'—'}</b></td>`;
-  h+=panel('Overall cost – every material',simpleTable([['Material'],['Received',1],['Issued / used',1],['Returned',1],['Damaged',1],['Missing',1],['Scrapped',1],['In store',1]],
-    G.flatMap(g=>{ const r=[`<tr class="${g==='rent'?'subt':''}"><td class="v"><b>${g==='rent'?'Rental material – all systems':COSTCOLS[g].t}</b><br><small class="muted">returned = ${g==='mat'?'from contractors':'to vendor'}</small></td>${T[g].map(cell).join('')}</tr>`];
-      if(g==='rent') [...new Set(costRows('rent').map(x=>x.sid))].forEach(id=>r.push(`<tr><td class="v" style="padding-left:22px">↳ ${esc(sysName(id))}</td>${costTotals('rent',id).map(cell).join('')}</tr>`));
+  const G=['mat','cons','rent'], T=Object.fromEntries(G.map(g=>[g,costTotals(g)])), A=[0,0,0,0,0,0,0,0,0]; G.forEach(g=>T[g].forEach((v,k)=>A[k]+=v));
+  let h=`<div class="kpis">${A[8]?kpi('Starting stock',money(A[8]),'first physical count'):''}${A[7]?kpi('Stock check +/−',(A[7]>0?'+':'−')+money(Math.abs(A[7])),A[7]<0?'shortage found in later counts':'excess found in later counts',A[7]<0?'bad':'good'):''}${kpi('Received – all material',money(A[0]))}${kpi('Issued to contractors / used',money(A[1]))}${kpi('Damaged',money(A[3]),'all material',A[3]?'bad':'good')}${kpi('Missing',money(A[4]),'all material',A[4]?'bad':'good')}${kpi('In store now',money(A[6]),'value of stock')}</div>`;
+  const cell=(v,k)=>`<td class="calc r"><b class="${((k===3||k===4)&&v)||(k===7&&v<0)?'neg':''}">${v?(k===7&&v>0?'+':'')+money(v):'—'}</b></td>`;
+  const hasOp=Math.abs(A[7])>0, hasSt=A[8]>0, ORD=CORD.filter(k=>(k!==7||hasOp)&&(k!==8||hasSt)), row=T0=>ORD.map(k=>cell(T0[k],k)).join('');
+  h+=panel('Overall cost – every material',simpleTable([['Material']].concat(hasSt?[['Starting stock',1]]:[]).concat([['Received',1],['Issued / used',1],['Returned',1],['Damaged',1],['Missing',1],['Scrapped',1]]).concat(hasOp?[['Stock check +/−',1]]:[]).concat([['In store',1]]),
+    G.flatMap(g=>{ const r=[`<tr class="${g==='rent'?'subt':''}"><td class="v"><b>${g==='rent'?'Rental material – all systems':COSTCOLS[g].t}</b><br><small class="muted">returned = ${g==='mat'?'from contractors':'to vendor'}</small></td>${row(T[g])}</tr>`];
+      if(g==='rent') [...new Set(costRows('rent').map(x=>x.sid))].forEach(id=>r.push(`<tr><td class="v" style="padding-left:22px">↳ ${esc(sysName(id))}</td>${row(costTotals('rent',id))}</tr>`));
       return r; }),
-    `<tr><td>All material</td>${A.map((v,k)=>`<td class="r"><b class="${(k===3||k===4)&&v?'neg':''}">${money(v)}</b></td>`).join('')}</tr>`),'qty × rate');
+    `<tr><td>All material</td>${ORD.map(k=>`<td class="r"><b class="${(k===3||k===4)&&A[k]?'neg':''}">${money(A[k])}</b></td>`).join('')}</tr>`),'qty × rate');
   return h+G.map(g=>costPanel(g)).join('');
 }
+
+/* ---------- RENTAL STORE – separate page: received from vendor, returned, left, store / contractors, value ---------- */
+PAGES.rentStore=()=>{
+  const S=[...new Set(state.items.filter(i=>i.inStore).map(i=>i.systemId))];
+  const row=sid=>{ const L=state.items.filter(i=>i.inStore&&i.systemId===sid); const a={rec:0,ret:0,left:0,st:0,out:0,loss:0,n:L.length};
+    L.forEach(i=>{ const b=rentStoreBal(i), v=num(i.storeRate)*rentFac(i); a.rec+=b.r*v; a.ret+=b.d*v; a.left+=Math.max(0,b.onSite)*v; a.st+=Math.max(0,b.inStore)*v; a.out+=Math.max(0,b.withCon)*v; a.loss+=(b.damaged+b.missing)*v; }); return a; };
+  const R=S.map(sid=>[sid,row(sid)]), A=R.reduce((a,[,x])=>{ ['rec','ret','left','st','out','loss'].forEach(f=>a[f]+=x[f]); return a; },{rec:0,ret:0,left:0,st:0,out:0,loss:0});
+  let h=`<div class="kpis">${kpi('Received from vendors',money(A.rec),'ticked components')}${kpi('Returned to vendors',money(A.ret))}${kpi('Left – to return',money(A.left),'on site now')}${kpi('In store',money(A.st))}${kpi('With contractors',money(A.out))}${kpi('Damaged / missing',money(A.loss),'vendor will charge',A.loss?'bad':'good')}</div>`;
+  if(R.length) h+=panel('Valuation – every rental material',simpleTable([['Material'],['Components',1],['Received',1],['Returned',1],['Left – to return',1],['In store',1],['With contractors',1],['Damaged / missing',1]],
+    R.map(([sid,x])=>`<tr><td class="v"><b>${esc(sysName(sid))}</b></td><td class="calc r">${x.n}</td><td class="calc r">${money(x.rec)}</td><td class="calc r">${money(x.ret)}</td><td class="calc r"><b>${money(x.left)}</b></td><td class="calc r">${money(x.st)}</td><td class="calc r">${money(x.out)}</td><td class="calc r">${x.loss?`<span class="neg">${money(x.loss)}</span>`:'—'}</td></tr>`),
+    `<tr><td>All rental material</td><td></td><td class="r">${money(A.rec)}</td><td class="r">${money(A.ret)}</td><td class="r"><b>${money(A.left)}</b></td><td class="r">${money(A.st)}</td><td class="r">${money(A.out)}</td><td class="r">${money(A.loss)}</td></tr>`),'rate × qty – enter the rate per component below');
+  return h+rentStoreView()+costPanel('rent',rentStoreSys());
+};
 
 /* ---------- PR & PO ---------- */
 function prStatus(p){
@@ -2065,7 +2268,10 @@ PAGES.prpo=()=>{
     .concat(csugg.map(c=>{const s=consStock(c.id), q=num(c.minStock)*2-s-openPOQty(c.item); return `<tr><td class="v">${esc(c.item)}</td><td class="calc r">${fmtN(s)} ${esc(c.unit)}</td><td class="calc r">${fmtN(c.minStock)}</td><td class="calc r">${fmtN(openPOQty(c.item))}</td><td class="calc r"><b>${fmtN(q)}</b></td><td class="v"><button class="btn sm p" onclick="raisePR('${esc(c.item).replace(/'/g,"\\'")}',${q},'${esc(c.unit)}',${num(c.unitCost)},'Consumable')">Raise PR</button></td></tr>`;})).concat(msugg.map(m=>{const st=machBal(m.id).store, q=Math.max(1,num(m.minStore)-st-openPOQty(m.name)); return `<tr><td class="v">${esc(m.name)} <small class="muted">(machine)</small></td><td class="calc r">${fmtN(st)} Nos</td><td class="calc r">${fmtN(m.minStore)}</td><td class="calc r">${fmtN(openPOQty(m.name))}</td><td class="calc r"><b>${fmtN(q)}</b></td><td class="v"><button class="btn sm p" onclick="raisePR('${esc(m.name).replace(/'/g,"\\'")}',${q},'Nos',${num(m.unitValue)},'Machinery')">Raise PR</button></td></tr>`;}))));
   h+=`<div class="chips"><label>Show</label>${['Open','Late','Received','All'].map(x=>`<button class="btn sm ${x===f?'p':''}" onclick="setUI('prFilter','${x}')">${x}</button>`).join('')}</div>`;
   h+=panel('Purchase requests & orders',table('prpo',[{key:'category',label:'Category',type:'select',options:['Material','Consumable','Machinery','Service','Other']},{key:'item',label:'Item',w:160},{key:'qty',label:'Qty',type:'number',r:1},{key:'unit',label:'Unit'},{key:'value',label:`Value (${cur()})`,type:'number',r:1},{key:'vendor',label:'Vendor'},{key:'prNo',label:'PR no.'},{key:'prDate',label:'PR date',type:'date'},{key:'poNo',label:'PO no.'},{key:'poDate',label:'PO date',type:'date'},{key:'requiredBy',label:'Required by',type:'date'},{key:'receivedDate',label:'Received on',type:'date'},
-    {label:'Status',calc:p=>{const [c,t]=prStatus(p); return PILL(c,t);}},{label:'Received (machines)',r:1,calc:p=>{ if(!p.poNo) return '—'; const q=state.machineTx.filter(t=>t.type==='Received (purchase)'&&norm(t.poNo)===norm(p.poNo)).reduce((a,t)=>a+num(t.qty),0); return q?fmtN(q)+(num(p.qty)?' of '+fmtN(p.qty):''):'—'; }},{label:'Days open',r:1,calc:p=>p.prDate?fmtN(dayDiff(p.prDate,p.receivedDate||todayStr())):'—'},{key:'remarks',label:'Remarks'}],{rows,totals:['value']}),'showing: '+f);
+    {label:'Status',calc:p=>{const [c,t]=prStatus(p); return PILL(c,t);}},{label:'Received (good)',r:1,calc:p=>{ const g=poGood(p.poNo); return g?fmtN(g):'—'; }},{label:'Pending',r:1,calc:p=>{ if(!p.poNo||!num(p.qty)) return '—'; const b=num(p.qty)-poGood(p.poNo); return b>1e-9?`<b class="neg">${fmtN(b)}</b>`:PILL('ok','Complete'); }},{label:'Received (machines)',r:1,calc:p=>{ if(!p.poNo) return '—'; const q=state.machineTx.filter(t=>t.type==='Received (purchase)'&&norm(t.poNo)===norm(p.poNo)).reduce((a,t)=>a+num(t.qty),0); return q?fmtN(q)+(num(p.qty)?' of '+fmtN(p.qty):''):'—'; }},{label:'Days open',r:1,calc:p=>p.prDate?fmtN(dayDiff(p.prDate,p.receivedDate||todayStr())):'—'},{key:'remarks',label:'Remarks'}],{rows,totals:['value']}),'showing: '+f);
+  { const P=state.prpo.filter(p=>p.poNo); if(P.length) h+=panel('PO status – ordered, received, left',simpleTable([['PO no.'],['Item'],['PO qty',1],['Received (good)',1],['Damaged',1],['Short',1],['Left',1],['Status']],
+      P.map(p=>{ const R=poRecs(p.poNo), g=R.reduce((a,t)=>a+goodQ(t),0), d=R.reduce((a,t)=>a+num(t.dmgQty),0), sh=R.reduce((a,t)=>a+num(t.shortQty),0), left=Math.max(0,num(p.qty)-g);
+        return `<tr><td class="v"><b>${esc(p.poNo)}</b></td><td class="v">${esc(p.item||'')}</td><td class="calc r">${fmtN(p.qty)} ${esc(p.unit||'')}</td><td class="calc r">${fmtN(g)}</td><td class="calc r">${d?`<span class="neg">${fmtN(d)}</span>`:'—'}</td><td class="calc r">${sh?`<span class="neg">${fmtN(sh)}</span>`:'—'}</td><td class="calc r"><b class="${left?'neg':''}">${fmtN(left)}</b></td><td class="v">${!R.length?PILL('na','Not received'):left>1e-9?PILL('wn','Part received'):PILL('ok','Complete')}</td></tr>`; })),'from Received entries with this PO no.'); }
   h+=`<p class="note hint">When material arrives, enter <b>Received on</b> here and add a <b>Received (purchase)</b> movement on Store Stock – or on <b>Machines & Tools</b> for machines, with the same <b>PO no.</b> – so the stock goes up. The <b>Received (machines)</b> column then shows how much of the PO has arrived.</p>`;
   return h;
 };
@@ -2081,7 +2287,7 @@ PAGES.contractors=()=>{
     reus.forEach(i=>{ const b=storeBal(i.id,c.id); if(!b.issued&&!b.retGood&&!b.retDam&&!b.missing) return; const est=(b.retDam+b.missing)*num(i.rate); ctot+=est;
       lines.push(`<tr><td class="v">${esc(i.item)}</td><td class="calc r">${fmtN(b.issued)}</td><td class="calc r">${fmtN(b.retGood)}</td><td class="calc r ${b.retDam?'neg':''}">${fmtN(b.retDam)}</td><td class="calc r ${b.missing?'neg':''}">${fmtN(b.missing)}</td><td class="calc r"><b>${fmtN(b.withCon)}</b></td><td class="calc r">${b.issued?fmtN((b.retDam+b.missing)/b.issued*100,1)+'%':'—'}</td><td class="calc r">${money(est)}</td></tr>`); });
     state.machines.forEach(m=>{ const tx=state.machineTx.filter(t=>t.machineId===m.id&&t.contractorId===c.id); if(!tx.length) return; const S=k=>tx.filter(t=>t.type===k).reduce((a,t)=>a+num(t.qty),0);
-      const iss=S('Issued to vendor'), ret=S('Returned from vendor'), dmg=S('Damaged'), est=dmg*num(m.unitValue); ctot+=est;
+      const iss=S('Issued to vendor')+S('Available on takeover – with vendor'), ret=S('Returned from vendor'), dmg=S('Damaged'), est=dmg*num(m.unitValue); ctot+=est;
       lines.push(`<tr><td class="v">🔧 ${esc(m.name)} <small class="muted">(machine)</small></td><td class="calc r">${fmtN(iss)}</td><td class="calc r">${fmtN(ret)}</td><td class="calc r ${dmg?'neg':''}">${fmtN(dmg)}</td><td class="calc r">—</td><td class="calc r"><b>${fmtN(iss-ret-dmg)}</b></td><td class="calc r">${iss?fmtN(dmg/iss*100,1)+'%':'—'}</td><td class="calc r">${money(est)}</td></tr>`); });
     grand+=ctot;
     rowsAll.push(panel(esc(c.name),simpleTable([['Item'],['Taken',1],['Returned good',1],['Returned damaged',1],['Missing',1],['Still holding',1],['Damage + missing %',1],['Est. cost',1]],lines,lines.length?`<tr><td>Total</td><td></td><td></td><td></td><td></td><td></td><td></td><td class="r">${money(ctot)}</td></tr>`:''),money(ctot)+' estimated'));
