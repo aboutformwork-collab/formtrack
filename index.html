@@ -223,7 +223,7 @@ input.nameedit.big{font:700 32px/1.1 "Barlow Condensed","Arial Narrow",sans-seri
 #side.mini .ng{padding:8px 4px 2px}
 @media (prefers-reduced-motion:reduce){#side,#side .nl{transition:none}#side .nl:hover{transform:none}}
 @media (max-width:820px){#side,#side.mini{width:100%;flex:0 0 auto;flex-direction:row;padding:6px 8px;gap:4px;align-items:center}#side .brand{margin:0;padding:4px 8px;border:0}.mini-t,.pcard,.ucard,#side .ng{display:none!important}.navw{flex-direction:row;gap:4px}#side .nl{flex:0 0 auto;padding:8px 12px}#side .nl .lb{display:inline!important}#side .nl.on{box-shadow:inset 0 -3px 0 var(--accent2)}#side .bdg{position:static}}
-.sheet tr.subt td{background:color-mix(in srgb,var(--accent) 10%,var(--calc))}.sheet tr.grp td{background:var(--th-bg);color:var(--th-fg);padding-top:7px;padding-bottom:7px}.sheet tr.grp td small{color:inherit;opacity:.75}
+.sheet tr.subt td{background:color-mix(in srgb,var(--accent) 10%,var(--calc))}.gck{display:flex;align-items:center;gap:8px;cursor:pointer;white-space:nowrap}.lk{font-size:11px;opacity:.75}.gck input{width:16px;height:16px;accent-color:var(--accent);margin:0}.sheet tr.tkrow td{background:color-mix(in srgb,var(--accent) 8%,var(--paper))!important}.sheet tr.grp td{background:var(--th-bg);color:var(--th-fg);padding-top:7px;padding-bottom:7px}.sheet tr.grp td small{color:inherit;opacity:.75}
 .thf{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .fbtn{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 3px;border:1px solid color-mix(in srgb,currentColor 35%,transparent);border-radius:4px;background:color-mix(in srgb,#fff 12%,transparent);color:inherit;font-size:11px;line-height:1;cursor:pointer}
 .fbtn.on{background:#fff;color:var(--accent);border-color:#fff}
@@ -274,7 +274,7 @@ input.nameedit.big{font:700 32px/1.1 "Barlow Condensed","Arial Narrow",sans-seri
 .phview{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:zoom-out}.phview img{max-width:94vw;max-height:86vh;border-radius:6px}.phview span{color:#ccc;font-size:12px}
 .mb-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-bottom:12px}.mb-tiles>div{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}.mb-tiles>div.hl{background:color-mix(in srgb,var(--accent) 7%,var(--paper));border-color:color-mix(in srgb,var(--accent) 35%,var(--line))}
 .mb-tiles span{font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:700}.mb-tiles b{font:700 28px/1.15 "Barlow Condensed","Arial Narrow",sans-serif;color:var(--title)}.mb-tiles b small{font-size:14px;color:var(--muted)}.mb-tiles em{font-style:normal;font-size:12px;color:var(--muted)}
-.mb-tiles>div.xs{border-color:color-mix(in srgb,var(--bad,#c0392b) 35%,var(--line))}.mb-tiles>div.xs b{color:var(--bad,#c0392b)}.rspick{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:4px 12px;max-height:260px;overflow:auto;padding:2px}.rspick .rsck{font-size:13px;padding:3px 6px;border-radius:6px}.rspick .rsck.on{background:color-mix(in srgb,var(--accent) 9%,var(--paper));font-weight:600}.mb-tab td,.mb-tab th{font-size:13.5px}.mb-present .mb-tiles b{font-size:36px}
+.mb-tiles>div.xs{border-color:color-mix(in srgb,var(--bad,#c0392b) 35%,var(--line))}.mb-tiles>div.xs b{color:var(--bad,#c0392b)}.rspick{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:4px 12px;max-height:260px;overflow:auto;padding:2px}.rspick .rsck{font-size:13px;padding:3px 6px;border-radius:6px}.rspick .rsck.on{background:color-mix(in srgb,var(--accent) 9%,var(--paper));font-weight:600}.mb-why{margin-top:12px;border-color:color-mix(in srgb,var(--bad) 35%,var(--line))}.mb-say{font-size:15px;line-height:1.5;margin:4px 0 10px;padding:10px 12px;border-radius:8px;background:color-mix(in srgb,var(--bad) 6%,var(--paper))}.mb-present .mb-say{font-size:19px}.mb-tab td,.mb-tab th{font-size:13.5px}.mb-present .mb-tiles b{font-size:36px}
 .addmat{border-style:dashed;color:var(--accent)}.frm.amat{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 14px}.frm.amat label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--muted)}.frm.amat input,.frm.amat select{padding:8px;border:1px solid var(--line);border-radius:6px;font:inherit;background:var(--in);color:var(--ink)}
 .fpb{display:flex;gap:8px;justify-content:flex-end;padding:8px 2px 2px}.fpb .btn{min-width:78px}.fpb .btn[disabled]{opacity:.5}
 .fltbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 6px;font-size:13px}
@@ -311,7 +311,7 @@ input.nameedit.big{font:700 32px/1.1 "Barlow Condensed","Arial Narrow",sans-seri
 <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="if(this.files[0])restoreBackup(this.files[0]);this.value=''">
 <input type="file" id="fsPick" style="display:none" onchange="fsOpenFile(this.files[0]);this.value=''">
 
-<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.10.26-2311"; window.__FORMTRACK_VERNAME="26 Oct 23:11";</script>
+<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.10.27-1332"; window.__FORMTRACK_VERNAME="27 Oct 13:32";</script>
 <script>
 /* FormTrack */
 const STORE_KEY = 'formtrack_data_v2';
@@ -381,7 +381,7 @@ function seed(){
       {id:'si-runner-75x75',item:'Runner 75x75',kind:'Reusable',unit:'Rmt',rate:0,minStock:0},
       {id:'si-batten-50x75',item:'Batten 50x75',kind:'Reusable',unit:'Rmt',rate:0,minStock:0},
       {id:'si-steel-props',item:'Steel props',kind:'Reusable',unit:'Nos',rate:0,minStock:0}],
-    storeTx:[], contractors:[], prpo:[], ownedTx:[], machines:[], machineTx:[], consNorms:[], manAreas:[], manSystems:[], practices:[], notes:[], calcs:[], deleted:{},
+    storeTx:[], contractors:[], prpo:[], ownedTx:[], machines:[], machineTx:[], consNorms:[], manAreas:[], manSystems:[], plans:[], sysCmp:[], practices:[], notes:[], calcs:[], deleted:{},
     meeting:{cards:{attention:true,progress:true,cost:true,rental:true,bills:true,idle:true,delays:true,stock:false,labour:false},approved:{},locks:[],requireApproval:true},
     rev:0,
     route:'dashboard', ui:{month:thisMonth(), period:'month', groupBy:'system', sysSel:[]}
@@ -414,7 +414,7 @@ function hydrate(p){
   const s=seed(); const out=Object.assign(s,p);
   out.meta=Object.assign(seed().meta,p.meta||{});
   out.ui=Object.assign({month:thisMonth(),period:'month',groupBy:'system',sysSel:[]},p.ui||{});
-  ['consItems','scope','labour','consTx','usage','targets','items','itemTx','storeItems','storeTx','contractors','prpo','ownedTx','machines','machineTx','consNorms','manAreas','manSystems','practices','notes','calcs'].forEach(k=>{ if(!Array.isArray(out[k])) out[k]=s[k]; });
+  ['consItems','scope','labour','consTx','usage','targets','items','itemTx','storeItems','storeTx','contractors','prpo','ownedTx','machines','machineTx','consNorms','manAreas','manSystems','plans','sysCmp','practices','notes','calcs'].forEach(k=>{ if(!Array.isArray(out[k])) out[k]=s[k]; });
   if(!out.deleted||typeof out.deleted!=='object'||Array.isArray(out.deleted)) out.deleted={};
   out.meeting=Object.assign(s.meeting,out.meeting||{}); ['cards','approved'].forEach(k=>{ if(!out.meeting[k]||typeof out.meeting[k]!=='object') out.meeting[k]=s.meeting[k]; }); if(!Array.isArray(out.meeting.locks)) out.meeting.locks=[];
   /* consumables kept in Store Stock (old versions) move to the one consumables list */
@@ -652,6 +652,10 @@ function monthBuckets(m){
 }
 function periodMonths(){ const m=state.ui.month||thisMonth(); return state.ui.period==='todate'? allMonthsUpTo(m) : [m]; }
 function sysFilter(s){ const sel=state.ui.sysSel||[]; return !sel.length || sel.includes(s); }
+/* ticks beside the rows of dashboard table 1 – kept separately for each break-up */
+const grpSel=()=>((state.ui.grpSel||{})[state.ui.groupBy||'system'])||[];
+function toggleGrp(k){ state.ui.grpSel=state.ui.grpSel||{}; const gb=state.ui.groupBy||'system', s=new Set(state.ui.grpSel[gb]||[]); s.has(k)?s.delete(k):s.add(k); state.ui.grpSel[gb]=[...s]; persist(); render(); }
+function clearGrp(){ state.ui.grpSel=state.ui.grpSel||{}; state.ui.grpSel[state.ui.groupBy||'system']=[]; persist(); render(); }
 function groupKey(b){ const g=state.ui.groupBy; return g==='area'? b.s+'|'+b.a : g==='element'? b.s+'|'+b.ek : b.s; }
 function costGrouped(){
   const G=new Map();
@@ -792,6 +796,8 @@ const DEFAULTS = {
   notes:()=>({date:todayStr(),title:'',text:''}),
   calcs:()=>({sheet:state.ui.calcSheet||'Sheet 1',desc:'',expr:'',unit:''}),
   manAreas:()=>({name:'',scope:0,done:0}),
+  plans:()=>planDefaults(),
+  sysCmp:()=>cmpDefaults(),
   manSystems:()=>({name:'',unit:'Sqm',qtyM:0,rentM:0,xsM:0,otherM:0,qty:0,rent:0,xs:0,other:0}),
   consNorms:()=>({systemId:state.systems[0]?.id||'',itemId:state.consItems[0]?.id||'',qty:1,per:0,remarks:''}),
   consTx:()=>({date:defDate(),itemId:state.consItems[0]?.id||'',type:'Issued',qty:0,systemId:'',areaId:'',contractorId:'',doc:'',remarks:''}),
@@ -961,7 +967,7 @@ function table(arr,cols,opt={}){
   h+=`<div class="tw"><table class="sheet"><thead><tr><th>#</th>${cols.map(c=>{ const fo=!!f[c.key]; const sb=so&&so.key===c.key; return `<th class="${c.r?'r':''}${fo?' fon':''}">${showF&&canFlt(c)?`<span class="thf">${c.label}<button class="fbtn${fo?' on':''}" title="Filter / sort ${esc(c.label)}" aria-label="Filter ${esc(c.label)}" onclick="openFlt(event,'${arr}','${c.key}')">${fo?FUNNEL:'▾'}${sb?(so.dir>0?'↑':'↓'):''}</button></span>`:c.label}</th>`; }).join('')}<th></th></tr></thead><tbody>`;
   if(!rows.length) h+=`<tr><td class="sn"></td><td class="calc" colspan="${cols.length+1}" style="text-align:center;color:var(--muted)">${active?'No rows match the filter.':'No entries yet — click "+ Add row".'}</td></tr>`;
   rows.forEach((r,i)=>{
-    h+=`<tr><td class="sn">${i+1}</td>`+cols.map(c=> c.calc? `<td class="calc ${c.r?'r':''}">${c.calc(r)}</td>` : `<td${c.w?` style="min-width:${c.w}px"`:''}>${cellInput(arr,r,c)}</td>`).join('')+`<td class="x"><button class="del" title="Delete" onclick="delRow('${arr}','${r.id}')">×</button></td></tr>`;
+    h+=`<tr><td class="sn">${i+1}</td>`+cols.map(c=> c.calc? `<td class="calc ${c.r?'r':''}">${c.calc(r)}</td>` : (c.na&&c.na(r))? `<td class="calc na" title="${esc(c.naTip||'not used for this row')}">—</td>` : `<td${c.w?` style="min-width:${c.w}px"`:''}>${cellInput(arr,r,c)}</td>`).join('')+`<td class="x"><button class="del" title="Delete" onclick="delRow('${arr}','${r.id}')">×</button></td></tr>`;
   });
   h+='</tbody>';
   const sum=opt.noSum?'':tableSummary(cols,base,rows,active,opt.sums,opt.bal,opt.unitOf,opt.qtyByUnit);
@@ -989,7 +995,7 @@ const NAV=[
   {g:'Rental',items:[['items','Item-wise Material'],['rent','Rent Calculation'],['invoices','Invoice Check']]},
   {g:'Owned',items:[['owned','Owned Material']]},
   {g:'Store',items:[['store','Store Stock'],['machines','Machines & Tools'],['prpo','PR & PO'],['contractors','Contractor Sheet']]},
-  {g:'Analysis',items:[['rentbuy','Rent vs Buy']]},
+  {g:'Analysis',items:[['planning','Formwork Planning'],['rentbuy','Rent vs Buy']]},
   {g:'Site',items:[['practice','Site Observation'],['notes','Notes & Calculations']]},
   {g:'File',items:[['data','Backup & Settings']]},
 ];
@@ -1039,6 +1045,7 @@ const ICONS={
  store:'<path d="M3 21V9l9-5 9 5v12M7 21v-8h10v8M7 17h10"/>',
  prpo:'<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l3 12h11l2-8H6.2"/>',
  contractors:'<path d="M4 17h16M5.5 17a6.5 6.5 0 0 1 13 0M10 10.6V6.5h4v4.1M3 20h18"/>',
+ planning:'<path d="M4 5h16v15H4zM4 9h16M9 5v15"/><path d="M12 13h5M12 16h3"/>',
  rentbuy:'<path d="M12 3v18M7 21h10M5 7h14M5 7l-3 6a3 3 0 0 0 6 0zM19 7l-3 6a3 3 0 0 0 6 0z"/>',
  data:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>'
 };
@@ -1084,6 +1091,7 @@ PAGES.dashboard=()=>{
   let h=scopeHero()+monthBar(`<span style="width:12px"></span><label>Period</label>${seg('period',[['month','This month'],['todate','Project to date']])}<span style="width:12px"></span><label>Break-up</label>${seg('groupBy',[['system','System'],['area','System + Area'],['element','System + Element']])}`);
   h+=`<div class="chips"><label>Systems</label>${state.systems.map(s=>`<label class="ck"><input type="checkbox" ${(state.ui.sysSel||[]).includes(s.id)?'checked':''} onchange="toggleSys('${s.id}')"> ${esc(s.name)}</label>`).join('')}<span class="muted" style="font-size:11px">${(state.ui.sysSel||[]).length?'Combined total of ticked systems':'None ticked = all systems'}</span></div>`;
 
+
   h+=`<div class="kpis">
     ${(()=>{ const m=new Map(); cg.forEach(g=>{ const u=sysUnit(g.s); m.set(u,(m.get(u)||0)+num(g.sqm)); }); const parts=[...m.entries()].filter(([,q])=>q); return kpi('Executed',parts.length?parts.map(([u,q])=>fmtN(q)+' '+u).join(' + '):'0 sqm',pl); })()}
     ${kpi('Formwork cost',money(tot.total),pl)}
@@ -1108,25 +1116,29 @@ PAGES.dashboard=()=>{
     const qty=(q,u)=>`${fmtN(q,1)} <small class="muted">${u}</small>`;
     const byU=(list,fn)=>{ const m=new Map(); list.forEach(g=>{ const u=sysUnit(g.s); const x=m.get(u)||{q:0,t:0}; x.q+=num(g.sqm); x.t+=fn(g); m.set(u,x); }); return m; };
     const perU=(list,fn)=>[...byU(list,fn).entries()].map(([u,x])=>x.q?money(x.t/x.q)+` <small>/${u}</small>`:(x.t?'no output':'—')).join('<br>');
-    const cells=(g,u,foot)=>{ const td=foot?'<td class="r">':'<td class="calc r">'; const one=x=>foot&&!oneU?null:x;
-      const q= foot? (oneU?qty(g.sqm,oneU):[...byU(cg,x=>0).entries()].map(([uu,x])=>qty(x.q,uu)).join('<br>')) : qty(g.sqm,u);
-      const pu=fn=> foot? (oneU?cpu(fn(g),g.sqm,oneU):perU(cg,fn)) : cpu(fn(g),g.sqm,u);
+    const cells=(g,u,foot,L)=>{ L=L||cg; const td=foot?'<td class="r">':'<td class="calc r">'; const lu=[...new Set(L.map(x=>sysUnit(x.s)))], oU=lu.length<=1?(lu[0]||'sqm'):null;
+      const q= foot? (oU?qty(g.sqm,oU):[...byU(L,x=>0).entries()].map(([uu,x])=>qty(x.q,uu)).join('<br>')) : qty(g.sqm,u);
+      const pu=fn=> foot? (oU?cpu(fn(g),g.sqm,oU):perU(L,fn)) : cpu(fn(g),g.sqm,u);
       return `${td}${q}</td>${td}${money(g.rent)}</td>${hasX?`${td}${g.xs?`<span class="neg">${money(g.xs)}</span>`:'—'}</td>`:''}${add.length?`${td}${pu(x=>num(x.rent))}</td>`:''}${hasL?`${td}${money(g.lab)}</td>`:''}${hasC?`${td}${money(g.cons)}</td>`:''}${hasO?`${td}${money(g.own)}</td>`:''}${add.length||hasX?`${td}<b>${money(g.total)}</b></td>`:''}${td}<b>${pu(x=>num(x.base))}</b></td>${hasX?`${td}${pu(x=>num(x.total))}</td>`:''}`; };
-    const cRows=cg.map(g=>`<tr><td class="v">${groupLabel(g)}</td>${cells(g,sysUnit(g.s))}</tr>`);
+    const GS=grpSel(), gk=g=>groupKey(g), ticked=cg.filter(g=>GS.includes(gk(g)));
+    const cRows=cg.map(g=>{ const k=gk(g), on=GS.includes(k); return `<tr class="${on?'tkrow':''}"><td class="v"><label class="gck"><input type="checkbox" ${on?'checked':''} onchange="toggleGrp('${esc(k).replace(/'/g,"\\'")}')"> ${groupLabel(g)}</label></td>${cells(g,sysUnit(g.s))}</tr>`; });
     const heads=[['Group'],['Executed qty',1],[hasX?'Rent – as required':'Rent / bill',1]].concat(hasX?[['Excess rent',1]]:[]).concat(add.length?[['Rent per unit',1]]:[]).concat(hasL?[['Labour',1]]:[]).concat(hasC?[['Consumables',1]]:[]).concat(hasO?[['Owned material',1]]:[]).concat(add.length||hasX?[['Total cost',1]]:[]).concat([[hasX?'System cost per unit (as required)':'System cost per unit',1]]).concat(hasX?[['Incl. excess',1]]:[]);
-    h+=panel('1. System cost – '+pl, simpleTable(heads,cRows,`<tr><td>${(state.ui.sysSel||[]).length>1?'Combined (ticked systems)':'Total'}</td>${cells(tot,null,true)}</tr>`));
+    const tk=ticked.length?'ticked rows':((state.ui.sysSel||[]).length?'ticked systems':'');
+    const TK=sum(ticked); TK.total=TK.rent+TK.xs+TK.lab+TK.cons+TK.own; TK.base=TK.rent+TK.lab+TK.cons+TK.own;
+    const foot=(ticked.length?`<tr class="subt"><td><b>Combined – ${ticked.length} ticked row${ticked.length>1?'s':''}</b> <button class="btn sm" onclick="clearGrp()">Clear ticks</button></td>${cells(TK,null,true,ticked)}</tr>`:'')+`<tr><td>${(state.ui.sysSel||[]).length>1?'Total (ticked systems)':'Total – all rows'}</td>${cells(tot,null,true)}</tr>`;
+    h+=panel('1. System cost – '+pl, simpleTable(heads,cRows,foot), ticked.length?'tick rows to combine':'tick rows to see their combined cost');
     /* month-wise */
     const months=allMonthsUpTo(mSel); const C={b:new Map(),t:new Map()}; const mrows=[];
     const acc=(M,K)=>M.forEach((x,u)=>{ const c=K.get(u)||{q:0,t:0}; c.q+=x.q; c.t+=x.t; K.set(u,c); });
     const ut=m=>[...m.entries()].map(([u,x])=>qty(x.q,u)).join('<br>')||'—', uc=m=>[...m.entries()].map(([u,x])=>x.q?money(x.t/x.q)+` <small class="muted">/${u}</small>`:(x.t?PILL('bd','no output'):'—')).join('<br>')||'—';
-    months.forEach(m=>{ const gl=withUI({period:'month',month:m},()=>costGrouped()); const t=sum(gl); if(!t.rent&&!t.xs&&!t.sqm&&!t.lab&&!t.cons&&!t.own) return;
+    months.forEach(m=>{ const gl=withUI({period:'month',month:m},()=>costGrouped()).filter(g=>!GS.length||GS.includes(gk(g))); const t=sum(gl); if(!t.rent&&!t.xs&&!t.sqm&&!t.lab&&!t.cons&&!t.own) return;
       const Mb=byU(gl,g=>num(g.base)), Mt=byU(gl,g=>num(g.total)); acc(Mb,C.b); acc(Mt,C.t);
       mrows.push(`<tr class="${m===mSel?'dnew':''}"><td class="v" style="white-space:nowrap"><b>${monthLabel(m)}</b></td><td class="calc r">${ut(Mb)}</td><td class="calc r">${money(t.rent)}</td>${hasX?`<td class="calc r">${t.xs?`<span class="neg">${money(t.xs)}</span>`:'—'}</td>`:''}<td class="calc r">${money(t.lab)}</td><td class="calc r">${money(t.cons)}</td>${hasO?`<td class="calc r">${money(t.own)}</td>`:''}<td class="calc r"><b>${money(t.total)}</b></td><td class="calc r"><b>${uc(Mb)}</b></td>${hasX?`<td class="calc r">${uc(Mt)}</td>`:''}<td class="calc r tdc">${ut(new Map(C.b))}</td><td class="calc r"><b>${uc(new Map([...C.b].map(([u,x])=>[u,{q:x.q,t:x.t}])))}</b></td>${hasX?`<td class="calc r">${uc(new Map([...C.t].map(([u,x])=>[u,{q:x.q,t:x.t}])))}</td>`:''}</tr>`); });
     const mh=[['Month'],['Executed qty',1],[hasX?'Rent – as required':'Rent / bill',1]].concat(hasX?[['Excess rent',1]]:[]).concat([['Labour',1],['Consumables',1]]).concat(hasO?[['Owned mat.',1]]:[]).concat([['Total cost',1],[hasX?'Cost / unit (as required)':'Cost per unit (month)',1]]).concat(hasX?[['Incl. excess',1]]:[]).concat([['From start – qty',1],[hasX?'From start – cost / unit (as required)':'From start – cost per unit',1]]).concat(hasX?[['From start – incl. excess',1]]:[]);
     { const L=state.labour.filter(r=>num(r.carpenters)||num(r.helpers)), noWage=L.length&&!num(state.meta.carpenterWage)&&!num(state.meta.helperWage);
       const CT=state.consTx.filter(t=>t.type==='Issued'&&num(t.qty)), noRate=CT.filter(t=>!num((consObj(t.itemId)||{}).unitCost)).map(t=>(consObj(t.itemId)||{}).item).filter(Boolean);
       if(noWage||noRate.length) h+=`<div class="banner">${PILL('wn','CHECK')} <span>${noWage?`Labour is entered (${fmtN(mandays(L),1)} mandays) but <b>wages are ₹0</b> – set carpenter / helper wage on <a href="#" onclick="go('labour');return false">Labour</a> so labour cost is added. `:''}${noRate.length?`Consumables issued without a rate: <b>${esc([...new Set(noRate)].join(', '))}</b> – set the rate on <a href="#" onclick="go('consumables');return false">Consumables</a>.`:''}</span></div>`; }
-    h+=panel('1b. System cost – month by month'+((state.ui.sysSel||[]).length?' (ticked systems)':' (all systems)'),simpleTable(mh,mrows),'running total from start');
+    h+=panel('1b. System cost – month by month'+(tk?' ('+tk+')':' (all systems)'),simpleTable(mh,mrows),'running total from start');
   }
 
   // 2. Scope
@@ -1404,7 +1416,7 @@ PAGES.items=()=>{
   h+=`<div class="kpis">${kpi('Received',fmtN(tot.r)+' nos',tot.rs?fmtN(tot.rs,2)+' sqm':'')}${kpi('Returned',fmtN(tot.d)+' nos',tot.ds?fmtN(tot.ds,2)+' sqm':'')}${kpi('Still on site',fmtN(tot.r-tot.d)+' nos',tot.sq?fmtN(tot.sq,2)+' sqm':(tot.kg?fmtN(tot.kg/1000,2)+' MT':''),tot.r-tot.d>0?'warn':'good')}${kpi('Items fully returned',tot.full+' / '+its.length)}${pcs?kpi('Rent per day now',money(its.reduce((a,i)=>a+Math.max(0,itemBalOn(i.id,null,todayStr()))*num(i.ratePcDay),0)),'at today\'s balance'):''}</div>`;
   const filt=i=>{ const st=itemStatus(i,T.get(i.id))[1]; return f==='all' || (f==='site'&&T.get(i.id).bal>0) || (f==='pending'&&/Pending|Not received/.test(st)) || (f==='returned'&&st==='Fully returned') || (f==='check'&&itemStatus(i,T.get(i.id))[0]==='bd'); };
   h+=`<div class="chips"><label>Show</label>${[['all','All items'],['site','Still on site'],['pending','Pending receipt'],['returned','Fully returned'],['check','Errors']].map(([k,l])=>`<button class="btn sm ${f===k?'p':''}" onclick="setUI('itemFilter','${k}')">${l}</button>`).join('')}</div>`;
-  const cols=[{key:'code',label:'Code',w:90},{key:'item',label:'Item',w:250},{key:'sqmPerNo',label:'Sqm / no',type:'number',r:1},{key:'kgPerNo',label:'Kg / no',type:'number',r:1},{key:'boq',label:'BOQ (nos)',type:'number',r:1}];
+  const cols=[{label:'In store',calc:i=>lockTick(i)},{key:'code',label:'Code',w:90},{key:'item',label:'Item',w:250},{key:'sqmPerNo',label:'Sqm / no',type:'number',r:1},{key:'kgPerNo',label:'Kg / no',type:'number',r:1},{key:'boq',label:'BOQ (nos)',type:'number',r:1}];
   if(pcs) cols.push({key:'ratePcDay',label:`Rate (${cur()}/pc/day)`,type:'number',r:1});
   cols.push({label:'Received',sumLabel:'Received (nos)',r:1,val:i=>T.get(i.id).r,calc:i=>fmtN(T.get(i.id).r)},{label:'Returned',sumLabel:'Returned (nos)',r:1,val:i=>T.get(i.id).d,calc:i=>fmtN(T.get(i.id).d)},
     {label:'On site',sumLabel:'On site (nos)',r:1,val:i=>T.get(i.id).bal,calc:i=>{const b=T.get(i.id).bal; return `<b class="${b<0?'neg':''}">${fmtN(b)}</b>`;}},
@@ -1578,11 +1590,15 @@ PAGES.machines=()=>{
 
 /* ================= SUMMARY BOARD – figures typed by hand, not linked to any other page ================= */
 const manAuto=()=>state.meta.manMode!=='manual';
+/* required sqm (Rental Rates) vs material on site today – for the excess explanation */
+function reqSite(sId){ const s=sysObj(sId); if(!s||s.ownership!=='Rental'||isPcs(sId)) return {}; let req=0, site=0, ex=0, any=false;
+  ledgerAreas(sId).forEach(a=>{ const b=Math.max(0,balanceOn(sId,a,todayStr())), rr=rateRow(sId,a), q=rr?num(rr.requiredSqm):0; if(q>0){ any=true; req+=q; site+=b; ex+=Math.max(0,b-q); } });
+  return any?{req,site,ex}:{}; }
 function manAutoData(){
   const am=new Map(); state.scope.forEach(sc=>{ const st=scopeStatus(sc); const k=sc.areaId||''; const g=am.get(k)||{name:areaName(sc.areaId),scope:0,done:0}; g.scope+=num(st.scope); g.done+=Math.min(num(st.executed),num(st.scope)||num(st.executed)); am.set(k,g); });
   const gm=new Map(withUI({period:'month',groupBy:'system',sysSel:[]},()=>costGrouped()).map(g=>[g.s,g]));
   const S=withUI({period:'todate',groupBy:'system',sysSel:[]},()=>costGrouped()).filter(g=>g.sqm||g.rent||g.xs).map(g=>{ const m=gm.get(g.s)||{}; return {name:sysName(g.s),unit:sysUnit(g.s)==='cum'?'Cum':'Sqm',
-    qty:g.sqm,rent:g.rent,xs:num(g.xs),other:g.lab+g.cons+g.own, qtyM:num(m.sqm),rentM:num(m.rent),xsM:num(m.xs),otherM:num(m.lab)+num(m.cons)+num(m.own)}; });
+    qty:g.sqm,rent:g.rent,xs:num(g.xs),other:g.lab+g.cons+g.own, qtyM:num(m.sqm),rentM:num(m.rent),xsM:num(m.xs),otherM:num(m.lab)+num(m.cons)+num(m.own), ...reqSite(g.s)}; });
   return {A:[...am.values()],S};
 }
 function manCopyAuto(){ const D=manAutoData(); askConfirm('Replace the manual figures with the current automatic figures? You can then change any number.',()=>{
@@ -1615,6 +1631,20 @@ function manDisplay(big){
     ${D.S.length?`<div class="tw"><table class="sheet mb-tab"><thead><tr><th></th><th colspan="${X?4:3}" class="grp">${mon}</th><th colspan="${X?4:3}" class="grp tdc">Till now</th></tr><tr><th>System</th><th class="r">Executed</th><th class="r">Rent${RQ}</th>${X?'<th class="r">Excess rent</th>':''}<th class="r">System cost${RQ}</th><th class="r tdc">Executed</th><th class="r">Rent${RQ}</th>${X?'<th class="r">Excess rent</th>':''}<th class="r">System cost${RQ}</th></tr></thead><tbody>
     ${D.S.map(x=>{ const u=(x.unit||'Sqm').toLowerCase(); return `<tr><td class="v"><b>${esc(x.name||'—')}</b></td><td class="calc r">${fmtN(x.qtyM)} ${u}</td><td class="calc r">${money(x.rentM)}</td>${xc(x.xsM)}<td class="calc r"><b>${cpu(num(x.rentM)+num(x.otherM),num(x.qtyM),u)}</b></td><td class="calc r tdc">${fmtN(x.qty)} ${u}</td><td class="calc r">${money(x.rent)}</td>${xc(x.xs)}<td class="calc r"><b>${cpu(num(x.rent)+num(x.other),num(x.qty),u)}</b></td></tr>`; }).join('')}</tbody>
     <tfoot>${units.map(u=>`<tr><td>All systems (${u})</td><td class="r">${fmtN(U[u].qM)} ${u}</td><td class="r">${money(D.S.filter(x=>(x.unit||'Sqm').toLowerCase()===u).reduce((a,x)=>a+num(x.rentM),0))}</td>${X?`<td class="r">${money(D.S.filter(x=>(x.unit||'Sqm').toLowerCase()===u).reduce((a,x)=>a+num(x.xsM),0))}</td>`:''}<td class="r">${cpu(U[u].tM,U[u].qM,u)}</td><td class="r tdc">${fmtN(U[u].q)} ${u}</td><td class="r">${money(D.S.filter(x=>(x.unit||'Sqm').toLowerCase()===u).reduce((a,x)=>a+num(x.rent),0))}</td>${X?`<td class="r">${money(D.S.filter(x=>(x.unit||'Sqm').toLowerCase()===u).reduce((a,x)=>a+num(x.xs),0))}</td>`:''}<td class="r">${cpu(U[u].t,U[u].q,u)}</td></tr>`).join('')}</tfoot></table></div>`:`<p class="note">${manAuto()?'No executed qty or rent yet.':'Add systems below.'}</p>`}</div>`;
+  /* why system cost went up – excess material */
+  { const X=D.S.filter(x=>num(x.xs)>0||num(x.xsM)>0);
+    if(X.length){ const pc=(a,b)=>b?`+${fmtN((a-b)/b*100,0)}%`:'—';
+      const one=(x,q,base,xs,u)=>{ const c0=q?base/q:0, c1=q?(base+xs)/q:0; return {c0,c1,d:c1-c0,p:pc(c1,c0),q,u}; };
+      let tq=0,tb=0,tx=0; X.forEach(x=>{ tq+=num(x.qty); tb+=num(x.rent)+num(x.other); tx+=num(x.xs); });
+      const T=one(null,tq,tb,tx,'sqm');
+      const rows=X.map(x=>{ const u=(x.unit||'Sqm').toLowerCase(), A=one(x,num(x.qty),num(x.rent)+num(x.other),num(x.xs),u), M=one(x,num(x.qtyM),num(x.rentM)+num(x.otherM),num(x.xsM),u);
+        const sq=x.req!=null?`<td class="calc r">${fmtN(x.req)} sqm</td><td class="calc r">${fmtN(x.site)} sqm</td><td class="calc r">${x.ex?`<b class="neg">${fmtN(x.ex)} sqm</b>`:'0'}</td>`:'<td class="calc r">—</td><td class="calc r">—</td><td class="calc r">—</td>';
+        const cc=(K)=>K.q?`<td class="calc r">${money(K.c0)}<small> /${u}</small></td><td class="calc r">${money(K.c1)}<small> /${u}</small></td><td class="calc r"><b class="neg">+${money(K.d)}</b> <small class="neg">${K.p}</small></td>`:'<td class="calc r">—</td><td class="calc r">—</td><td class="calc r">—</td>';
+        return `<tr><td class="v"><b>${esc(x.name||'—')}</b></td>${sq}${cc(M)}${cc(A)}<td class="calc r"><b class="neg">${money(x.xs)}</b></td></tr>`; }).join('');
+      h+=`<div class="mb-box mb-why"><h4>Why system cost is higher – excess material</h4>
+        ${T.q?`<p class="mb-say">For <b>${esc(X.map(x=>x.name).join(', ').replace(/, ([^,]*)$/,' and $1'))}</b>: with only the <b>required material</b>, system cost would be <b>${money(T.c0)} /sqm</b>. Because the vendor supplied <b>more than required</b>, actual cost is <b class="neg">${money(T.c1)} /sqm</b> – <b class="neg">${money(T.d)} /sqm (${T.p})</b> higher, i.e. <b class="neg">${money(tx)}</b> rent paid on excess material till now.</p>`:`<p class="mb-say">Excess material above requirement has cost <b class="neg">${money(tx)}</b> in rent till now.</p>`}
+        <div class="tw"><table class="sheet mb-tab"><thead><tr><th></th><th colspan="3" class="grp">Material today (areas with a requirement)</th><th colspan="3" class="grp tdc">System cost – ${mon}</th><th colspan="3" class="grp tdc">System cost – till now</th><th></th></tr>
+        <tr><th>System</th><th class="r">Required</th><th class="r">On site</th><th class="r">Excess</th><th class="r tdc">As required</th><th class="r">Actual</th><th class="r">Increase</th><th class="r tdc">As required</th><th class="r">Actual</th><th class="r">Increase</th><th class="r">Excess rent till now</th></tr></thead><tbody>${rows}</tbody></table></div></div>`; } }
   return h;
 }
 function presentManual(){
@@ -1681,13 +1711,113 @@ PAGES.notes=()=>{
   let cur=state.ui.calcSheet; if(!sheets.includes(cur)) cur=sheets[0];
   const rows=state.calcs.filter(c=>(c.sheet||'Sheet 1')===cur), vals=[];
   rows.forEach(r=>vals.push(calcVal(r.expr,vals)));
-  let h=`<div class="chips"><label>Sheet</label>${sheets.map(x=>`<button class="btn sm ${x===cur?'p':''}" onclick="setUI('calcSheet','${esc(x).replace(/'/g,"\\\\'")}')">${esc(x)}</button>`).join('')}<button class="btn sm" onclick="newCalcSheet()">+ New sheet</button></div>`;
+  let h=`<div class="chips"><label>Sheet</label>${sheets.map(x=>`<button class="btn sm ${x===cur?'p':''}" onclick="setUI('calcSheet','${esc(x).replace(/'/g,"\\\\'")}')">${esc(x)}</button>`).join('')}<button class="btn sm" onclick="newCalcSheet()">+ New sheet</button><span style="width:10px"></span><label>Rename</label><input style="min-width:180px" value="${esc(cur)}" onchange="renameCalcSheet(this.dataset.old,this.value)" data-old="${esc(cur)}" title="Type a new name and press Enter"></div>`;
   const idx=new Map(rows.map((r,i)=>[r.id,i]));
   h+=panel('Calculation – '+esc(cur),table('calcs',[{label:'Line',calc:r=>`<b>R${idx.get(r.id)+1}</b>`},{key:'desc',label:'Description',w:220},{key:'expr',label:'Calculation',w:220},{label:'= Result',r:1,calc:r=>{ const v=vals[idx.get(r.id)]; return v==null?'':(isNaN(v)?'<span class="neg">check</span>':`<b>${fmtN(v,Math.abs(v)<100&&v%1?3:2)}</b>`); }},{key:'unit',label:'Unit',w:70}],{rows,noFilter:1,noSum:1}));
   h+=panel('Notes',table('notes',[{key:'date',label:'Date',type:'date'},{key:'title',label:'Title',w:160},{key:'text',label:'Note',type:'longtext',w:420}],{rows:state.notes.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')),noSum:1}));
   return h;
 };
+function renameCalcSheet(o,n){ n=String(n||'').trim(); if(!n||n===o) return render(); if(state.calcs.some(c=>(c.sheet||'Sheet 1')===n)){ toast('A sheet with this name already exists.'); return render(); }
+  let k=0; state.calcs.forEach(c=>{ if((c.sheet||'Sheet 1')===o){ c.sheet=n; c._u=nowMs(); k++; } }); if(!k) state.calcs.push({id:uid(),_u:nowMs(),sheet:n,desc:'',expr:'',unit:''}); state.ui.calcSheet=n; save(); toast('Sheet renamed.'); }
 function newCalcSheet(){ const n='Sheet '+(new Set(state.calcs.map(c=>c.sheet)).size+1); state.ui.calcSheet=n; state.calcs.push(Object.assign({id:uid(),_u:nowMs()},{sheet:n,desc:'',expr:'',unit:''})); save(); }
+
+/* ================= FORMWORK PLANNING – plan, track delay, compare systems ================= */
+const DPM=30.4;
+const mAdd=(m,k)=>{ const [y,mm]=m.split('-').map(Number), t=y*12+mm-1+k; return Math.floor(t/12)+'-'+String(t%12+1).padStart(2,'0'); };
+const dDiff=(a,b)=>Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/864e5);
+const avgWage=()=>{ const c=num(state.meta.carpenterWage), h=num(state.meta.helperWage); return c&&h?(c+h)/2:(c||h); };
+function actProd(sId,aId){ const q=sumSqm(execRows({s:sId,a:aId||''})), md=mandays(state.labour.filter(r=>r.systemId===sId&&(!aId||r.areaId===aId))); return md?q/md:0; }
+function actConsSqm(sId){ const q=sumSqm(execRows({s:sId})), c=state.consTx.filter(t=>t.type==='Issued'&&t.systemId===sId).reduce((a,t)=>a+consCostTx(t),0); return q?c/q:0; }
+function appFigures(sId,aId){ const rr=rateRow(sId,aId)||state.rates.find(r=>r.systemId===sId&&num(r.rate)); const sy=sysObj(sId)||{};
+  return {rate:rr?num(rr.rate):0, prod:Math.round((actProd(sId,aId)||actProd(sId)||num(sy.stdSqmPerManday))*100)/100, wage:Math.round(avgWage()), cons:Math.round(actConsSqm(sId)*100)/100}; }
+function planDefaults(){ const sId=(rentalSystems()[0]||state.systems[0]||{}).id||'', aId=state.areas[0]?.id||''; const f=appFigures(sId,aId);
+  return {name:'Plan '+(state.plans.length+1),systemId:sId,areaId:aId,start:todayStr(),scope:1000,matSqm:100,repsPerMonth:2,prod:f.prod||4,labBasis:'Daily wage',wage:f.wage||800,labRate:0,own:'Rental',rate:f.rate,buyUnit:'Sqm',buyRate:0,kgSqm:0,scrapRate:0,cons:f.cons,transport:0,workDays:26}; }
+function cmpDefaults(){ const sId=(rentalSystems()[0]||state.systems[0]||{}).id||''; const f=appFigures(sId,''); const g=(state.ui.cmpGrp&&state.ui.cmpGrp!=='All')?state.ui.cmpGrp:(state.areas[0]?areaName(state.areas[0].id):'Comparison 1');
+  return {grp:g,systemId:sId,own:'Rental',scope:1000,matSqm:100,repsPerMonth:2,prod:f.prod||4,labBasis:'Daily wage',wage:f.wage||800,labRate:0,rate:f.rate,buyUnit:'Sqm',buyRate:0,kgSqm:0,scrapRate:0,cons:f.cons,transport:0,other:0}; }
+/* core numbers of a plan / option */
+function planCalc(p){ const scope=num(p.scope), mat=num(p.matSqm), rpm=num(p.repsPerMonth), prod=num(p.prod), wd=num(p.workDays)||26;
+  const buy=p.own==='Purchase', reps=mat?Math.ceil(scope/mat-1e-9):0, dur=rpm?reps/rpm:0, sqmM=mat*rpm, rentM=buy?0:mat*num(p.rate);
+  const tons=mat*num(p.kgSqm)/1000, perTon=p.buyUnit==='Ton', buyT=buy?(perTon?tons*num(p.buyRate):mat*num(p.buyRate)):0, scrapT=buy?(perTon?tons*num(p.scrapRate):mat*num(p.scrapRate)):0, matNet=buyT-scrapT;
+  const pieceRate=p.labBasis==='Per sqm rate';
+  const rentT=rentM*dur, labT=pieceRate?scope*num(p.labRate):(prod?scope/prod*num(p.wage):0), consT=scope*num(p.cons), tr=num(p.transport)+num(p.other)*scope, total=rentT+matNet+labT+consT+tr;
+  return {buy,tons,buyT,scrapT,matNet,netSqm:mat?matNet/mat:0,eqRent:mat&&dur?matNet/mat/dur:0,pieceRate,scope,mat,rpm,reps,dur,sqmM,mdM:prod?sqmM/prod:0,labDay:prod?sqmM/prod/wd:0,rentM,rentT,labT,consT,tr,total,unit:scope?total/scope:0,
+    finish:p.start?addDays(p.start,Math.round(dur*DPM)):'', wd};
+}
+function planTrack(p,P){ const today=todayStr(); if(!p.start||!P.scope) return null;
+  const el=Math.max(0,dDiff(p.start,today)), done=state.execution.filter(e=>e.systemId===p.systemId&&(!p.areaId||e.areaId===p.areaId)&&e.date>=p.start&&e.date<=today).reduce((a,e)=>a+num(e.sqm),0);
+  const planned=Math.min(P.scope,P.sqmM*el/DPM), delay=Math.max(0,planned-done), ahead=Math.max(0,done-planned), dDays=P.sqmM?delay/(P.sqmM/DPM):0, rem=Math.max(0,P.scope-done), remDays=P.finish?dDiff(today,P.finish):0;
+  const T={el,done,planned,delay,ahead,dDays,rem,remDays,started:el>0};
+  /* A – finish on the planned date */
+  if(remDays>0&&rem>0){ const needM=rem/(remDays/DPM), needRpm=P.mat?needM/P.mat:0, labDay=num(p.prod)?needM/num(p.prod)/P.wd:0, matNeed=P.rpm?needM/P.rpm:0, extraMat=Math.max(0,matNeed-P.mat), xRent=P.buy?extraMat*P.netSqm:extraMat*num(p.rate)*remDays/DPM;
+    T.A={needM,needRpm,labDay,extraLab:Math.max(0,labDay-P.labDay),matNeed,extraMat,xRent,total:P.total+xRent,unit:P.scope?(P.total+xRent)/P.scope:0}; }
+  /* B – continue at the planned pace */
+  if(rem>0&&P.sqmM){ const days=rem/(P.sqmM/DPM), fin=addDays(today,Math.round(days)), xM=P.finish?dDiff(P.finish,fin)/DPM:0, xRent=P.rentM*xM;
+    T.B={fin,xM,xRent,total:P.total+xRent,unit:P.scope?(P.total+xRent)/P.scope:0}; }
+  /* C – continue at the actual pace so far */
+  if(rem>0&&el>=7&&done>0){ const pace=done/(el/DPM), days=rem/(pace/DPM), fin=addDays(today,Math.round(days)), xM=P.finish?dDiff(P.finish,fin)/DPM:0, xRent=P.rentM*xM;
+    T.C={pace,fin,xM,xRent,total:P.total+xRent,unit:P.scope?(P.total+xRent)/P.scope:0}; }
+  return T;
+}
+function fillPlanFromApp(arr,id){ const r=state[arr].find(x=>x.id===id); if(!r) return; const f=appFigures(r.systemId,r.areaId||'');
+  ['rate','prod','cons'].forEach(k=>{ if(f[k]) r[k]=f[k]; }); if(f.wage) r.wage=f.wage; r._u=nowMs(); save(); toast('Rent, productivity, wage and consumables filled from your site records.'); }
+const mo=x=>fmtN(x,1)+' months';
+const LABCOLS=()=>[{key:'labBasis',label:'Labour paid by',type:'select',options:['Daily wage','Per sqm rate'],w:120},{key:'wage',label:`Wage (${cur()}/manday)`,type:'number',r:1,na:r=>r.labBasis==='Per sqm rate',naTip:'paid per sqm'},{key:'labRate',label:`Labour rate (${cur()}/sqm)`,type:'number',r:1,na:r=>r.labBasis!=='Per sqm rate',naTip:'paid by daily wage'}];
+const MATCOLS=()=>[{key:'own',label:'Rental / purchase',type:'select',options:['Rental','Purchase'],w:110},{key:'rate',label:`Rent (${cur()}/sqm/month)`,type:'number',r:1,na:r=>r.own==='Purchase',naTip:'purchased – no rent'},
+  {key:'buyUnit',label:'Buy / scrap per',type:'select',options:['Sqm','Ton'],w:80,na:r=>r.own!=='Purchase',naTip:'rental – returned to vendor'},{key:'buyRate',label:`Purchase rate (${cur()})`,type:'number',r:1,na:r=>r.own!=='Purchase',naTip:'rental – returned to vendor'},{key:'kgSqm',label:'Weight (kg/sqm)',type:'number',r:1,na:r=>r.own!=='Purchase'||r.buyUnit!=='Ton',naTip:'only for purchase per ton'},{key:'scrapRate',label:`Scrap / resale (${cur()})`,type:'number',r:1,na:r=>r.own!=='Purchase',naTip:'rental – returned to vendor, no scrap value'}];
+const xr=(v,xM)=>Math.abs(v)<1?'—':(v>0?`<span class="neg">+${money(v)}</span><br><small class="muted">${mo(xM)} extra rent</small>`:`<span class="ok" style="color:var(--good)">−${money(-v)}</span><br><small class="muted">${mo(-xM)} less rent</small>`);
+function planView(){
+  let h='';
+  const L=state.plans; const sel=L.find(p=>p.id===state.ui.planSel)||L[0];
+  h+=panel('Plans',table('plans',[{key:'name',label:'Plan',w:120},{key:'systemId',label:'System',type:'system',w:130},{key:'areaId',label:'Area',type:'area',w:120},{key:'start',label:'Start',type:'date'},
+    {key:'scope',label:'Total qty (sqm)',type:'number',r:1},{key:'matSqm',label:'Material (sqm)',type:'number',r:1},{key:'repsPerMonth',label:'Repetitions / month',type:'number',r:1},
+    {key:'prod',label:'Productivity (sqm / manday)',type:'number',r:1},...LABCOLS(),...MATCOLS(),
+    {key:'cons',label:`Consumables (${cur()}/sqm)`,type:'number',r:1},{key:'transport',label:`Transport (${cur()} total)`,type:'number',r:1},{key:'workDays',label:'Working days / month',type:'number',r:1},
+    {label:'Repetitions',r:1,calc:p=>fmtN(planCalc(p).reps)},{label:'Duration',r:1,calc:p=>mo(planCalc(p).dur)},{label:'Labour / day',r:1,calc:p=>fmtN(planCalc(p).labDay,1)},{label:'Unit cost',r:1,calc:p=>`<b>${money(planCalc(p).unit)}</b> <small class="muted">/sqm</small>`}],{noSum:1,noFilter:1}));
+  if(!sel) return h+`<p class="note">Add a plan to see the month-wise schedule, labour, rent and delay tracking.</p>`;
+  h=`<div class="chips"><label>Plan</label>${L.map(p=>`<button class="btn sm ${p.id===sel.id?'p':''}" onclick="setUI('planSel','${p.id}')">${esc(p.name||'—')}</button>`).join('')}<button class="btn sm" onclick="fillPlanFromApp('plans','${sel.id}')" title="Rent rate, productivity, wage and consumables from your actual site data">⤓ Fill from app</button></div>`+h;
+  const P=planCalc(sel), T=planTrack(sel,P);
+  const k=`<div class="kpis">${kpi('Repetitions',fmtN(P.reps),`${fmtN(P.mat)} sqm × ${fmtN(P.reps)} = ${fmtN(P.mat*P.reps)} sqm`)}${kpi('Duration',mo(P.dur),`${fmtN(P.rpm,1)} repetitions / month · finish ${fmtD(P.finish)}`)}${kpi('Labour needed',fmtN(P.labDay,1)+' / day',`${fmtN(P.mdM,0)} mandays / month`)}${P.buy?kpi('Material (purchase − scrap)',money(P.matNet),`buy ${money(P.buyT)} · scrap ${money(P.scrapT)}`):kpi('Rent',money(P.rentT),`${money(P.rentM)} / month`)}${kpi('Unit cost',money(P.unit)+' /sqm',money(P.total)+' total')}</div>`;
+  const brk=simpleTable([['Cost head'],['Total',1],['Per sqm',1],['Share',1]],(P.buy?[['Material purchase',P.buyT],['Less scrap / resale value',-P.scrapT]]:[['Rent',P.rentT]]).concat([[P.pieceRate?'Labour (per sqm rate)':'Labour (daily wage)',P.labT],['Consumables',P.consT],['Transport',P.tr]]).map(([n,v])=>`<tr><td class="v">${n}</td><td class="calc r">${money(v)}</td><td class="calc r">${P.scope?money(v/P.scope):'—'}</td><td class="calc r">${P.total&&v>0?fmtN(v/P.total*100,0)+'%':'—'}</td></tr>`),`<tr><td>Total</td><td class="r"><b>${money(P.total)}</b></td><td class="r"><b>${money(P.unit)}</b></td><td class="r">100%</td></tr>`);
+  h+=panel('Plan – '+esc(sel.name||''),k+brk);
+  /* month-wise */
+  const n=Math.ceil(P.dur-1e-9); const rows=[]; let cp=0, ca=0, repLeft=P.reps;
+  for(let i=0;i<Math.min(n,36);i++){ const m=mAdd(monthOf(sel.start),i); const r=Math.min(P.rpm,repLeft); repLeft-=r; const q=Math.min(r*P.mat,P.scope-cp); cp+=q;
+    const act=state.execution.filter(e=>e.systemId===sel.systemId&&(!sel.areaId||e.areaId===sel.areaId)&&monthOf(e.date)===m&&e.date>=sel.start).reduce((a,e)=>a+num(e.sqm),0); const past=m<=thisMonth(); if(past) ca+=act;
+    rows.push(`<tr class="${m===thisMonth()?'dnew':''}"><td class="v"><b>Month ${i+1}</b> <small class="muted">${monthLabel(m)}</small></td><td class="calc r">${fmtN(r,1)}</td><td class="calc r">${fmtN(q)}</td><td class="calc r">${fmtN(cp)}</td><td class="calc r">${fmtN(num(sel.prod)?q/num(sel.prod)/P.wd:0,1)}</td><td class="calc r">${money(P.rentM*(r/(P.rpm||1)))}</td><td class="calc r tdc">${past?fmtN(act):'—'}</td><td class="calc r">${past?fmtN(ca):'—'}</td><td class="calc r">${past?`<b class="${ca<cp-1e-6?'neg':''}">${ca-cp>=0?'+':''}${fmtN(ca-cp)}</b>`:'—'}</td></tr>`); }
+  h+=panel('Month-wise plan vs actual',simpleTable([['Month'],['Repetitions',1],['Planned sqm',1],['Planned – cumulative',1],['Labour / day',1],['Rent',1],['Actual sqm',1],['Actual – cumulative',1],['Ahead (+) / behind (−)',1]],rows),'actual from Execution');
+  /* delay & recovery */
+  if(T){ let d=`<div class="kpis">${kpi('Planned till today',fmtN(T.planned)+' sqm',`${T.el} days since start`)}${kpi('Executed till today',fmtN(T.done)+' sqm',fmtN(P.scope?T.done/P.scope*100:0,0)+'% of plan qty')}${T.delay>0.5?kpi('Behind plan',fmtN(T.delay)+' sqm',`≈ ${fmtN(T.dDays,0)} days late`,'bad'):kpi('Status',T.ahead>0.5?'Ahead '+fmtN(T.ahead)+' sqm':'On plan','', 'good')}${kpi('Balance',fmtN(T.rem)+' sqm',T.remDays>0?T.remDays+' days to planned finish':'planned finish passed',T.remDays>0?'':'bad')}</div>`;
+    const opt=[];
+    if(T.A){ opt.push(`<tr><td class="v"><b>1a. Finish on time – faster cycle</b><br><small class="muted">same ${fmtN(P.mat)} sqm material</small></td><td class="calc">${fmtN(T.A.needM)} sqm/month · <b>${fmtN(T.A.needRpm,1)}</b> repetitions/month (plan ${fmtN(P.rpm,1)})</td><td class="calc"><b>${fmtN(T.A.labDay,1)}</b> / day${T.A.extraLab>0.05?` <span class="neg">(+${fmtN(T.A.extraLab,1)})</span>`:''}</td><td class="calc">no extra material</td><td class="calc r">—</td><td class="calc r"><b>${money(P.unit)}</b></td><td class="calc r">${fmtD(P.finish)}</td></tr>`);
+      if(T.A.extraMat>0.5) opt.push(`<tr><td class="v"><b>1b. Finish on time – add material</b><br><small class="muted">keep ${fmtN(P.rpm,1)} repetitions/month</small></td><td class="calc">${fmtN(T.A.needM)} sqm/month · ${fmtN(P.rpm,1)} repetitions/month</td><td class="calc"><b>${fmtN(T.A.labDay,1)}</b> / day${T.A.extraLab>0.05?` <span class="neg">(+${fmtN(T.A.extraLab,1)})</span>`:''}</td><td class="calc"><span class="neg">+${fmtN(T.A.extraMat)} sqm material</span></td><td class="calc r"><span class="neg">+${money(T.A.xRent)}</span></td><td class="calc r"><b class="neg">${money(T.A.unit)}</b></td><td class="calc r">${fmtD(P.finish)}</td></tr>`); }
+    if(T.B) opt.push(`<tr><td class="v"><b>2. Continue at planned pace</b><br><small class="muted">${fmtN(P.sqmM)} sqm/month</small></td><td class="calc">${fmtN(P.sqmM)} sqm/month · ${fmtN(P.rpm,1)} repetitions/month</td><td class="calc">${fmtN(P.labDay,1)} / day</td><td class="calc">same material${T.B.xM>0?', kept longer':', released earlier'}</td><td class="calc r">${xr(T.B.xRent,T.B.xM)}</td><td class="calc r"><b class="${T.B.xRent>1?'neg':''}">${money(T.B.unit)}</b></td><td class="calc r">${fmtD(T.B.fin)}</td></tr>`);
+    if(T.C) opt.push(`<tr><td class="v"><b>3. Continue at actual pace</b><br><small class="muted">${fmtN(T.C.pace)} sqm/month so far</small></td><td class="calc">${fmtN(T.C.pace)} sqm/month</td><td class="calc">as now</td><td class="calc">same material${T.C.xM>0?', kept longer':', released earlier'}</td><td class="calc r">${xr(T.C.xRent,T.C.xM)}</td><td class="calc r"><b class="${T.C.xRent>1?'neg':''}">${money(T.C.unit)}</b></td><td class="calc r">${fmtD(T.C.fin)}</td></tr>`);
+    d+=opt.length?simpleTable([['Option'],['Output needed'],['Labour'],['Material'],['Extra cost',1],['Unit cost',1],['Finish',1]],opt,`<tr><td>Planned</td><td></td><td>${fmtN(P.labDay,1)} / day</td><td>${fmtN(P.mat)} sqm</td><td></td><td class="r"><b>${money(P.unit)}</b></td><td class="r">${fmtD(P.finish)}</td></tr>`):`<p class="note">Plan complete.</p>`;
+    h+=panel('Delay tracking & recovery',d,'today '+fmtD(todayStr())); }
+  return h;
+}
+function cmpView(){
+  const grps=[...new Set(state.sysCmp.map(r=>r.grp||'—'))], g=grps.includes(state.ui.cmpGrp)?state.ui.cmpGrp:(grps[0]||'');
+  const rows=state.sysCmp.filter(r=>(r.grp||'—')===g);
+  let h=`<div class="chips"><label>Area / comparison</label>${grps.map(x=>`<button class="btn sm ${x===g?'p':''}" onclick="setUI('cmpGrp','${esc(x).replace(/'/g,"\\'")}')">${esc(x)}</button>`).join('')}</div>`;
+  const C=new Map(rows.map(r=>[r.id,planCalc(r)])), ok=rows.filter(r=>C.get(r.id).scope&&C.get(r.id).mat);
+  const best=ok.slice().sort((a,b)=>C.get(a.id).unit-C.get(b.id).unit)[0], fast=ok.slice().sort((a,b)=>C.get(a.id).dur-C.get(b.id).dur)[0];
+  const nm=r=>esc(sysName(r.systemId))+` <small class="muted">${r.own==='Purchase'?'purchase':'rental'}</small>`;
+  h+=panel('Systems to compare',table('sysCmp',[{key:'grp',label:'Area / comparison',w:130},{key:'systemId',label:'System',type:'system',w:140},{key:'scope',label:'Qty (sqm)',type:'number',r:1},{key:'matSqm',label:'Material (sqm)',type:'number',r:1},
+    {key:'repsPerMonth',label:'Repetitions / month',type:'number',r:1},{key:'prod',label:'Productivity (sqm/manday)',type:'number',r:1},...LABCOLS(),...MATCOLS(),
+    {key:'cons',label:`Consumables (${cur()}/sqm)`,type:'number',r:1},{key:'transport',label:`Transport (${cur()} total)`,type:'number',r:1},{key:'other',label:`Other (${cur()}/sqm)`,type:'number',r:1},
+    {label:'',calc:r=>`<button class="btn sm" onclick="fillPlanFromApp('sysCmp','${r.id}')" title="Fill rent, productivity, wage, consumables from your site records">⤓ app</button>`}],{rows,noSum:1,noFilter:1}));
+  if(!ok.length) return h+`<p class="note">Add two or more systems for the same area to compare.</p>`;
+  const H=[['System'],['Repetitions',1],['Duration',1],['Labour / day',1],['Rent or (purchase − scrap) / sqm',1],['Labour / sqm',1],['Consumables / sqm',1],['Transport / sqm',1],['Other / sqm',1],['Total / sqm',1],['Total cost',1],['']];
+  const R=ok.slice().sort((a,b)=>C.get(a.id).unit-C.get(b.id).unit).map((r,i)=>{ const P=C.get(r.id), q=P.scope||1, bU=C.get(best.id).unit;
+    return `<tr class="${r===best?'dnew':''}"><td class="v" style="white-space:nowrap"><b>${i+1}. ${nm(r)}</b></td><td class="calc r">${fmtN(P.reps)}</td><td class="calc r">${mo(P.dur)}</td><td class="calc r">${fmtN(P.labDay,1)}</td><td class="calc r">${money((P.rentT+P.matNet)/q)}${P.buy?`<br><small class="muted">= rent of ${money(P.eqRent)}/sqm/month</small>`:''}</td><td class="calc r">${money(P.labT/q)}${P.pieceRate?'<br><small class="muted">per sqm rate</small>':''}</td><td class="calc r">${money(P.consT/q)}</td><td class="calc r">${money(num(r.transport)/q)}</td><td class="calc r">${money(num(r.other))}</td><td class="calc r"><b>${money(P.unit)}</b>${r!==best?`<br><small class="neg">+${money(P.unit-bU)} (+${fmtN(bU?(P.unit-bU)/bU*100:0,0)}%)</small>`:''}</td><td class="calc r">${money(P.total)}</td><td class="v" style="white-space:nowrap">${r===best?PILL('ok','Lowest cost'):''} ${r===fast?PILL('na','Fastest'):''}</td></tr>`; });
+  h+=panel('Result – '+esc(g),`<p class="mb-say" style="background:color-mix(in srgb,var(--good) 8%,var(--paper))"><b>${nm(best)}</b> is the lowest cost at <b>${money(C.get(best.id).unit)} /sqm</b> (${mo(C.get(best.id).dur)})${fast!==best?`; <b>${nm(fast)}</b> is fastest at ${mo(C.get(fast.id).dur)} and ${money(C.get(fast.id).unit)} /sqm`:' and also the fastest'}.</p>`+simpleTable(H,R),'sorted by total cost per sqm');
+  return h;
+}
+PAGES.planning=()=>{
+  const t=state.ui.planTab==='cmp'?'cmp':'plan';
+  return `<div class="chips systabs"><button class="btn sm ${t==='plan'?'p':''}" onclick="setUI('planTab','plan')">Plan & track</button><button class="btn sm ${t==='cmp'?'p':''}" onclick="setUI('planTab','cmp')">Compare systems</button></div>`+(t==='cmp'?cmpView():planView());
+};
 
 PAGES.rentbuy=()=>{
   let h=`<p class="note hint">Enter the purchase cost per sqm for each rental system. Break-even = purchase cost ÷ monthly rent per sqm. If the material stays longer than the break-even, buying would likely have been cheaper (ignoring repairs, transport and resale).</p>`;
@@ -1841,6 +1971,14 @@ function rentStoreBal(i){ const t=itemTotals(i.id), b=storeBal(i.id), Q=ty=>stat
   const dmg=Math.max(0,b.retDam-b.repaired-Q('Damaged sent back to vendor')), mis=Math.max(0,b.missing-Q('Missing settled with vendor')), wc=b.issued-b.retGood-b.retDam-b.missing;
   return {onSite:t.bal,r:t.r,d:t.d,issued:b.issued,withCon:wc,damaged:dmg,missing:mis,inStore:t.bal-wc-dmg-mis}; }
 function setInStore(ids,on){ ids.forEach(id=>{ const it=itemObj(id); if(it){ it.inStore=on?1:0; it._u=nowMs(); } }); save(); }
+/* one tick, shared by Item-wise Material and Store Stock › Rental material. Ticked = locked; unticking asks first. */
+function tickInStore(id,el){ const it=itemObj(id); if(!it) return;
+  if(el.checked){ setInStore([id],true); toast('Added to store stock – locked.'); return; }
+  el.checked=true; const used=state.storeTx.some(t=>t.itemId===id);
+  askConfirm(`Do you want to untick "${(it.code?it.code+' – ':'')+it.item}"? It will be removed from store stock${used?' (its store movements stay saved and come back if you tick it again)':''}.`,()=>{ setInStore([id],false); toast('Unticked.'); },'Untick'); }
+function untickAll(ids){ const L=ids.map(itemObj).filter(i=>i&&i.inStore); if(!L.length) return;
+  askConfirm(`Do you want to untick all ${L.length} components? They will be removed from store stock.`,()=>setInStore(L.map(i=>i.id),false),'Untick all'); }
+const lockTick=i=>`<label class="gck" title="${i.inStore?'In store stock – locked. Untick asks for confirmation.':'Tick to keep in store stock'}"><input type="checkbox" ${i.inStore?'checked':''} onchange="tickInStore('${i.id}',this)">${i.inStore?'<span class="lk">🔒</span>':''}</label>`;
 function rentStoreView(){
   const sId=rentStoreSys(), L=state.systems.filter(x=>state.items.some(i=>i.systemId===x.id)), its=state.items.filter(i=>i.systemId===sId), sel=its.filter(i=>i.inStore);
   let h=`<div class="chips"><label>Material</label>${L.map(x=>`<button class="btn sm ${x.id===sId?'p':''}" onclick="setUI('rsSys','${x.id}')">${esc(x.name)} <small>(${state.items.filter(i=>i.systemId===x.id&&i.inStore).length}/${state.items.filter(i=>i.systemId===x.id).length})</small></button>`).join('')}</div>`;
@@ -1848,8 +1986,8 @@ function rentStoreView(){
   const B=new Map(sel.map(i=>[i.id,rentStoreBal(i)])), S=f=>sel.reduce((a,i)=>a+B.get(i.id)[f],0), sq=f=>sel.reduce((a,i)=>a+Math.max(0,B.get(i.id)[f])*num(i.sqmPerNo),0);
   h+=`<div class="kpis">${kpi('Components in store',sel.length+' / '+its.length,'ticked below')}${kpi('On site (from vendor)',fmtN(S('onSite'))+' nos',sq('onSite')?fmtN(sq('onSite'),1)+' sqm':'')}${kpi('In store',fmtN(S('inStore'))+' nos',sq('inStore')?fmtN(sq('inStore'),1)+' sqm':'')}${kpi('With contractors',fmtN(S('withCon'))+' nos',sq('withCon')?fmtN(sq('withCon'),1)+' sqm':'')}${kpi('Damaged / missing',fmtN(S('damaged')+S('missing'))+' nos','vendor will charge',S('damaged')+S('missing')?'bad':'good')}</div>`;
   const ids=its.map(i=>`'${i.id}'`).join(',');
-  const pick=its.map(i=>`<label class="ck rsck ${i.inStore?'on':''}"><input type="checkbox" ${i.inStore?'checked':''} onchange="setInStore(['${i.id}'],this.checked)"> ${esc((i.code?i.code+' – ':'')+i.item)}</label>`).join('');
-  h+=panel('Which components to keep in store stock',`<div class="acts" style="margin-bottom:8px"><button class="btn sm" onclick="setInStore([${ids}],true)">Tick all</button><button class="btn sm" onclick="setInStore([${ids}],false)">Untick all</button></div><div class="rspick">${pick}</div>`,sel.length+' of '+its.length+' ticked');
+  const pick=its.map(i=>`<label class="ck rsck ${i.inStore?'on':''}"><input type="checkbox" ${i.inStore?'checked':''} onchange="tickInStore('${i.id}',this)"> ${esc((i.code?i.code+' – ':'')+i.item)}${i.inStore?' <span class="lk">🔒</span>':''}</label>`).join('');
+  h+=panel('Which components to keep in store stock',`<div class="acts" style="margin-bottom:8px"><button class="btn sm" onclick="setInStore([${ids}],true)">Tick all</button><button class="btn sm" onclick="untickAll([${ids}])">Untick all</button></div><div class="rspick">${pick}</div>`,sel.length+' of '+its.length+' ticked');
   if(sel.length) h+=panel('Store stock – '+esc(sysName(sId)),table('rsItems',[{key:'code',label:'Code',w:80},{key:'item',label:'Component',w:220},{key:'storeRate',label:`Rate (${cur()})`,type:'number',r:1},{key:'storeRateUnit',label:'per',type:'select',options:['Nos','Sqm','Kg'],w:70},
     {label:'Received from vendor',r:1,val:i=>B.get(i.id).r,calc:i=>fmtN(B.get(i.id).r)},{label:'Returned to vendor',r:1,val:i=>B.get(i.id).d,calc:i=>fmtN(B.get(i.id).d)},
     {label:'On site',r:1,val:i=>B.get(i.id).onSite,calc:i=>fmtN(B.get(i.id).onSite)},
