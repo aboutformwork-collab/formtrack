@@ -311,7 +311,7 @@ input.nameedit.big{font:700 32px/1.1 "Barlow Condensed","Arial Narrow",sans-seri
 <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="if(this.files[0])restoreBackup(this.files[0]);this.value=''">
 <input type="file" id="fsPick" style="display:none" onchange="fsOpenFile(this.files[0]);this.value=''">
 
-<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.10.28-0938"; window.__FORMTRACK_VERNAME="28 Oct 09:38";</script>
+<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.10.28-0945"; window.__FORMTRACK_VERNAME="28 Oct 09:45";</script>
 <script>
 /* FormTrack */
 const STORE_KEY = 'formtrack_data_v2';
@@ -1560,7 +1560,7 @@ PAGES.items=()=>{
   const T=new Map(its.map(i=>[i.id,itemTotals(i.id)]));
   const tot=its.reduce((a,i)=>{ const t=T.get(i.id); a.r+=t.r; a.d+=t.d; a.sq+=Math.max(0,t.bal)*num(i.sqmPerNo); a.kg+=Math.max(0,t.bal)*num(i.kgPerNo); a.rs+=t.r*num(i.sqmPerNo); a.ds+=t.d*num(i.sqmPerNo); if(t.r>0&&t.d>=t.r) a.full++; return a; },{r:0,d:0,sq:0,kg:0,rs:0,ds:0,full:0});
   let h=`<div class="chips"><label>System</label>${state.systems.filter(x=>x.ownership==='Rental'||state.items.some(i=>i.systemId===x.id)).map(x=>`<button class="btn sm ${x.id===sId?'p':''}" onclick="setUI('itemSys','${x.id}')">${esc(x.name)}</button>`).join('')}</div>`;
-  h+=`<div class="chips"><span class="muted" style="font-size:12px">🔒 Tick “In store” to keep a component in Rental Store – unticking asks first.</span><button class="btn sm p" onclick="state.ui.rsSys='${sId}';go('rentStore')">↗ Open Rental Store – ${esc(s?s.name:'')}</button></div>`;
+  h+=`<div class="chips"><span class="muted" style="font-size:12px">🔒 Tick “In store” to keep a component in Rental Store – unticking asks first.</span><button class="btn sm p" onclick="state.ui.rsSys='${sId}';go('rentStore')">↗ Open Rental Store – ${esc(s?s.name:'')}</button><button class="btn sm p" onclick="document.getElementById('itprice').scrollIntoView({behavior:'smooth'})">₹ Price list ↓</button></div>`;
   h+=`<div class="kpis">${kpi('Received',fmtN(tot.r)+' nos',tot.rs?fmtN(tot.rs,2)+' sqm':'')}${kpi('Returned',fmtN(tot.d)+' nos',tot.ds?fmtN(tot.ds,2)+' sqm':'')}${kpi('Still on site',fmtN(tot.r-tot.d)+' nos',tot.sq?fmtN(tot.sq,2)+' sqm':(tot.kg?fmtN(tot.kg/1000,2)+' MT':''),tot.r-tot.d>0?'warn':'good')}${kpi('Items fully returned',tot.full+' / '+its.length)}${pcs?kpi('Rent per day now',money(its.reduce((a,i)=>a+Math.max(0,itemBalOn(i.id,null,todayStr()))*num(i.ratePcDay),0)),'at today\'s balance'):''}</div>`;
   const filt=i=>{ const st=itemStatus(i,T.get(i.id))[1]; return f==='all' || (f==='site'&&T.get(i.id).bal>0) || (f==='pending'&&/Pending|Not received/.test(st)) || (f==='returned'&&st==='Fully returned') || (f==='check'&&itemStatus(i,T.get(i.id))[0]==='bd'); };
   h+=`<div class="chips"><label>Show</label>${[['all','All items'],['site','Still on site'],['pending','Pending receipt'],['returned','Fully returned'],['check','Errors']].map(([k,l])=>`<button class="btn sm ${f===k?'p':''}" onclick="setUI('itemFilter','${k}')">${l}</button>`).join('')}</div>`;
@@ -1575,6 +1575,7 @@ PAGES.items=()=>{
   // price list – one price per component, shared with Rental Store (used for valuation and the reconciliation statement)
   const vNo=i=>num(i.storeRate)*rentFac(i), lossNo=i=>num(i.lossRate)||vNo(i);
   const priced=its.filter(i=>num(i.storeRate)).length;
+  h+=`<div id="itprice"></div>`;
   h+=panel(`${esc(s?s.name:'')} – price list`,`<p class="note">Price of each component – for valuation now and the <b>reconciliation statement</b> later. The same price is used in Rental Store. <b>Repair charge</b> = what the vendor charges for a damaged piece. <b>Loss charge</b> = what the vendor charges for a missing piece (left blank = full value per no).</p>`+table('itPrice',[{label:'Code',calc:i=>esc(i.code||'')},{label:'Item',calc:i=>esc(i.item||'')},
     {key:'storeRate',label:`Price (${cur()})`,type:'number',r:1},{key:'storeRateUnit',label:'per',type:'select',options:['Nos','Sqm','Kg'],w:70},
     {label:'Value / no',r:1,calc:i=>{ const v=vNo(i); return v?money(v):(num(i.storeRate)&&i.storeRateUnit!=='Nos'?`<span class="neg" title="enter ${i.storeRateUnit==='Sqm'?'Sqm':'Kg'} / no in the item balance">set ${i.storeRateUnit==='Sqm'?'sqm':'kg'} / no</span>`:'—'); }},

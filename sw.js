@@ -1,5 +1,5 @@
-/* FormTrack offline service worker – 2026.10.28-0938 */
-const CACHE='formtrack-2026.10.28-0938';
+/* FormTrack offline service worker – 2026.10.28-0945 */
+const CACHE='formtrack-2026.10.28-0945';
 const SHELL=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',e=>{ e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL))); self.skipWaiting(); });
 self.addEventListener('activate',e=>{ e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())); });
