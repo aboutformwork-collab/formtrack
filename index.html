@@ -311,7 +311,7 @@ input.nameedit.big{font:700 32px/1.1 "Barlow Condensed","Arial Narrow",sans-seri
 <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="if(this.files[0])restoreBackup(this.files[0]);this.value=''">
 <input type="file" id="fsPick" style="display:none" onchange="fsOpenFile(this.files[0]);this.value=''">
 
-<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.10.28-0101"; window.__FORMTRACK_VERNAME="28 Oct 01:01";</script>
+<script>window.__FORMTRACK_PWA=true; window.__FORMTRACK_VER="2026.10.28-0938"; window.__FORMTRACK_VERNAME="28 Oct 09:38";</script>
 <script>
 /* FormTrack */
 const STORE_KEY = 'formtrack_data_v2';
@@ -844,9 +844,10 @@ const DEFAULTS = {
   itemTx:()=>({date:todayStr(),systemId:curItemSys(),areaId:'',doc:'',itemId:state.items.find(i=>i.systemId===curItemSys())?.id||'',type:'Received',nos:0,remarks:''}),
 };
 /* virtual tables: one data list shown as two tables (consumables Received / Issued) */
-const VARR={consRec:'consTx',consIss:'consTx',rentStore:'storeTx',rsItems:'items'}; const RA=a=>VARR[a]||a;
+const VARR={consRec:'consTx',consIss:'consTx',rentStore:'storeTx',rsItems:'items',itPrice:'items'}; const RA=a=>VARR[a]||a;
 function addRow(arr){ const r=Object.assign({id:uid(),_u:nowMs()},DEFAULTS[arr]()); state[RA(arr)].push(r); if(Object.values(tflt(arr)).some(Boolean)) FKEEP.add(r.id); save(); }
 function delRow(arr,id){
+  if(arr==='rsItems'||arr==='itPrice') arr='items';
   const used=(test)=>{ if(test){ toast('This is used in other entries — delete or change those first.'); return true; } return false; };
   if(arr==='systems' && used(['ledger','owned','execution','labour','scope','rates','items','itemTx'].some(k=>state[k].some(r=>r.systemId===id)))) return;
   if(arr==='areas' && used(['ledger','execution','labour','scope','rates'].some(k=>state[k].some(r=>r.areaId===id)))) return;
@@ -1571,6 +1572,17 @@ PAGES.items=()=>{
     {label:'Last received',calc:i=>esc(T.get(i.id).lastR||'—')},{label:'Last returned',calc:i=>esc(T.get(i.id).lastD||'—')},
     {label:'Status',calc:i=>{const [c,t]=itemStatus(i,T.get(i.id)); return PILL(c,t);}});
   h+=panel(`${esc(s?s.name:'')} – item balance`,table('items',cols,{rows:its.filter(filt),sums:[{label:'Received sqm',val:i=>T.get(i.id).r*num(i.sqmPerNo),dec:2,only:1},{label:'Returned sqm',val:i=>T.get(i.id).d*num(i.sqmPerNo),dec:2,only:1},{label:'Weight on site (MT)',val:i=>Math.max(0,T.get(i.id).bal)*num(i.kgPerNo)/1000,dec:3,only:1}]}),`${its.filter(filt).length} of ${its.length} items`);
+  // price list – one price per component, shared with Rental Store (used for valuation and the reconciliation statement)
+  const vNo=i=>num(i.storeRate)*rentFac(i), lossNo=i=>num(i.lossRate)||vNo(i);
+  const priced=its.filter(i=>num(i.storeRate)).length;
+  h+=panel(`${esc(s?s.name:'')} – price list`,`<p class="note">Price of each component – for valuation now and the <b>reconciliation statement</b> later. The same price is used in Rental Store. <b>Repair charge</b> = what the vendor charges for a damaged piece. <b>Loss charge</b> = what the vendor charges for a missing piece (left blank = full value per no).</p>`+table('itPrice',[{label:'Code',calc:i=>esc(i.code||'')},{label:'Item',calc:i=>esc(i.item||'')},
+    {key:'storeRate',label:`Price (${cur()})`,type:'number',r:1},{key:'storeRateUnit',label:'per',type:'select',options:['Nos','Sqm','Kg'],w:70},
+    {label:'Value / no',r:1,calc:i=>{ const v=vNo(i); return v?money(v):(num(i.storeRate)&&i.storeRateUnit!=='Nos'?`<span class="neg" title="enter ${i.storeRateUnit==='Sqm'?'Sqm':'Kg'} / no in the item balance">set ${i.storeRateUnit==='Sqm'?'sqm':'kg'} / no</span>`:'—'); }},
+    {key:'repairRate',label:`Repair charge (${cur()}/no)`,type:'number',r:1},{key:'lossRate',label:`Loss charge (${cur()}/no)`,type:'number',r:1},
+    {label:'Received value',r:1,money:1,val:i=>T.get(i.id).r*vNo(i),calc:i=>vNo(i)?money(T.get(i.id).r*vNo(i)):'—'},
+    {label:'Returned value',r:1,money:1,val:i=>T.get(i.id).d*vNo(i),calc:i=>vNo(i)?money(T.get(i.id).d*vNo(i)):'—'},
+    {label:'On site value',r:1,money:1,val:i=>Math.max(0,T.get(i.id).bal)*vNo(i),calc:i=>vNo(i)?`<b>${money(Math.max(0,T.get(i.id).bal)*vNo(i))}</b>`:'—'}],
+    {rows:its.filter(filt),noAdd:true,paste:false}),`${priced} of ${its.length} items priced`);
   // document-wise summary
   const docs=new Map();
   state.itemTx.filter(t=>t.systemId===sId).forEach(t=>{ const k=t.date+'|'+t.type+'|'+(t.doc||''); const it=itemObj(t.itemId)||{}; if(!docs.has(k)) docs.set(k,{date:t.date,type:t.type,doc:t.doc,lines:0,nos:0,sqm:0,kg:0,areas:new Set()}); const g=docs.get(k); g.lines++; g.nos+=num(t.nos); g.sqm+=num(t.nos)*num(it.sqmPerNo); g.kg+=num(t.nos)*num(it.kgPerNo); if(t.areaId) g.areas.add(areaName(t.areaId)); });
@@ -2213,7 +2225,7 @@ PAGES.storeVal=()=>{ const T={}; Object.keys(SK).forEach(k=>{ T[k]=skVal(k).redu
   h+=skChips()+panel(S.label+' – item-wise value',(noRate?`<div class="banner">${PILL('wn','RATE')} <span>${noRate} item${noRate>1?'s have':' has'} no rate – type it in the Rate column.</span></div>`:'')+table(S.master,[{key:k==='mach'?'name':'item',label:'Item',w:170},{label:'Unit',calc:i=>esc(S.unit(i))},
     {key:S.rateK,label:`Rate (${cur()}/unit)`,type:'number',r:1},{label:'In store (qty)',r:1,calc:i=>fmtN(V.get(i.id).st,2)},{label:'Stock value',r:1,val:i=>V.get(i.id).stV,money:1,calc:i=>`<b>${money(V.get(i.id).stV)}</b>`},
     ...(k!=='cons'?[{label:'With contractors / vendors',r:1,val:i=>V.get(i.id).outV,money:1,calc:i=>money(V.get(i.id).outV)}]:[]),
-    {label:'Received (good) qty',r:1,calc:i=>fmtN(V.get(i.id).recQ,2)},{label:'Received value',r:1,val:i=>V.get(i.id).recV,money:1,calc:i=>money(V.get(i.id).recV)},
+    {label:'Received (good) qty',r:1,calc:i=>fmtN(V.get(i.id).recQ,2)},{label:'Received value',r:1,money:1,val:i=>V.get(i.id).recV,money:1,calc:i=>money(V.get(i.id).recV)},
     {label:'Issued qty',r:1,calc:i=>fmtN(V.get(i.id).issQ,2)},{label:'Issued value',r:1,val:i=>V.get(i.id).issV,money:1,calc:i=>money(V.get(i.id).issV)},
     ...(k!=='cons'?[{label:'Damaged / missing',r:1,val:i=>V.get(i.id).loss,money:1,calc:i=>V.get(i.id).loss?`<span class="neg">${money(V.get(i.id).loss)}</span>`:'—'}]:[])],{rows:S.items(),noAdd:1,noFilter:1}),'value = qty × rate');
   return h; };
@@ -3020,7 +3032,9 @@ function askAnswer(raw){ const q=askNorm(raw); if(!q) return '';
     out.push(`<h4>Executed – ${lbl}</h4>${[...by].map(([k,v])=>askLine(esc(k),fmtN(v)+' sqm')).join('')||'<p>No execution entered.</p>'}${by.size>1?askLine('<b>Total</b>',fmtN(sumSqm(ex))+' sqm'):''}${askGo('execution','Execution')}`); }
   /* system cost */
   if(/cost|per sqm|per unit/.test(q)&&!/stock|store|valu/.test(q)){ const cg=withUI({period:todate?'todate':'month',month:mm,groupBy:'system',sysSel:sys.map(x=>x.id)},()=>costGrouped());
-    out.push(`<h4>System cost – ${lbl}</h4>${cg.filter(g=>g.total||g.sqm).map(g=>askLine(esc(sysName(g.s)),g.sqm?money(g.total/g.sqm)+' /'+sysUnit(g.s):'no output',`${money(g.total)} ÷ ${fmtN(g.sqm)} ${sysUnit(g.s)}`)).join('')||'<p>Nothing yet.</p>'}${askGo('dashboard','Dashboard')}`); }
+    const G=cg.filter(g=>g.total||g.sqm), sq=G.filter(g=>/sqm/i.test(sysUnit(g.s))), T=sq.reduce((a,g)=>(a.c+=g.total,a.q+=g.sqm,a),{c:0,q:0});
+    const totL=(!sys.length||sys.length>1)&&sq.length?askLine('<b>All formwork systems</b>',T.q?`<b>${money(T.c/T.q)} /sqm</b>`:'no work entered yet',`${money(T.c)} ÷ ${fmtN(T.q)} sqm`+(sq.length<G.length?' · systems counted in nos are left out':'')):'';
+    out.push(`<h4>Formwork system cost per sqm – ${lbl}</h4>${totL}${G.map(g=>askLine(esc(sysName(g.s)),g.sqm?money(g.total/g.sqm)+' /'+sysUnit(g.s):'no work entered yet',`${money(g.total)} ÷ ${fmtN(g.sqm)} ${sysUnit(g.s)}`)).join('')||'<p>Nothing yet.</p>'}${askGo('dashboard','Dashboard')}`); }
   /* store stock */
   if(/stock|store|in hand|available|balance of|how much .* (have|left)/.test(q)&&!/rental|on site/.test(q)){ const hits=[]; Object.entries(SK).forEach(([k,S])=>askFind(q,S.items(),S.name).forEach(i=>hits.push([k,i])));
     const show=hits.length?hits:Object.entries(SK).flatMap(([k,S])=>S.items().map(i=>[k,i]));
@@ -3037,14 +3051,14 @@ function askAnswer(raw){ const q=askNorm(raw); if(!q) return '';
   /* scope */
   if(/scope|balance work|remaining|pending work/.test(q)){ const SC=state.scope.filter(sc=>!area.length||area.some(a=>a.id===sc.areaId)); const t=SC.reduce((a,sc)=>{ const st=scopeStatus(sc); a.s+=st.scope; a.d+=st.scope?Math.min(st.executed,st.scope):0; return a; },{s:0,d:0});
     out.push(`<h4>Scope</h4>${askLine('Total scope',fmtN(t.s)+' sqm')}${askLine('Done against scope',fmtN(t.d)+' sqm')}${askLine('Balance',fmtN(t.s-t.d)+' sqm',t.s?fmtN(t.d/t.s*100,1)+'% complete':'')}${askGo('scope','Scope & Schedule')}`); }
-  if(!out.length) return `<p>I didn't understand that. Try one of the examples below – e.g. <b>September rent</b>, <b>shuttering oil stock</b>, <b>Aluminium cost per sqm till now</b>.</p>`;
+  if(!out.length) return `<p>I didn't understand that. Try one of the examples below – e.g. <b>September rent</b>, <b>shuttering oil stock</b>, <b>Formwork system cost per sqm till now</b>.</p>`;
   return out.join('');
 }
-const ASK_EX=['Rent this month','September rent Aluminium','Rent till now','Shuttering oil stock','Store stock','Executed this month','Aluminium cost per sqm till now','Idle material','Rental material on site','Pending PO','Labour this month','Excess rent till now','Scope balance'];
+const ASK_EX=['Rent this month','September rent Aluminium','Rent till now','Shuttering oil stock','Store stock','Executed this month','Formwork system cost per sqm till now','Idle material','Rental material on site','Pending PO','Labour this month','Excess rent till now','Scope balance'];
 function openAsk(){ let d=document.getElementById('askp'); if(d){ d.remove(); return; }
   d=document.createElement('div'); d.id='askp'; d.className='askp';
   d.innerHTML=`<div class="askh"><b>💬 Ask FormTrack</b><small>answers from your own data · works offline</small><button class="btn sm" onclick="closeAsk()">✕</button></div>
-    <div class="askin"><input id="askq" placeholder="e.g. September rent, shuttering oil stock, Aluminium cost per sqm" onkeydown="if(event.key==='Enter')runAsk()"><button class="btn p" onclick="runAsk()">Ask</button></div>
+    <div class="askin"><input id="askq" placeholder="e.g. September rent, shuttering oil stock, formwork cost per sqm" onkeydown="if(event.key==='Enter')runAsk()"><button class="btn p" onclick="runAsk()">Ask</button></div>
     <div class="askex">${ASK_EX.map(x=>`<button class="btn sm" onclick="document.getElementById('askq').value='${x}';runAsk()">${x}</button>`).join('')}</div><div id="aska" class="aska"></div>`;
   document.body.appendChild(d); setTimeout(()=>{ const i=document.getElementById('askq'); if(i) i.focus(); },50); }
 function closeAsk(){ const d=document.getElementById('askp'); if(d) d.remove(); }
